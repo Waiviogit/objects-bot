@@ -33,7 +33,7 @@ const processCreateObject = async (req, res) => {
             appendObjPostData.parent_author = '';
             appendObjPostData.parent_permlink = appData.appendObjectTag;
             appendObjPostData.permlink = permlink;
-            appendObjPostData.json_metadata = `{"tags":["${appData.appendObjectTag}"],"app":"${appData.appName}/${appData.version}"},“action”:”appendObject”,`;
+            appendObjPostData.json_metadata = `{"tags":["${appData.appendObjectTag}"],"app":"${appData.appName}/${appData.version}"},“action”:”createObject”,`;
 
             optionsData.author = botAcc.name;
             optionsData.max_accepted_payout = '100000.000 SBD';
@@ -41,7 +41,6 @@ const processCreateObject = async (req, res) => {
             optionsData.allow_votes = true;
             optionsData.allow_curation_rewards = true;
             optionsData.permlink = permlink;
-
             optionsData.extensions = [
                 [
                     0,
@@ -62,7 +61,7 @@ const processCreateObject = async (req, res) => {
             if(!transactionStatus){
                     res.status(422).json({error: 'Data is incorrect'})
             } else {
-                res.status(200).json(transactionStatus.id);
+                res.status(200).json({ transactionId: transactionStatus.id, objectPermlink: permlink, objectAuthor: botAcc.name });
             }
         }
         else {

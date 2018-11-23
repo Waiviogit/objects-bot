@@ -2,7 +2,7 @@ const appData = {
     appName: 'busy',
     version: '2.5.6',
     appAccName: 'monterey',
-    appendObjectTag: 'appendwaivioobject'
+    appendObjectTag: 'waivio-object'
 };
 
 module.exports = {
