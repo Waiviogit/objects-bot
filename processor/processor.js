@@ -2,6 +2,7 @@ const { api } = require('../api');
 const { validator } = require('../validator');
 const { PrivateKey } = require('dsteem');
 const { accountsData } = require('../constants/accountsData');
+const { appData } = require('../constants/appData');
 const _ = require('lodash');
 
 let index = 0;
@@ -14,6 +15,63 @@ const getAccount = () => {
         index++
     }
     return accountsData[currentIndex];
+};
+
+const processCreateObject = async (req, res) => {
+    try {
+        const data = req.body;
+        if(validator.validateCreateObject(data)) {
+
+            const appendObjPostData = {};
+            const optionsData = {};
+            const botAcc = getAccount();
+            const permlink = data.permlink;
+
+            appendObjPostData.author = botAcc.name;
+            appendObjPostData.body = data.body;
+            appendObjPostData.title = data.title;
+            appendObjPostData.parent_author = '';
+            appendObjPostData.parent_permlink = appData.appendObjectTag;
+            appendObjPostData.permlink = permlink;
+            appendObjPostData.json_metadata = `{"tags":["${appData.appendObjectTag}"],"app":"${appData.appName}/${appData.version}"},“action”:”appendObject”,`;
+
+            optionsData.author = botAcc.name;
+            optionsData.max_accepted_payout = '100000.000 SBD';
+            optionsData.percent_steem_dollars = 0;
+            optionsData.allow_votes = true;
+            optionsData.allow_curation_rewards = true;
+            optionsData.permlink = permlink;
+
+            optionsData.extensions = [
+                [
+                    0,
+                    {
+                         beneficiaries: _.orderBy(
+                            [
+                                {weight: 1500, account: botAcc.name},
+                                {weight: 1500, account: appData.appAccName},
+                                {weight: 7000, account: data.author}
+                            ],
+                            ['account'],
+                            ['asc'],
+                        )
+                    }
+                ]
+            ];
+            const transactionStatus = await api.createPost(appendObjPostData, optionsData, PrivateKey.fromString(botAcc.postingKey));
+            if(!transactionStatus){
+                    res.status(422).json({error: 'Data is incorrect'})
+            } else {
+                res.status(200).json(transactionStatus.id);
+            }
+        }
+        else {
+            res.status(422).json({error: 'Not enough data', body: req.body})
+        }
+    }
+    catch (e) {
+        res.status(422).json({error: e.message})
+    }
 };
 
 const processAppendObject = async (req, res) => {
@@ -30,9 +88,9 @@ const processAppendObject = async (req, res) => {
             appendObjPostData.body = data.body;
             appendObjPostData.title = data.title;
             appendObjPostData.parent_author = '';
-            appendObjPostData.parent_permlink = 'appendwaivioobject';
+            appendObjPostData.parent_permlink = appData.appendObjectTag;
             appendObjPostData.permlink = permlink;
-            appendObjPostData.json_metadata = '{"tags":["appendwaivioobject"],"app":"busy/2.5.6"}';
+            appendObjPostData.json_metadata = `{"tags":["${appData.appendObjectTag}"],"app":"${appData.appName}/${appData.version}"},“action”:”appendObject”,`;
 
             optionsData.author = botAcc.name;
             optionsData.max_accepted_payout = '100000.000 SBD';
@@ -45,10 +103,10 @@ const processAppendObject = async (req, res) => {
                 [
                     0,
                     {
-                         beneficiaries: _.orderBy(
+                        beneficiaries: _.orderBy(
                             [
                                 {weight: 1500, account: botAcc.name},
-                                {weight: 1500, account: 'monterey'},
+                                {weight: 1500, account: appData.appAccName},
                                 {weight: 7000, account: data.author}
                             ],
                             ['account'],
@@ -59,7 +117,7 @@ const processAppendObject = async (req, res) => {
             ];
             const transactionStatus = await api.createPost(appendObjPostData, optionsData, PrivateKey.fromString(botAcc.postingKey));
             if(!transactionStatus){
-                    res.status(422).json({error: 'Data is incorrect'})
+                res.status(422).json({error: 'Data is incorrect'})
             } else {
                 res.status(200).json({ transactionId: transactionStatus.id, permlink });
             }
@@ -74,5 +132,5 @@ const processAppendObject = async (req, res) => {
 };
 
 module.exports = {
-    processAppendObject,
+    processAppendObject, processCreateObject
 };
