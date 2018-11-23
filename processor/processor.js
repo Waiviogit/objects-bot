@@ -40,18 +40,28 @@ const processAppendObject = async (req, res) => {
             optionsData.allow_votes = true;
             optionsData.allow_curation_rewards = true;
             optionsData.permlink = permlink;
+
             optionsData.extensions = [
-                [0, {beneficiaries: [
-                        {weight: 1500, account: botAcc.name},
-                        {weight: 1500, account: 'monterey'},
-                        {weight: 7000, account: data.author}
-                    ]}]
+                [
+                    0,
+                    {
+                         beneficiaries: _.orderBy(
+                            [
+                                {weight: 1500, account: botAcc.name},
+                                {weight: 1500, account: 'monterey'},
+                                {weight: 7000, account: data.author}
+                            ],
+                            ['account'],
+                            ['asc'],
+                        )
+                    }
+                ]
             ];
             const transactionStatus = await api.createPost(appendObjPostData, optionsData, PrivateKey.fromString(botAcc.postingKey));
             if(!transactionStatus){
                     res.status(422).json({error: 'Data is incorrect'})
             } else {
-                res.status(200).json('distributedValue');
+                res.status(200).json({ transactionId: transactionStatus.id, permlink });
             }
         }
         else {
