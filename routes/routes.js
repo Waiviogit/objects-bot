@@ -8,8 +8,8 @@ const routes = express.Router();
 routes.use('/objects-bot', routes);
 
 routes.route('/create-object')
-    .post(processor.processAppendObject);
-routes.route('/append-object')
     .post(processor.processCreateObject);
+routes.route('/append-object')
+    .post(processor.processAppendObject);
 
 module.exports = routes;

@@ -33,7 +33,7 @@ const processCreateObject = async (req, res) => {
             appendObjPostData.parent_author = '';
             appendObjPostData.parent_permlink = appData.appendObjectTag;
             appendObjPostData.permlink = permlink;
-            appendObjPostData.json_metadata = `{"tags":["${appData.appendObjectTag}"],"app":"${appData.appName}/${appData.version}"},“action”:”createObject”,`;
+            appendObjPostData.json_metadata = `{"tags":["${appData.appendObjectTag}"],"app":"${appData.appName}/${appData.version}","action":"createObject"}`;
 
             optionsData.author = botAcc.name;
             optionsData.max_accepted_payout = '100000.000 SBD';
@@ -89,7 +89,7 @@ const processAppendObject = async (req, res) => {
             appendObjPostData.parent_author = '';
             appendObjPostData.parent_permlink = appData.appendObjectTag;
             appendObjPostData.permlink = permlink;
-            appendObjPostData.json_metadata = `{"tags":["${appData.appendObjectTag}"],"app":"${appData.appName}/${appData.version}"},“action”:”appendObject”,`;
+            appendObjPostData.json_metadata = `{"tags":["${appData.appendObjectTag}"],"app":"${appData.appName}/${appData.version}","action":"appendObject"}`;
 
             optionsData.author = botAcc.name;
             optionsData.max_accepted_payout = '100000.000 SBD';
