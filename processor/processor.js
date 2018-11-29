@@ -27,14 +27,25 @@ const processCreateObject = async (req, res) => {
             const botAcc = getAccount();
             const permlink = data.permlink;
 
-            appendObjPostData.author = botAcc.name;
-            appendObjPostData.body = data.body;
-            appendObjPostData.title = data.title;
             appendObjPostData.parent_author = '';
             appendObjPostData.parent_permlink = appData.appendObjectTag;
+            appendObjPostData.author = botAcc.name;
             appendObjPostData.permlink = permlink;
-            appendObjPostData.json_metadata = `{"tags":["${appData.appendObjectTag}"],"app":"${appData.appName}/${appData.version}","action":"createObject"}`;
-
+            appendObjPostData.body = data.body;
+            appendObjPostData.title = data.title;
+            appendObjPostData.json_metadata = JSON.stringify({
+                app:`${appData.appName}/${appData.version}`,
+                community: '',
+                tags: appData.appendObjectTag,
+                wobj: {
+                    action: "createObject",
+                    field: {
+                        name: "name",
+                        body: data.objectName,
+                        locale: data.locale,
+                    },
+                    object_type: data.type,
+                }});
             optionsData.author = botAcc.name;
             optionsData.max_accepted_payout = '100000.000 SBD';
             optionsData.percent_steem_dollars = 0;
