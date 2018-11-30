@@ -15,11 +15,7 @@ const client = new dsteem.Client('https://api.steemit.com');
         // console.log('options:', options);
         const returnData = await client.broadcast.commentWithOptions(comment, options, key);
         return returnData;
-    };
-
-  const createAppend = async (comment, options, key) => {
-    return await client.broadcast.commentWithOptions(comment, options, key);
-};
+  };
 
   const votePost = async (payload) => {
         console.log('client.broadcast.upvote:', payload.payload);
@@ -28,5 +24,5 @@ const client = new dsteem.Client('https://api.steemit.com');
     };
 
 module.exports = {
-    createPost, votePost, createAppend
+    createPost, votePost
 };

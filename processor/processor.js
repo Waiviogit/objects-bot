@@ -136,9 +136,7 @@ const processAppendObject = async (req, res) => {
             optionsData.percent_steem_dollars = 0;
             optionsData.permlink = data.permlink;
 
-            console.log('test -> ', JSON.stringify(optionsData));
-
-            const transactionStatus = await api.createAppend(appendObjPostData, optionsData, PrivateKey.fromString(botAcc.postingKey));
+            const transactionStatus = await api.createPost(appendObjPostData, optionsData, PrivateKey.fromString(botAcc.postingKey));
             if (!transactionStatus) {
                 res.status(422).json({ error: 'Data is incorrect' })
             } else {
