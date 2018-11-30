@@ -11,13 +11,16 @@ opts.chainId = '0000000000000000000000000000000000000000000000000000000000000000
 const client = new dsteem.Client('https://api.steemit.com');
 
   const createPost = async (comment, options, key) => {
-        console.log('comment:', comment);
-        console.log('options:', options);
-        // const returnData = await client.broadcast.commentWithOptions(comment, options, key);
-        const returnData = await new Promise(resolve => setTimeout(resolve({ id:`badc0a847dbe70e2ec982aad39a10a${Math.random().toString(36).substring(2)}` }), 5000));
-
+        // console.log('comment:', comment);
+        // console.log('options:', options);
+        const returnData = await client.broadcast.commentWithOptions(comment, options, key);
         return returnData;
     };
+
+  const createAppend = async (comment, options, key) => {
+    return await client.broadcast.commentWithOptions(comment, options, key);
+};
+
   const votePost = async (payload) => {
         console.log('client.broadcast.upvote:', payload.payload);
         const returnData = await client.broadcast.vote(payload.payload, payload.privateKey);
@@ -25,5 +28,5 @@ const client = new dsteem.Client('https://api.steemit.com');
     };
 
 module.exports = {
-    createPost, votePost
+    createPost, votePost, createAppend
 };
