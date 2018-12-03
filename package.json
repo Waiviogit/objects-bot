@@ -2,6 +2,10 @@
   "name": "objects-bot",
   "version": "1.0.0",
   "description": "bot for waivio",
+  "engines": {
+    "node": "8.x",
+    "npm": "6.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Waiviogit/objects-bot.git"
