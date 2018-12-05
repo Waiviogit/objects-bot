@@ -1,6 +1,6 @@
 const appData = {
-    appName: 'busy',
-    version: '2.5.6',
+    appName: 'waiviodev',
+    version: '1.0.0',
     appAccName: 'monterey',
     appendObjectTag: 'waivio-object'
 };
