@@ -11,8 +11,6 @@ opts.chainId = '0000000000000000000000000000000000000000000000000000000000000000
 const client = new dsteem.Client('https://api.steemit.com');
 
   const createPost = async (comment, options, key) => {
-        // console.log('comment:', comment);
-        // console.log('options:', options);
         const returnData = await client.broadcast.commentWithOptions(comment, options, key);
         return returnData;
   };
