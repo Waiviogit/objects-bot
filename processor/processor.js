@@ -2,78 +2,35 @@ const { api } = require('../api');
 const { validator } = require('../validator');
 const { PrivateKey } = require('dsteem');
 const { accountsData } = require('../constants/accountsData');
+const { actionTypes } = require('../constants/actionTypes');
 const { appData } = require('../constants/appData');
-const _ = require('lodash');
+const { getPostData, getOptions } = require('../helpers/dataMapper');
 
 let index = 0;
 
 const getAccount = () => {
     const currentIndex = index;
-    if ((accountsData.length - 1) <= index) {
-        index = 0
-    } else {
-        index++
+    if (++index === accountsData.length) {
+        index = 0;
     }
     return accountsData[currentIndex];
 };
 
-const processCreateObject = async (req, res) => {
+async function processCreateObject(req, res) {
+    this.attempts = this.attempts < appData.maxAttempts ? this.attempts + 1 : 1;
     try {
         const data = req.body;
         if (validator.validateCreateObject(data)) {
-
-            const appendObjPostData = {};
-            const optionsData = {};
             const botAcc = getAccount();
-            const permlink = data.permlink;
-
-            appendObjPostData.parent_author = '';
-            appendObjPostData.parent_permlink = appData.appendObjectTag;
-            appendObjPostData.author = botAcc.name;
-            appendObjPostData.permlink = permlink;
-            appendObjPostData.body = data.body;
-            appendObjPostData.title = data.title;
-            appendObjPostData.json_metadata = JSON.stringify({
-                app: `${appData.appName}/${appData.version}`,
-                community: '',
-                tags: appData.appendObjectTag,
-                wobj: {
-                    action: "createObject",
-                    field: {
-                        name: "name",
-                        body: data.objectName,
-                        locale: data.locale,
-                    },
-                    object_type: data.type,
-                }
-            });
-            optionsData.author = botAcc.name;
-            optionsData.max_accepted_payout = '100000.000 SBD';
-            optionsData.percent_steem_dollars = 0;
-            optionsData.allow_votes = true;
-            optionsData.allow_curation_rewards = true;
-            optionsData.permlink = permlink;
-            optionsData.extensions = [
-                [
-                    0,
-                    {
-                        beneficiaries: _.orderBy(
-                            [
-                                { weight: 1500, account: botAcc.name },
-                                { weight: 1500, account: appData.appAccName },
-                                { weight: 7000, account: data.author }
-                            ],
-                            ['account'],
-                            ['asc'],
-                        )
-                    }
-                ]
-            ];
-            const transactionStatus = await api.createPost(appendObjPostData, optionsData, PrivateKey.fromString(botAcc.postingKey));
+            const transactionStatus = await api.createPost(
+                getPostData(actionTypes.CREATE_OBJECT, data, botAcc),
+                getOptions(data, botAcc),
+                PrivateKey.fromString(botAcc.postingKey)
+            );
             if (!transactionStatus) {
                 res.status(422).json({ error: 'Data is incorrect' })
             } else {
-                res.status(200).json({ transactionId: transactionStatus.id, objectPermlink: permlink, objectAuthor: botAcc.name });
+                res.status(200).json({ transactionId: transactionStatus.id, objectPermlink: data.permlink, objectAuthor: botAcc.name });
             }
         }
         else {
@@ -81,62 +38,25 @@ const processCreateObject = async (req, res) => {
         }
     }
     catch (e) {
-        res.status(422).json({ error: e.message })
+        if (e.name === 'RPCError' && this.attempts < appData.maxAttempts) {
+            await processCreateObject.call(this ,req, res);
+        } else {
+            res.status(422).json({ error: e.message })
+        }
     }
-};
+}
 
-const processAppendObject = async (req, res) => {
+async function processAppendObject(req, res) {
+    this.attempts = this.attempts < appData.maxAttempts ? this.attempts + 1 : 1;
     try {
         const data = req.body;
         if (validator.validateAppendObject(data)) {
-
-            const appendObjPostData = {};
-            const optionsData = {};
             const botAcc = getAccount();
-
-            appendObjPostData.author = botAcc.name;
-            appendObjPostData.body = data.body;
-            appendObjPostData.title = data.title;
-            appendObjPostData.parent_author = data.parentAuthor;
-            appendObjPostData.parent_permlink = data.parentPermlink;
-            appendObjPostData.permlink = data.permlink;
-
-            appendObjPostData.json_metadata = JSON.stringify({
-                app: `${appData.appName}/${appData.version}`,
-                community: '',
-                tags: appData.appendObjectTag,
-                wobj: {
-                    action: "appendObject",
-                    field: { ...data.field },
-                }
-            });
-
-            optionsData.allow_curation_rewards = true;
-            optionsData.allow_votes = true;
-            optionsData.author = botAcc.name;
-
-            optionsData.extensions = [
-                [
-                    0,
-                    {
-                        beneficiaries: _.orderBy(
-                            [
-                                { weight: 1500, account: botAcc.name },
-                                { weight: 1500, account: appData.appAccName },
-                                { weight: 7000, account: data.author }
-                            ],
-                            ['account'],
-                            ['asc'],
-                        )
-                    }
-                ]
-            ];
-
-            optionsData.max_accepted_payout = '100000.000 SBD';
-            optionsData.percent_steem_dollars = 0;
-            optionsData.permlink = data.permlink;
-
-            const transactionStatus = await api.createPost(appendObjPostData, optionsData, PrivateKey.fromString(botAcc.postingKey));
+            const transactionStatus = await api.createPost(
+                getPostData(actionTypes.APPEND_OBJECT, data, botAcc),
+                getOptions(data, botAcc),
+                PrivateKey.fromString(botAcc.postingKey)
+            );
             if (!transactionStatus) {
                 res.status(422).json({ error: 'Data is incorrect' })
             } else {
@@ -148,9 +68,13 @@ const processAppendObject = async (req, res) => {
         }
     }
     catch (e) {
-        res.status(422).json({ error: e.message })
+        if (e.name === 'RPCError' && this.attempts < appData.maxAttempts) {
+            await processAppendObject.call(this ,req, res);
+        } else {
+            res.status(422).json({ error: e.message })
+        }
     }
-};
+}
 
 module.exports = {
     processAppendObject, processCreateObject
