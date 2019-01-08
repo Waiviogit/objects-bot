@@ -39,6 +39,7 @@ const processCreateObject = async (req, res) => {
                 tags: appData.appendObjectTag,
                 wobj: {
                     action: "createObject",
+                    creator: data.author,
                     is_posting_open: data.isPostingOpen !== undefined ? data.isPostingOpen : "true",
                     is_extending_open: data.isExtendingOpen !== undefined ? data.isExtendingOpen : "true",
                     field: {
@@ -109,6 +110,7 @@ const processAppendObject = async (req, res) => {
                 tags: appData.appendObjectTag,
                 wobj: {
                     action: "appendObject",
+                    creator: data.author,
                     field: { ...data.field },
                 }
             });
