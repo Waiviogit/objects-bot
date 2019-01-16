@@ -4,7 +4,7 @@ const { PrivateKey } = require('dsteem');
 const { accountsData } = require('../constants/accountsData');
 const { appData } = require('../constants/appData');
 const _ = require('lodash');
-const uuidv4 = require('uuid/4')
+const uuidv4 = require('uuid/v4');
 
 let index = 0;
 
