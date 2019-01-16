@@ -4,7 +4,6 @@ const { PrivateKey } = require('dsteem');
 const { accountsData } = require('../constants/accountsData');
 const { appData } = require('../constants/appData');
 const _ = require('lodash');
-const uuidv4 = require('uuid/v4');
 
 let index = 0;
 
@@ -97,7 +96,7 @@ const processAppendObject = async (req, res) => {
             const appendObjPostData = {};
             const optionsData = {};
             const botAcc = getAccount();
-            const galleryAlbumId = (data.field.name === 'galleryAlbum') ? uuidv4() : null;
+            const galleryAlbumId = (data.field.name === 'galleryAlbum') ? Math.random().toString(36).substring(2) : null;
 
             appendObjPostData.author = botAcc.name;
             appendObjPostData.body = data.body;
