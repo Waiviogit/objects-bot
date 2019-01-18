@@ -50,6 +50,9 @@ const getPostData = (type, reqData, accData) => {
             appendObjPostData.parent_permlink = appData.appendObjectTag;
             metadata.wobj = {
                 action: type,
+                creator: reqData.author,
+                is_posting_open: Boolean(reqData.isPostingOpen),
+                is_extending_open: Boolean(reqData.isExtendingOpen),
                 field: {
                     name: "name",
                     body: reqData.objectName,
@@ -59,11 +62,15 @@ const getPostData = (type, reqData, accData) => {
             };
             break;
         case actionTypes.APPEND_OBJECT:
+            const galleryAlbumId = (reqData.field.name === 'galleryAlbum')
+                ? Math.random().toString(36).substring(2)
+                : null;
             appendObjPostData.parent_author = reqData.parentAuthor;
             appendObjPostData.parent_permlink = reqData.parentPermlink;
             metadata.wobj = {
                 action: type,
-                field: { ...reqData.field },
+                creator: reqData.author,
+                field: galleryAlbumId ? { ...data.field, id: galleryAlbumId } : { ...data.field },
             };
             break;
         default:
