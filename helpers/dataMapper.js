@@ -70,7 +70,7 @@ const getPostData = (type, reqData, accData) => {
             metadata.wobj = {
                 action: type,
                 creator: reqData.author,
-                field: galleryAlbumId ? { ...data.field, id: galleryAlbumId } : { ...data.field },
+                field: galleryAlbumId ? { ...reqData.field, id: galleryAlbumId } : { ...reqData.field },
             };
             break;
         default:
