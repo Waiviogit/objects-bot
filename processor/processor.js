@@ -157,6 +157,39 @@ const processAppendObject = async (req, res) => {
     }
 };
 
+async function markForecastAsExpired(req, res) {
+    this.attempts = this.attempts < appData.maxAttempts ? this.attempts + 1 : 1;
+    try {
+        const data = {
+            ...req.body,
+            title: '',
+            body: `Forecast has expired with profitability ${req.body.expForecast.profitability}`,
+            permlink: `exp-${Number(new Date(req.body.expForecast.expiredAt))}`,
+        };
+
+        const botAcc = getAccount();
+        const transactionStatus = await api.createPost(
+            getPostData(actionTypes.FORECAST_EXPIRED, data, botAcc),
+            getOptions(data, botAcc),
+            PrivateKey.fromString(botAcc.postingKey)
+        );
+        if (!transactionStatus) {
+            res.status(422).json({ error: 'Data is incorrect' })
+        } else {
+            res.status(200).json({ transactionId: transactionStatus.id, permlink: data.permlink, author: botAcc.name });
+        }
+    }
+    catch (e) {
+        if (e.name === 'RPCError' && this.attempts < appData.maxAttempts) {
+            await markForecastAsExpired.call(this ,req, res);
+        } else {
+            res.status(422).json({ error: e.message })
+        }
+    }
+}
+
 module.exports = {
-    processAppendObject, processCreateObject
+    processCreateObject,
+    processAppendObject,
+    markForecastAsExpired,
 };
