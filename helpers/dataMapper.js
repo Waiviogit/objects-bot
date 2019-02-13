@@ -62,15 +62,12 @@ const getPostData = (type, reqData, accData) => {
             };
             break;
         case actionTypes.APPEND_OBJECT:
-            const galleryAlbumId = (reqData.field.name === 'galleryAlbum')
-                ? Math.random().toString(36).substring(2)
-                : null;
             appendObjPostData.parent_author = reqData.parentAuthor;
             appendObjPostData.parent_permlink = reqData.parentPermlink;
             metadata.wobj = {
                 action: type,
                 creator: reqData.author,
-                field: galleryAlbumId ? { ...reqData.field, id: galleryAlbumId } : { ...reqData.field },
+                field: reqData.field,
             };
             break;
         case actionTypes.FORECAST_EXPIRED:
