@@ -4,7 +4,7 @@ const { PrivateKey } = require('dsteem');
 const { accountsData } = require('../constants/accountsData');
 const { actionTypes } = require('../constants/actionTypes');
 const { appData } = require('../constants/appData');
-const { getPostData, getOptions } = require('../helpers/dataMapper');
+const { getPostData, getOptions, getAppendRequestBody } = require('../helpers/dataMapper');
 
 let index = 0;
 
@@ -30,7 +30,7 @@ async function processCreateObject(req, res) {
             if (!transactionStatus) {
                 res.status(422).json({ error: 'Data is incorrect' })
             } else {
-                res.status(200).json({ transactionId: transactionStatus.id, objectPermlink: data.permlink, objectAuthor: botAcc.name });
+                await processAppendObject(getAppendRequestBody(data, botAcc), res);
             }
         }
         else {

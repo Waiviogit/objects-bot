@@ -88,6 +88,28 @@ const getPostData = (type, reqData, accData) => {
     return appendObjPostData;
 };
 
+const getAppendRequestBody = (reqData, accData) => (
+    {
+        body: {
+            author: reqData.author,
+            parentAuthor: accData.name,
+            parentPermlink: reqData.permlink,
+            body: `${reqData.author} added name(${reqData.locale || 'uk-UA'}):\n ${reqData.objectName}`,
+            title: "",
+            field: {
+                name: "name",
+                body: reqData.objectName,
+                locale: reqData.locale || "uk-UA",
+            },
+            permlink: `${reqData.author}-${Math.random()
+                .toString(36)
+                .substring(2)}`,
+            lastUpdated: Date.now(),
+            wobjectName: reqData.objectName
+        }
+    }
+);
+
 module.exports = {
-    getPostData, getOptions
+    getPostData, getOptions, getAppendRequestBody
 };
