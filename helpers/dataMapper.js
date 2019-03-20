@@ -2,7 +2,11 @@ const { appData } = require('../constants/appData');
 const { actionTypes } = require('../constants/actionTypes');
 const _ = require('lodash');
 
-const getOptions = (reqData, accData) => {
+const getPermlink = str => `${Math.random()
+    .toString(36)
+    .substring(2)}-${str}`;
+
+const getOptions = (type, reqData, accData) => {
     const optionsData = {};
 
     optionsData.author = accData.name;
@@ -11,22 +15,45 @@ const getOptions = (reqData, accData) => {
     optionsData.allow_votes = true;
     optionsData.allow_curation_rewards = true;
     optionsData.permlink = reqData.permlink;
-    optionsData.extensions = [
-        [
-            0,
-            {
-                beneficiaries: _.orderBy(
-                    [
-                        { weight: 1500, account: accData.name },
-                        { weight: 1500, account: appData.appAccName },
-                        { weight: 7000, account: reqData.author }
-                    ],
-                    ['account'],
-                    ['asc'],
-                )
-            }
-        ]
-    ];
+
+    switch (type) {
+        case actionTypes.CREATE_OBJECT_TYPE:
+            optionsData.extensions = [
+                [
+                    0,
+                    {
+                        beneficiaries: _.orderBy(
+                            [
+                                { weight: 1500, account: accData.name },
+                                { weight: 8500, account: appData.appAccName }
+                            ],
+                            ['account'],
+                            ['asc'],
+                        )
+                    }
+                ]
+            ];
+            break;
+        case actionTypes.CREATE_OBJECT:
+        case actionTypes.APPEND_OBJECT:
+        default:
+            optionsData.extensions = [
+                [
+                    0,
+                    {
+                        beneficiaries: _.orderBy(
+                            [
+                                { weight: 1500, account: accData.name },
+                                { weight: 1500, account: appData.appAccName },
+                                { weight: 7000, account: reqData.author }
+                            ],
+                            ['account'],
+                            ['asc'],
+                        )
+                    }
+                ]
+            ];
+    }
 
     return optionsData;
 };
@@ -45,6 +72,16 @@ const getPostData = (type, reqData, accData) => {
     appendObjPostData.author = accData.name;
 
     switch (type) {
+        case actionTypes.CREATE_OBJECT_TYPE:
+            appendObjPostData.parent_author = '';
+            appendObjPostData.parent_permlink = appData.objectTypeTag;
+            appendObjPostData.title = `Object Type - ${reqData.objectType}`;
+            appendObjPostData.body = 'Description will be here..';
+            metadata.wobj = {
+                action: type,
+                name: reqData.objectType,
+            };
+            break;
         case actionTypes.CREATE_OBJECT:
             appendObjPostData.parent_author = '';
             appendObjPostData.parent_permlink = appData.appendObjectTag;
@@ -111,5 +148,5 @@ const getAppendRequestBody = (reqData, accData) => (
 );
 
 module.exports = {
-    getPostData, getOptions, getAppendRequestBody
+    getPermlink, getPostData, getOptions, getAppendRequestBody
 };

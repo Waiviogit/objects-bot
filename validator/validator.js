@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const requiredFieldsCreate = 'author,title,body,permlink'.split(',');
 
 const validateCreateObject = (postData) => {
@@ -20,6 +18,8 @@ const validateAppendObject = (postData) => {
     return isValid;
 };
 
+const validateCreateObjectType = (postData) => (Boolean(postData.objectType));
+
 module.exports = {
-    validateAppendObject, validateCreateObject,
+    validateAppendObject, validateCreateObject, validateCreateObjectType
 };
