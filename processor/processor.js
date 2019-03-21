@@ -26,14 +26,18 @@ async function processCreateObjectType(req, res) {
         if (validator.validateCreateObjectType(data)) {
             const botAcc = getAccount();
             const transactionStatus = await api.createPost(
-                getPostData(actionTypes.CREATE_OBJECT_TYPE, data, botAcc),
-                getOptions(actionTypes.CREATE_OBJECT_TYPE, data, botAcc),
+                getPostData(data, botAcc, actionTypes.CREATE_OBJECT_TYPE),
+                getOptions(data, botAcc, actionTypes.CREATE_OBJECT_TYPE),
                 PrivateKey.fromString(botAcc.postingKey)
             );
             if (!transactionStatus) {
                 res.status(422).json({ error: 'Data is incorrect' })
             } else {
-                res.status(200).json({ transactionId: transactionStatus.id, objType: data.objectType });
+                res.status(200).json({
+                    transactionId: transactionStatus.id,
+                    permlink: data.permlink,
+                    author: botAcc.name,
+                });
             }
         }
         else {
@@ -56,7 +60,7 @@ async function processCreateObject(req, res) {
         if (validator.validateCreateObject(data)) {
             const botAcc = getAccount();
             const transactionStatus = await api.createPost(
-                getPostData(actionTypes.CREATE_OBJECT, data, botAcc),
+                getPostData(data, botAcc, actionTypes.CREATE_OBJECT),
                 getOptions(data, botAcc),
                 PrivateKey.fromString(botAcc.postingKey)
             );
@@ -86,14 +90,20 @@ async function processAppendObject(req, res) {
         if (validator.validateAppendObject(data)) {
             const botAcc = getAccount();
             const transactionStatus = await api.createPost(
-                getPostData(actionTypes.APPEND_OBJECT, data, botAcc),
+                getPostData(data, botAcc, actionTypes.APPEND_OBJECT),
                 getOptions(data, botAcc),
                 PrivateKey.fromString(botAcc.postingKey)
             );
             if (!transactionStatus) {
                 res.status(422).json({ error: 'Data is incorrect' })
             } else {
-                res.status(200).json({ transactionId: transactionStatus.id, permlink: data.permlink, author: botAcc.name });
+                res.status(200).json({
+                    transactionId: transactionStatus.id,
+                    permlink: data.permlink,
+                    author: botAcc.name,
+                    parentAuthor: data.parentAuthor,
+                    parentPermlink: data.parentPermlink,
+                });
             }
         }
         else {
@@ -121,7 +131,7 @@ async function markForecastAsExpired(req, res) {
 
         const botAcc = getAccount();
         const transactionStatus = await api.createPost(
-            getPostData(actionTypes.FORECAST_EXPIRED, data, botAcc),
+            getPostData(data, botAcc, actionTypes.FORECAST_EXPIRED),
             getOptions(data, botAcc),
             PrivateKey.fromString(botAcc.postingKey)
         );

@@ -1,64 +1,44 @@
 const { appData } = require('../constants/appData');
 const { actionTypes } = require('../constants/actionTypes');
-const _ = require('lodash');
+const { orderBy } = require('lodash');
 
 const getPermlink = str => `${Math.random()
     .toString(36)
-    .substring(2)}-${str}`;
+    .substring(2)}-${str.toLowerCase()}`;
 
-const getOptions = (type, reqData, accData) => {
+const getOptions = (reqData, accData, type) => {
     const optionsData = {};
-
+    let beneficiaries = [];
+    switch (type) {
+        case actionTypes.CREATE_OBJECT_TYPE:
+        case actionTypes.FORECAST_EXPIRED:
+            beneficiaries = orderBy([
+                { weight: 1500, account: accData.name },
+                { weight: 8500, account: appData.appAccName }
+            ], ['account'], ['asc']);
+            break;
+        case actionTypes.CREATE_OBJECT:
+        case actionTypes.APPEND_OBJECT:
+        default:
+            beneficiaries = orderBy([
+                { weight: 1500, account: accData.name },
+                { weight: 1500, account: appData.appAccName },
+                { weight: 7000, account: reqData.author }
+            ], ['account'], ['asc']);
+            break;
+    }
     optionsData.author = accData.name;
     optionsData.max_accepted_payout = '100000.000 SBD';
     optionsData.percent_steem_dollars = 0;
     optionsData.allow_votes = true;
     optionsData.allow_curation_rewards = true;
     optionsData.permlink = reqData.permlink;
-
-    switch (type) {
-        case actionTypes.CREATE_OBJECT_TYPE:
-            optionsData.extensions = [
-                [
-                    0,
-                    {
-                        beneficiaries: _.orderBy(
-                            [
-                                { weight: 1500, account: accData.name },
-                                { weight: 8500, account: appData.appAccName }
-                            ],
-                            ['account'],
-                            ['asc'],
-                        )
-                    }
-                ]
-            ];
-            break;
-        case actionTypes.CREATE_OBJECT:
-        case actionTypes.APPEND_OBJECT:
-        default:
-            optionsData.extensions = [
-                [
-                    0,
-                    {
-                        beneficiaries: _.orderBy(
-                            [
-                                { weight: 1500, account: accData.name },
-                                { weight: 1500, account: appData.appAccName },
-                                { weight: 7000, account: reqData.author }
-                            ],
-                            ['account'],
-                            ['asc'],
-                        )
-                    }
-                ]
-            ];
-    }
+    optionsData.extensions = [[ 0, { beneficiaries } ]];
 
     return optionsData;
 };
 
-const getPostData = (type, reqData, accData) => {
+const getPostData = (reqData, accData, type) => {
     const appendObjPostData = {};
     const metadata = {
         app: `${appData.appName}/${appData.version}`,
@@ -66,10 +46,10 @@ const getPostData = (type, reqData, accData) => {
         tags: appData.appendObjectTag
     };
 
-    appendObjPostData.title = reqData.title;
+    appendObjPostData.author = accData.name;
     appendObjPostData.body = reqData.body;
     appendObjPostData.permlink = reqData.permlink;
-    appendObjPostData.author = accData.name;
+    appendObjPostData.title = "";
 
     switch (type) {
         case actionTypes.CREATE_OBJECT_TYPE:
@@ -79,23 +59,18 @@ const getPostData = (type, reqData, accData) => {
             appendObjPostData.body = 'Description will be here..';
             metadata.wobj = {
                 action: type,
-                name: reqData.objectType,
+                name: reqData.objectType.trim().toLowerCase(),
             };
             break;
         case actionTypes.CREATE_OBJECT:
-            appendObjPostData.parent_author = '';
-            appendObjPostData.parent_permlink = appData.appendObjectTag;
+            appendObjPostData.parent_author = reqData.parentAuthor;
+            appendObjPostData.parent_permlink = reqData.parentPermlink;
             metadata.wobj = {
                 action: type,
                 creator: reqData.author,
                 is_posting_open: Boolean(reqData.isPostingOpen),
                 is_extending_open: Boolean(reqData.isExtendingOpen),
-                field: {
-                    name: "name",
-                    body: reqData.objectName,
-                    locale: reqData.locale,
-                },
-                object_type: reqData.type,
+                //object_type: reqData.type, // is it needed?
             };
             break;
         case actionTypes.APPEND_OBJECT:
@@ -113,6 +88,7 @@ const getPostData = (type, reqData, accData) => {
             metadata.app = 'wia/1.0';
             metadata.tags = 'expired_forecast';
             metadata.wia = {
+                action: type,
                 exp_forecast: reqData.expForecast
             };
             break;
