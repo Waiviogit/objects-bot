@@ -68,9 +68,9 @@ const getPostData = (reqData, accData, type) => {
             metadata.wobj = {
                 action: type,
                 creator: reqData.author,
+                default_name: reqData.objectName,
                 is_posting_open: Boolean(reqData.isPostingOpen),
                 is_extending_open: Boolean(reqData.isExtendingOpen),
-                //object_type: reqData.type, // is it needed?
             };
             break;
         case actionTypes.APPEND_OBJECT:

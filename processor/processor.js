@@ -35,8 +35,8 @@ async function processCreateObjectType(req, res) {
             } else {
                 res.status(200).json({
                     transactionId: transactionStatus.id,
-                    permlink: data.permlink,
                     author: botAcc.name,
+                    permlink: data.permlink,
                 });
             }
         }
@@ -99,8 +99,8 @@ async function processAppendObject(req, res) {
             } else {
                 res.status(200).json({
                     transactionId: transactionStatus.id,
-                    permlink: data.permlink,
                     author: botAcc.name,
+                    permlink: data.permlink,
                     parentAuthor: data.parentAuthor,
                     parentPermlink: data.parentPermlink,
                 });
