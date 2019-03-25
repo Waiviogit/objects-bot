@@ -60,7 +60,13 @@ async function processAppendObject(req, res) {
             if (!transactionStatus) {
                 res.status(422).json({ error: 'Data is incorrect' })
             } else {
-                res.status(200).json({ transactionId: transactionStatus.id, permlink: data.permlink, author: botAcc.name });
+                res.status(200).json({
+                    author: botAcc.name,
+                    permlink: data.permlink,
+                    parentAuthor: req.parentAuthor,
+                    parentPermlink: req.parentPermlink,
+                    transactionId: transactionStatus.id,
+                });
             }
         }
         else {
