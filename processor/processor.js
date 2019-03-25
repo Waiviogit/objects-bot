@@ -63,8 +63,8 @@ async function processAppendObject(req, res) {
                 res.status(200).json({
                     author: botAcc.name,
                     permlink: data.permlink,
-                    parentAuthor: req.parentAuthor,
-                    parentPermlink: req.parentPermlink,
+                    parentAuthor: data.parentAuthor,
+                    parentPermlink: data.parentPermlink,
                     transactionId: transactionStatus.id,
                 });
             }
