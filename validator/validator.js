@@ -1,6 +1,15 @@
-const _ = require('lodash');
-
-const requiredFieldsCreate = 'author,title,body,permlink'.split(',');
+const requiredFieldsCreate = [
+    'author',
+    'title',
+    'body',
+    'permlink',
+    'objectName',
+    'locale',
+    'isExtendingOpen',
+    'isPostingOpen',
+    'parentAuthor',
+    'parentPermlink',
+];
 
 const validateCreateObject = (postData) => {
     let isValid = true;
@@ -10,7 +19,13 @@ const validateCreateObject = (postData) => {
     return isValid;
 };
 
-const requiredFieldsAppend = 'author,body,parentAuthor,parentPermlink'.split(',');
+const requiredFieldsAppend = [
+    'author',
+    'body',
+    'permlink',
+    'parentAuthor',
+    'parentPermlink',
+];
 
 const validateAppendObject = (postData) => {
     let isValid = true;
@@ -20,6 +35,8 @@ const validateAppendObject = (postData) => {
     return isValid;
 };
 
+const validateCreateObjectType = (postData) => (Boolean(postData.objectType));
+
 module.exports = {
-    validateAppendObject, validateCreateObject,
+    validateAppendObject, validateCreateObject, validateCreateObjectType
 };

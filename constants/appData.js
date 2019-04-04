@@ -1,8 +1,9 @@
 const appData = {
     appName: 'waiviodev',
     version: '1.0.0',
-    appAccName: 'monterey',
+    appAccName: 'waivio',
     appendObjectTag: 'waivio-object',
+    objectTypeTag: 'waivio-object-type',
     maxAttempts: 3,
 };
 

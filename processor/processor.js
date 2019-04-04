@@ -4,7 +4,7 @@ const { PrivateKey } = require('dsteem');
 const { accountsData } = require('../constants/accountsData');
 const { actionTypes } = require('../constants/actionTypes');
 const { appData } = require('../constants/appData');
-const { getPostData, getOptions, getAppendRequestBody } = require('../helpers/dataMapper');
+const { getPermlink, getPostData, getOptions, getAppendRequestBody } = require('../helpers/dataMapper');
 
 let index = 0;
 
@@ -16,6 +16,43 @@ const getAccount = () => {
     return accountsData[currentIndex];
 };
 
+async function processCreateObjectType(req, res) {
+    this.attempts = this.attempts < appData.maxAttempts ? this.attempts + 1 : 1;
+    try {
+        const data = {
+            ...req.body,
+            permlink: getPermlink(req.body.objectType),
+        };
+        if (validator.validateCreateObjectType(data)) {
+            const botAcc = getAccount();
+            const transactionStatus = await api.createPost(
+                getPostData(data, botAcc, actionTypes.CREATE_OBJECT_TYPE),
+                getOptions(data, botAcc, actionTypes.CREATE_OBJECT_TYPE),
+                PrivateKey.fromString(botAcc.postingKey)
+            );
+            if (!transactionStatus) {
+                res.status(422).json({ error: 'Data is incorrect' })
+            } else {
+                res.status(200).json({
+                    transactionId: transactionStatus.id,
+                    author: botAcc.name,
+                    permlink: data.permlink,
+                });
+            }
+        }
+        else {
+            res.status(422).json({ error: 'Not enough data', body: req.body })
+        }
+    }
+    catch (e) {
+        if (e.name === 'RPCError' && this.attempts < appData.maxAttempts) {
+            await processCreateObjectType.call(this ,req, res);
+        } else {
+            res.status(422).json({ error: e.message })
+        }
+    }
+}
+
 async function processCreateObject(req, res) {
     this.attempts = this.attempts < appData.maxAttempts ? this.attempts + 1 : 1;
     try {
@@ -23,7 +60,7 @@ async function processCreateObject(req, res) {
         if (validator.validateCreateObject(data)) {
             const botAcc = getAccount();
             const transactionStatus = await api.createPost(
-                getPostData(actionTypes.CREATE_OBJECT, data, botAcc),
+                getPostData(data, botAcc, actionTypes.CREATE_OBJECT),
                 getOptions(data, botAcc),
                 PrivateKey.fromString(botAcc.postingKey)
             );
@@ -53,7 +90,7 @@ async function processAppendObject(req, res) {
         if (validator.validateAppendObject(data)) {
             const botAcc = getAccount();
             const transactionStatus = await api.createPost(
-                getPostData(actionTypes.APPEND_OBJECT, data, botAcc),
+                getPostData(data, botAcc, actionTypes.APPEND_OBJECT),
                 getOptions(data, botAcc),
                 PrivateKey.fromString(botAcc.postingKey)
             );
@@ -61,11 +98,11 @@ async function processAppendObject(req, res) {
                 res.status(422).json({ error: 'Data is incorrect' })
             } else {
                 res.status(200).json({
+                    transactionId: transactionStatus.id,
                     author: botAcc.name,
                     permlink: data.permlink,
                     parentAuthor: data.parentAuthor,
                     parentPermlink: data.parentPermlink,
-                    transactionId: transactionStatus.id,
                 });
             }
         }
@@ -94,7 +131,7 @@ async function markForecastAsExpired(req, res) {
 
         const botAcc = getAccount();
         const transactionStatus = await api.createPost(
-            getPostData(actionTypes.FORECAST_EXPIRED, data, botAcc),
+            getPostData(data, botAcc, actionTypes.FORECAST_EXPIRED),
             getOptions(data, botAcc),
             PrivateKey.fromString(botAcc.postingKey)
         );
@@ -114,6 +151,7 @@ async function markForecastAsExpired(req, res) {
 }
 
 module.exports = {
+    processCreateObjectType,
     processCreateObject,
     processAppendObject,
     markForecastAsExpired,
