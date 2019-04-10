@@ -1,4 +1,5 @@
 const { api } = require('../api');
+const { get } = require('lodash');
 const { validator } = require('../validator');
 const { PrivateKey } = require('dsteem');
 const { accountsData } = require('../constants/accountsData');
@@ -47,7 +48,12 @@ async function processCreateObjectType(req, res) {
     }
     catch (e) {
         if (e.name === 'RPCError' && this.attempts < appData.maxAttempts) {
-            await processCreateObjectType.call(this ,req, res);
+            const errorCode = get(e, 'jse_info.code');
+            if (errorCode === 10 || errorCode === 4100000) { // STEEM_MIN_ROOT_COMMENT_INTERVAL or Not enough RC
+                res.status(503).json({ error: e.message })
+            } else {
+                await processCreateObjectType.call(this ,req, res);
+            }
         } else {
             res.status(422).json({ error: e.message })
         }
