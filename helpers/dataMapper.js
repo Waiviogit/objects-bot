@@ -2,10 +2,6 @@ const { appData } = require('../constants/appData');
 const { actionTypes } = require('../constants/actionTypes');
 const { orderBy } = require('lodash');
 
-const getPermlink = str => `${Math.random()
-    .toString(36)
-    .substring(2)}-${str.toLowerCase()}`;
-
 const getOptions = (reqData, accData, type) => {
     const optionsData = {};
     let beneficiaries = [];
@@ -124,5 +120,5 @@ const getAppendRequestBody = (reqData, accData) => (
 );
 
 module.exports = {
-    getPermlink, getPostData, getOptions, getAppendRequestBody
+    getPostData, getOptions, getAppendRequestBody
 };

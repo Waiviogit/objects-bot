@@ -4,7 +4,8 @@ const { PrivateKey } = require('dsteem');
 const { accountsData } = require('../constants/accountsData');
 const { actionTypes } = require('../constants/actionTypes');
 const { appData } = require('../constants/appData');
-const { getPermlink, getPostData, getOptions, getAppendRequestBody } = require('../helpers/dataMapper');
+const { getPostData, getOptions, getAppendRequestBody } = require('../helpers/dataMapper');
+const { getPermlink } = require('../helpers/permlinkGenerator');
 
 let index = 0;
 
