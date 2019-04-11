@@ -4,7 +4,7 @@ const { validator } = require('../validator');
 const { PrivateKey } = require('dsteem');
 const { accountsData } = require('../constants/accountsData');
 const { actionTypes } = require('../constants/actionTypes');
-const { appData } = require('../constants/appData');
+// const { appData } = require('../constants/appData');
 const { getPostData, getOptions, getAppendRequestBody } = require('../helpers/dataMapper');
 const { getPermlink } = require('../helpers/permlinkGenerator');
 
@@ -56,7 +56,7 @@ async function processCreateObjectType(req, res) {
                 await processCreateObjectType.call(this ,req, res);
             }
         } else {
-            res.status(422).json(e)
+            res.status(422).json({ error: e.message })
         }
     }
 }
@@ -92,7 +92,7 @@ async function processCreateObject(req, res) {
                 await processCreateObject.call(this ,req, res);
             }
         } else {
-            res.status(422).json(e)
+            res.status(422).json({ error: e.message })
         }
     }
 }
@@ -134,7 +134,7 @@ async function processAppendObject(req, res) {
                 await processAppendObject.call(this ,req, res);
             }
         } else {
-            res.status(422).json(e)
+            res.status(422).json({ error: e.message })
         }
     }
 }
