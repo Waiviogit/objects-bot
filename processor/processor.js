@@ -55,7 +55,7 @@ async function processCreateObjectType(req, res) {
                 await processCreateObjectType.call(this ,req, res);
             }
         } else {
-            res.status(422).json({ error: e.message })
+            res.status(422).json(e)
         }
     }
 }
@@ -90,7 +90,7 @@ async function processCreateObject(req, res) {
                 await processCreateObject.call(this ,req, res);
             }
         } else {
-            res.status(422).json({ error: e.message })
+            res.status(422).json(e)
         }
     }
 }
@@ -131,7 +131,7 @@ async function processAppendObject(req, res) {
                 await processAppendObject.call(this ,req, res);
             }
         } else {
-            res.status(422).json({ error: e.message })
+            res.status(422).json(e)
         }
     }
 }
