@@ -19,7 +19,7 @@ const getAccount = () => {
 };
 
 async function processCreateObjectType(req, res) {
-    this.attempts = this.attempts < appData.maxAttempts ? this.attempts + 1 : 1;
+    this.attempts = this.attempts < accountsData.length - 1 ? this.attempts + 1 : 1;
     try {
         const data = {
             ...req.body,
@@ -47,7 +47,7 @@ async function processCreateObjectType(req, res) {
         }
     }
     catch (e) {
-        if (e.name === 'RPCError' && this.attempts < appData.maxAttempts) {
+        if (e.name === 'RPCError' && this.attempts < accountsData.length - 1) {
             const errorCode = get(e, 'jse_info.code');
             if (errorCode === 10 || errorCode === 4100000) { // STEEM_MIN_ROOT_COMMENT_INTERVAL or Not enough RC
                 this.attempts = 0;
@@ -62,7 +62,7 @@ async function processCreateObjectType(req, res) {
 }
 
 async function processCreateObject(req, res) {
-    this.attempts = this.attempts < appData.maxAttempts ? this.attempts + 1 : 1;
+    this.attempts = this.attempts < accountsData.length - 1 ? this.attempts + 1 : 1;
     try {
         const data = req.body;
         if (validator.validateCreateObject(data)) {
@@ -83,7 +83,7 @@ async function processCreateObject(req, res) {
         }
     }
     catch (e) {
-        if (e.name === 'RPCError' && this.attempts < appData.maxAttempts) {
+        if (e.name === 'RPCError' && this.attempts < accountsData.length - 1) {
             const errorCode = get(e, 'jse_info.code');
             if (errorCode === 10 || errorCode === 4100000) { // STEEM_MIN_ROOT_COMMENT_INTERVAL or Not enough RC
                 this.attempts = 0;
@@ -98,7 +98,7 @@ async function processCreateObject(req, res) {
 }
 
 async function processAppendObject(req, res) {
-    this.attempts = this.attempts < appData.maxAttempts ? this.attempts + 1 : 1;
+    this.attempts = this.attempts < accountsData.length - 1 ? this.attempts + 1 : 1;
     try {
         const data = req.body;
         if (validator.validateAppendObject(data)) {
@@ -125,7 +125,7 @@ async function processAppendObject(req, res) {
         }
     }
     catch (e) {
-        if (e.name === 'RPCError' && this.attempts < appData.maxAttempts) {
+        if (e.name === 'RPCError' && this.attempts < accountsData.length - 1) {
             const errorCode = get(e, 'jse_info.code');
             if (errorCode === 4100000) { // check Not enough RC errCode
                 this.attempts = 0;
@@ -140,7 +140,7 @@ async function processAppendObject(req, res) {
 }
 
 async function markForecastAsExpired(req, res) {
-    this.attempts = this.attempts < appData.maxAttempts ? this.attempts + 1 : 1;
+    this.attempts = this.attempts < accountsData.length - 1 ? this.attempts + 1 : 1;
     try {
         const data = {
             ...req.body,
@@ -162,7 +162,7 @@ async function markForecastAsExpired(req, res) {
         }
     }
     catch (e) {
-        if (e.name === 'RPCError' && this.attempts < appData.maxAttempts) {
+        if (e.name === 'RPCError' && this.attempts < accountsData.length - 1) {
             await markForecastAsExpired.call(this ,req, res);
         } else {
             res.status(422).json({ error: e.message })
