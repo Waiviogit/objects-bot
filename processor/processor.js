@@ -50,6 +50,7 @@ async function processCreateObjectType(req, res) {
         if (e.name === 'RPCError' && this.attempts < appData.maxAttempts) {
             const errorCode = get(e, 'jse_info.code');
             if (errorCode === 10 || errorCode === 4100000) { // STEEM_MIN_ROOT_COMMENT_INTERVAL or Not enough RC
+                this.attempts = 0;
                 res.status(503).json({ error: e.message })
             } else {
                 await processCreateObjectType.call(this ,req, res);
@@ -85,6 +86,7 @@ async function processCreateObject(req, res) {
         if (e.name === 'RPCError' && this.attempts < appData.maxAttempts) {
             const errorCode = get(e, 'jse_info.code');
             if (errorCode === 10 || errorCode === 4100000) { // STEEM_MIN_ROOT_COMMENT_INTERVAL or Not enough RC
+                this.attempts = 0;
                 res.status(503).json({ error: e.message })
             } else {
                 await processCreateObject.call(this ,req, res);
@@ -126,6 +128,7 @@ async function processAppendObject(req, res) {
         if (e.name === 'RPCError' && this.attempts < appData.maxAttempts) {
             const errorCode = get(e, 'jse_info.code');
             if (errorCode === 4100000) { // check Not enough RC errCode
+                this.attempts = 0;
                 res.status(503).json({ error: e.message })
             } else {
                 await processAppendObject.call(this ,req, res);
