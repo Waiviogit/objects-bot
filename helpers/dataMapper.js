@@ -1,6 +1,6 @@
 const { appData } = require('../constants/appData');
 const { actionTypes } = require('../constants/actionTypes');
-const { orderBy } = require('lodash');
+const { orderBy, uniqWith } = require('lodash');
 
 const getOptions = (reqData, accData, type) => {
     const optionsData = {};
@@ -16,11 +16,15 @@ const getOptions = (reqData, accData, type) => {
         case actionTypes.CREATE_OBJECT:
         case actionTypes.APPEND_OBJECT:
         default:
-            beneficiaries = orderBy([
-                { weight: 1500, account: accData.name },
-                { weight: 1500, account: appData.appAccName },
-                { weight: 7000, account: reqData.author }
-            ], ['account'], ['asc']);
+            beneficiaries = orderBy(
+                uniqWith([
+                    { weight: 1500, account: accData.name },
+                    { weight: 1500, account: appData.appAccName },
+                    { weight: 7000, account: reqData.author }
+                ], (a, b) => a.account === b.account),
+                ['account'],
+                ['asc']
+            );
             break;
     }
     optionsData.author = accData.name;

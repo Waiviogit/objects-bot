@@ -1,11 +1,11 @@
 const { api } = require('../api');
-const { get } = require('lodash');
 const { validator } = require('../validator');
 const { PrivateKey } = require('dsteem');
 const { accountsData } = require('../constants/accountsData');
 const { actionTypes } = require('../constants/actionTypes');
 const { getPostData, getOptions, getAppendRequestBody } = require('../helpers/dataMapper');
 const { getPermlink } = require('../helpers/permlinkGenerator');
+const { steemErrRegExp } = require('../constants/regExp');
 
 const botsAcc = (function() {
     let index = 0;
@@ -61,8 +61,7 @@ async function processCreateObjectType(req, res) {
     }
     catch (e) {
         if (e.name === 'RPCError' && this.attempts < accountsData.length) {
-            const errorCode = get(e, 'jse_info.code');
-            if (errorCode === 10 || errorCode === 4100000) { // STEEM_MIN_ROOT_COMMENT_INTERVAL or Not enough RC
+            if (steemErrRegExp.test(e.message)) { // STEEM_MIN_ROOT_COMMENT_INTERVAL or Not enough RC
                 this.attempts = 0;
                 res.status(503).json({ error: e.message })
             } else {
@@ -97,8 +96,7 @@ async function processCreateObject(req, res) {
     }
     catch (e) {
         if (e.name === 'RPCError' && this.attempts < accountsData.length) {
-            const errorCode = get(e, 'jse_info.code');
-            if (errorCode === 10 || errorCode === 4100000) { // STEEM_MIN_ROOT_COMMENT_INTERVAL or Not enough RC
+            if (steemErrRegExp.test(e.message)) { // STEEM_MIN_ROOT_COMMENT_INTERVAL or Not enough RC
                 this.attempts = 0;
                 res.status(503).json({ error: e.message })
             } else {
@@ -139,8 +137,7 @@ async function processAppendObject(req, res) {
     }
     catch (e) {
         if (e.name === 'RPCError' && this.attempts < accountsData.length) {
-            const errorCode = get(e, 'jse_info.code');
-            if (errorCode === 4100000) { // check Not enough RC errCode
+            if (steemErrRegExp.test(e.message)) {
                 this.attempts = 0;
                 res.status(503).json({ error: e.message })
             } else {
