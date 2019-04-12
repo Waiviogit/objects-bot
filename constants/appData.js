@@ -4,7 +4,6 @@ const appData = {
     appAccName: 'waivio',
     appendObjectTag: 'waivio-object',
     objectTypeTag: 'waivio-object-type',
-    maxAttempts: 3,
 };
 
 module.exports = {
