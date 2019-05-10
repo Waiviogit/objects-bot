@@ -162,7 +162,7 @@ async function markForecastAsExpired(req, res) {
         const botAcc = botsAcc.getNext();
         const transactionStatus = await api.createPost(
             getPostData(data, botAcc, actionTypes.FORECAST_EXPIRED),
-            getOptions(data, botAcc),
+            getOptions(data, botAcc, actionTypes.FORECAST_EXPIRED),
             PrivateKey.fromString(botAcc.postingKey)
         );
         if (!transactionStatus) {
