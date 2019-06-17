@@ -164,7 +164,7 @@ async function markForecastAsExpired(req, res) {
         const data = {
             ...req.body,
             title: '',
-            body: `Forecast has expired with profitability ${req.body.expForecast.profitability}`,
+            body: `Forecast has ended with profitability of ${req.body.expForecast.profitability} pips`,
             permlink: `exp-${Number(new Date(req.body.expForecast.expiredAt))}`,
         };
 
