@@ -17,11 +17,12 @@
   },
   "dependencies": {
     "body-parser": "^1.15.2",
-    "dsteem": "^0.8.7",
+    "dsteem": "^0.11.2",
     "express": "^4.14.0",
     "http-errors": "~1.6.2",
     "lodash": "^4.17.5",
-    "morgan": "~1.9.0"
+    "morgan": "~1.9.0",
+    "cors": "^2.8.4"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"
