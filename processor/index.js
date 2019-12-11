@@ -1,3 +1,3 @@
 module.exports = {
-    processor: require('./processor')
+    processor: require( './processor' )
 };
