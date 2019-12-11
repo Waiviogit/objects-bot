@@ -7,8 +7,8 @@ const { mockRequest, mockResponse } = require( 'mock-req-res' );
 const { redis, redisGetter, redisSetter, redisHelper } = require( '../utilities/redis' );
 const { redisQueue, actionsRsmqClient } = require( '../utilities/redis/rsmq' );
 const faker = require( 'faker' );
-const autoriseUser = require( '../utilities/authorazation/autoriseUser' );
-const { postHelper, commentHelper } = require( '../helpers' );
+const authorise = require( '../utilities/authorazation/waivioAuth/autorise' );
+const { postHelper, commentHelper } = require( '../utilities/operations' );
 
 const getRandomString = ( length = 5 ) => {
     return faker.internet.password( length, false, /[a-z]/ );
@@ -29,7 +29,7 @@ module.exports = {
     faker,
     getRandomString,
     redisQueue,
-    autoriseUser,
+    authorise,
     postHelper,
     commentHelper,
     actionsRsmqClient

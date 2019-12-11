@@ -1,4 +1,5 @@
 module.exports = {
     postMock: require( './postMock' ),
-    actionMock: require( './actionMock' )
+    actionMock: require( './actionMock' ),
+    userMock: require( './userMock' )
 };

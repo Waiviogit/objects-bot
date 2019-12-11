@@ -1,10 +1,10 @@
 const { api } = require( '../api' );
-const { validator } = require( '../validators' );
+const { validator } = require( './validators' );
 const { PrivateKey } = require( 'dsteem' );
 const { accountsData } = require( '../constants/accountsData' );
 const { actionTypes } = require( '../constants/actionTypes' );
-const { getPostData, getOptions, getAppendRequestBody } = require( '../helpers/dataMapper' );
-const { getPermlink } = require( '../helpers/permlinkGenerator' );
+const { getPostData, getOptions, getAppendRequestBody } = require( '../utilities/operations/dataMapper' );
+const { getPermlink } = require( '../utilities/operations/permlinkGenerator' );
 const { steemErrRegExp } = require( '../constants/regExp' );
 
 const botsAcc = ( function() {
@@ -16,9 +16,7 @@ const botsAcc = ( function() {
         getNext: function() {
             let account;
 
-            if ( !this.hasNext() ) {
-                this.resetIndex();
-            }
+            if ( !this.hasNext() ) this.resetIndex();
             account = accData[ index ];
             index = index + 1;
             return account;

@@ -1,5 +1,5 @@
-const { appData } = require('../constants/appData');
-const { actionTypes } = require('../constants/actionTypes');
+const { appData } = require('../../constants/appData');
+const { actionTypes } = require('../../constants/actionTypes');
 const { orderBy, uniqWith } = require('lodash');
 
 const getOptions = (reqData, accData, type) => {

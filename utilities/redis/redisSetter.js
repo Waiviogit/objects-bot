@@ -1,11 +1,16 @@
 const { actionsDataClient } = require( './redis' );
 
 const setActionsData = async ( key, data ) => {
-    if ( key && data ) {
-        for ( const field in data ) {
-            await actionsDataClient.hsetAsync( key, field, data[ field ] );
+    try{
+        if ( key && data ) {
+            for ( const field in data ) {
+                await actionsDataClient.hsetAsync( key, field, data[ field ] );
+            }
         }
+    } catch( error ) {
+        return { error };
     }
+
 };
 
 const delActionsData = async ( key ) => {

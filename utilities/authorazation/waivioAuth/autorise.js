@@ -2,6 +2,7 @@ const { waivio_auth } = require( '../../../config' );
 const axios = require( 'axios' );
 const VALIDATE_TOKEN_URL = `https://${waivio_auth.host}/${waivio_auth.baseUrl}/${waivio_auth.validateTokenPath}`;
 const _ = require( 'lodash' );
+const { getNamespace } = require( 'cls-hooked' );
 
 const validateTokenRequest = async ( token ) => {
     try {
@@ -23,11 +24,18 @@ const validateTokenRequest = async ( token ) => {
  * @param {string} username User name for particular token
  * @returns {Boolean}  true if "token" valid for current "username", else false
  */
-exports.authorise = async ( token = '', username = '' ) => {
+exports.authorise = async (  username = '', token = '' ) => {
     const { response, error } = await validateTokenRequest( token );
 
     if( error ) {
         return false;
     }
-    return _.get( response, 'user.name' ) === username;
+    const result = _.get( response, 'user.name' ) === username;
+
+    if ( result ) {
+        const session = getNamespace( 'request-session' );
+
+        session.set( 'authorised_user', response.user );
+        return result;
+    }
 };

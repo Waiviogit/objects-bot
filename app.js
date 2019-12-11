@@ -6,6 +6,7 @@ const app = express();
 const { createNamespace } = require( 'cls-hooked' );
 const session = createNamespace( 'request-session' );
 
+
 app.use( logger( 'dev' ) );
 app.use( express.json() );
 app.use( cors() );
