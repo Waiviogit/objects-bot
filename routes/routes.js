@@ -1,4 +1,4 @@
-
+const { guestRequests } = require( '../proxy-service' );
 const { processor } = require( '../processor' );
 const routeConfig = process.env.ROUTE_CONFIG ? JSON.parse( process.env.ROUTE_CONFIG ) : {
     CREATE_POST: '/create-post',
@@ -26,7 +26,7 @@ routes.route( routeConfig.APPEND_OBJECT )
 routes.route( routeConfig.FORECAST_EXPIRED )
     .post( processor.markForecastAsExpired );
 routes.route( routeConfig.CREATE_COMMENT )
-    .post( processor.processComment );
+    .post( guestRequests.processComment );
 routes.route( routeConfig.CREATE_POST )
-    .post( processor.processPost );
+    .post( guestRequests.processPost );
 module.exports = routes;

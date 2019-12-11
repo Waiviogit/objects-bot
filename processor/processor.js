@@ -1,5 +1,5 @@
 const { api } = require( '../api' );
-const { validator } = require( '../validator' );
+const { validator } = require( '../validators' );
 const { PrivateKey } = require( 'dsteem' );
 const { accountsData } = require( '../constants/accountsData' );
 const { actionTypes } = require( '../constants/actionTypes' );
@@ -207,18 +207,11 @@ const handleError = ( instance, res, payload ) => {
     instance.attempts = 0;
     res.status( statusCode ).json( payload );
 };
-const processComment = async () => {
 
-};
-const processPost = async () => {
-
-};
 
 module.exports = {
     processCreateObjectType,
     processCreateObject,
     processAppendObject,
-    markForecastAsExpired,
-    processComment,
-    processPost
+    markForecastAsExpired
 };
