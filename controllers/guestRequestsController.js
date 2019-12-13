@@ -10,11 +10,10 @@ const proxyPosting = async ( req, res, next ) => { // add data to queue
 
     if ( error ) return next( error );
     else if( isValid ) {
-        const { result: timeToPublication, error: postingError } = await postingOperations.switcher( value );
+        const { result: timeToPublication, error: postingError } = await postingOperations.queueSwitcher( value );
 
-        if( postingError ) {
-            return next( postingError );
-        }
+        if( postingError ) return next( postingError );
+
         res.result = { status: 200, json: timeToPublication };
         next();
     }

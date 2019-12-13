@@ -8,7 +8,7 @@ const addToQueue = async ( data, actionData ) => {
     const { error: createError } = await redisQueue.createQueue( { client: actionsRsmqClient, qname: actionData.qname } );
 
     if ( createError ) return { error: { status: 500, message: createError } };
-    const currentUserComments = await redisGetter.getHashKeysAll( `${actionData.operation}:${data.author}:*` );
+    const { result: currentUserComments } = await redisGetter.getHashKeysAll( `${actionData.operation}:${data.author}:*` );
 
     if ( currentUserComments.length >= actionData.limit ) {
         return { error: { message: `To many comments from ${data.author} in queue` } };
@@ -20,7 +20,7 @@ const addToQueue = async ( data, actionData ) => {
         qname: actionData.qname,
         message: `${message}`
     } );
-    const redisDataError = await redisSetter.setActionsData( message, data );
+    const redisDataError = await redisSetter.setActionsData( message, JSON.stringify( data ) );
 
     if ( sendMessError || redisDataError ) {
         return { error: { status: 500, message: sendMessError || redisDataError } };
@@ -31,7 +31,7 @@ const addToQueue = async ( data, actionData ) => {
 };
 
 const timeToPosting = async ( actionData ) => {
-    const allQueueLength = await redisGetter.getHashKeysAll( `${actionData.operation}:*` );
+    const { result: allQueueLength } = await redisGetter.getHashKeysAll( `${actionData.operation}:*` );
 
     if( actionData.operation === 'proxy-post' ) {
         return ( Math.ceil( ( ( allQueueLength.length * actionData.rechargeTime ) / accountsData.length ) / 5 ) * 5 );

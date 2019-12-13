@@ -13,7 +13,10 @@
       "host": "www.waivio.com",
       "baseUrl": "auth",
       "validateTokenPath": "validate_token"
-    }
+    },
+    "posting_account": 0,
+    "posting_counter": 0,
+    "comment_account": 0
   },
   "staging": {
     "db": {
@@ -29,7 +32,10 @@
       "host": "waiviodev.com",
       "baseUrl": "auth",
       "validateTokenPath": "validate_token"
-    }
+    },
+    "posting_account": 0,
+    "posting_counter": 0,
+    "comment_account": 0
   },
   "development": {
     "db": {
@@ -45,7 +51,10 @@
       "host": "waiviodev.com",
       "baseUrl": "auth",
       "validateTokenPath": "validate_token"
-    }
+    },
+    "posting_account": 0,
+    "posting_counter": 0,
+    "comment_account": 0
   },
   "test": {
     "db": {
@@ -61,6 +70,9 @@
       "host": "waiviodev.com",
       "baseUrl": "auth",
       "validateTokenPath": "validate_token"
-    }
+    },
+    "posting_account": 0,
+    "posting_counter": 0,
+    "comment_account": 0
   }
 }

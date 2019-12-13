@@ -1,9 +1,8 @@
-const { api } = require( '../api' );
+const { dsteemModel } = require( '../models' );
 const { validator } = require( './validators' );
-const { PrivateKey } = require( 'dsteem' );
 const { accountsData } = require( '../constants/accountsData' );
 const { actionTypes } = require( '../constants/actionTypes' );
-const { getPostData, getOptions, getAppendRequestBody } = require( '../utilities/operations/dataMapper' );
+const { getPostData, getOptions, getAppendRequestBody } = require( '../utilities/helpers/postingDataHelper' );
 const { getPermlink } = require( '../utilities/operations/permlinkGenerator' );
 const { steemErrRegExp } = require( '../constants/regExp' );
 
@@ -42,10 +41,10 @@ const processCreateObjectType = async ( req, res ) => {
             const botAcc = botsAcc.getNext();
 
             console.info( `INFO[CreateObjectType] Try to create object type | attempt: ${this.attempts} | bot: ${botAcc.name} | request body: ${JSON.stringify( req.body )}` );
-            const transactionStatus = await api.createPost(
+            const { result: transactionStatus } = await dsteemModel.postWithOptions(
                 getPostData( data, botAcc, actionTypes.CREATE_OBJECT_TYPE ),
                 getOptions( data, botAcc, actionTypes.CREATE_OBJECT_TYPE ),
-                PrivateKey.fromString( botAcc.postingKey )
+                botAcc.postingKey
             );
 
             if ( !transactionStatus ) {
@@ -86,10 +85,10 @@ const processCreateObject = async ( req, res ) => {
             const botAcc = botsAcc.getNext();
 
             console.info( `INFO[CreateObject] Try create | attempt: ${this.attempts} | bot: ${botAcc.name} | request body: ${JSON.stringify( req.body )}` );
-            const transactionStatus = await api.createPost(
+            const { result: transactionStatus } = await dsteemModel.postWithOptions(
                 getPostData( data, botAcc, actionTypes.CREATE_OBJECT ),
                 getOptions( data, botAcc ),
-                PrivateKey.fromString( botAcc.postingKey )
+                botAcc.postingKey
             );
 
             if ( !transactionStatus ) {
@@ -125,10 +124,10 @@ const processAppendObject = async( req, res ) => {
             const botAcc = botsAcc.getNext();
 
             console.info( `INFO[AppendObject] Try append | attempt: ${this.attempts} | bot: ${botAcc.name} | request body: ${JSON.stringify( req.body )}` );
-            const transactionStatus = await api.createPost(
+            const { result: transactionStatus } = await dsteemModel.postWithOptions(
                 getPostData( data, botAcc, actionTypes.APPEND_OBJECT ),
                 getOptions( data, botAcc ),
-                PrivateKey.fromString( botAcc.postingKey )
+                botAcc.postingKey
             );
 
             if ( !transactionStatus ) {
@@ -175,10 +174,10 @@ const markForecastAsExpired = async ( req, res ) => {
         const botAcc = botsAcc.getNext();
 
         console.info( `INFO[ForecastExpired] Try to write comment | attempt: ${this.attempts} | bot: ${botAcc.name}` );
-        const transactionStatus = await api.createPost(
+        const { result: transactionStatus } = await dsteemModel.postWithOptions(
             getPostData( data, botAcc, actionTypes.FORECAST_EXPIRED ),
             getOptions( data, botAcc, actionTypes.FORECAST_EXPIRED ),
-            PrivateKey.fromString( botAcc.postingKey )
+            botAcc.postingKey
         );
 
         if ( !transactionStatus ) {
