@@ -10,7 +10,11 @@ const metadataModify = ( json_metadata ) => {
     } catch( error ) {
         return { error };
     }
-    metadata.alias = authorised_user.alias;
+    metadata.comment = {
+        userId: authorised_user.name,
+        displayName: authorised_user.alias,
+        social: authorised_user.auth.provider
+    };
     return JSON.stringify( metadata );
 };
 

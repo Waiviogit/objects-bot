@@ -8,10 +8,10 @@ const { redis, redisGetter, redisSetter, redisHelper } = require( '../utilities/
 const { redisQueue, actionsRsmqClient } = require( '../utilities/redis/rsmq' );
 const faker = require( 'faker' );
 const authorise = require( '../utilities/authorazation/waivioAuth/autorise' );
-const { postHelper, commentHelper } = require( '../utilities/operations' );
 const { dsteemModel } = require( '../models' );
-const { broadcastOperations } = require( '../utilities/operations' );
-const { accountsData } = require( '../constants/accountsData' );
+const { guestOperationAccounts } = require( '../constants/accountsData' );
+const config = require( '../config' );
+const { updateMetadata, broadcastOperations, postingData, queueOperations } = require( '../utilities' );
 const getRandomString = ( length = 5 ) => {
     return faker.internet.password( length, false, /[a-z]/ );
 };
@@ -32,10 +32,12 @@ module.exports = {
     getRandomString,
     redisQueue,
     authorise,
-    postHelper,
-    commentHelper,
+    queueOperations,
     actionsRsmqClient,
     dsteemModel,
     broadcastOperations,
-    accountsData
+    guestOperationAccounts,
+    updateMetadata,
+    postingData,
+    config
 };

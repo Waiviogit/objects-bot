@@ -1,4 +1,5 @@
 module.exports = {
     guestRequests: require( './guestRequestsController' ),
-    processor: require( './processor' )
+    forecast: require( './forecastsController' ),
+    object: require( './objectsController' )
 };

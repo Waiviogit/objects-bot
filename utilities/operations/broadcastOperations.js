@@ -1,19 +1,15 @@
 const { redisQueue, actionsRsmqClient } = require( '../redis/rsmq' );
 const { redisGetter, redisSetter } = require( '../redis' );
-const { postAction, commentAction } = require( '../../constants/guestRequestsData' );
-const { accountsData } = require( '../../constants/accountsData' );
-const { actionTypes } = require( '../../constants/actionTypes' );
+const { accountsData, regExp, guestRequestsData } = require( '../../constants' );
 const { dsteemModel } = require( '../../models' );
 const config = require( '../../config' );
-const { steemErrRegExp } = require( '../../constants/regExp' );
-const postHelper = require( '../helpers/postingDataHelper' );
 const _ = require( 'lodash' );
 
 const postBroadcaster = async ( noMessageWait = 5000, postingErrorWait = 60000 ) => {
-    const account = accountsData[ config.posting_account ];
+    const account = accountsData.guestOperationAccounts[ config.posting_account ];
     const { error: redisError, result: queueMessage } = await redisQueue.receiveMessage( {
         client: actionsRsmqClient,
-        qname: postAction.qname
+        qname: guestRequestsData.postAction.qname
     } );
 
     if ( redisError ) {
@@ -23,15 +19,15 @@ const postBroadcaster = async ( noMessageWait = 5000, postingErrorWait = 60000 )
         return;
     }
 
-    const { error: broadcastError } = await broadcastingSwitcher( queueMessage.message, account, actionTypes.GUEST_POST );
+    const { error: broadcastError } = await broadcastingSwitcher( queueMessage.message, account);
 
-    if ( broadcastError && steemErrRegExp.test( broadcastError.message ) ) {
-        config.posting_account === accountsData.length - 1 ? config.posting_account = 0 : config.posting_account += 1;
+    if ( broadcastError && regExp.steemErrRegExp.test( broadcastError.message ) ) {
+        config.posting_account === accountsData.guestOperationAccounts.length - 1 ? config.posting_account = 0 : config.posting_account += 1;
         return;
     }
-    await redisQueue.deleteMessage( { client: actionsRsmqClient, qname: postAction.qname, id: queueMessage.id } );
+    await redisQueue.deleteMessage( { client: actionsRsmqClient, qname: guestRequestsData.postAction.qname, id: queueMessage.id } );
     await redisSetter.delActionsData( queueMessage.message );
-    if ( config.posting_counter === ( accountsData.length - 1 ) ) {
+    if ( config.posting_counter === ( accountsData.guestOperationAccounts.length - 1 ) ) {
         await new Promise( ( resolve ) => setTimeout( resolve, postingErrorWait ) );
         config.posting_counter = 0;
     }
@@ -39,10 +35,10 @@ const postBroadcaster = async ( noMessageWait = 5000, postingErrorWait = 60000 )
 };
 
 const commentBroadcaster = async ( noMessageWait = 5000 ) => {
-    const account = accountsData[ config.comment_account ];
+    const account = accountsData.guestOperationAccounts[ config.comment_account ];
     const { error: redisError, result: queueMessage } = await redisQueue.receiveMessage( {
         client: actionsRsmqClient,
-        qname: commentAction.qname
+        qname: guestRequestsData.commentAction.qname
     } );
 
     if ( redisError || !queueMessage ) {
@@ -50,18 +46,18 @@ const commentBroadcaster = async ( noMessageWait = 5000 ) => {
         await new Promise( ( resolve ) => setTimeout( resolve, noMessageWait ) );
         return;
     }
-    const { error: broadcastError } = await broadcastingSwitcher( queueMessage.message, account, actionTypes.GUEST_POST );
+    const { error: broadcastError } = await broadcastingSwitcher( queueMessage.message, account );
 
-    if ( broadcastError && steemErrRegExp.test( broadcastError.message ) ) {
-        config.comment_account === accountsData.length - 1 ? config.comment_account = 0 : config.comment_account += 1;
+    if ( broadcastError && regExp.steemErrRegExp.test( broadcastError.message ) ) {
+        config.comment_account === accountsData.guestOperationAccounts.length - 1 ? config.comment_account = 0 : config.comment_account += 1;
         return;
     }
-    await redisQueue.deleteMessage( { client: actionsRsmqClient, qname: commentAction.qname, id: queueMessage.id } );
+    await redisQueue.deleteMessage( { client: actionsRsmqClient, qname: guestRequestsData.commentAction.qname, id: queueMessage.id } );
     await redisSetter.delActionsData( queueMessage.message );
 };
 
 
-const broadcastingSwitcher = async ( message, account, action ) => {
+const broadcastingSwitcher = async ( message, account ) => {
     const { result: postingData } = await redisGetter.getAllHashData( message );
     let parsedData;
 
@@ -70,10 +66,11 @@ const broadcastingSwitcher = async ( message, account, action ) => {
     }catch( error ) {
         return { error };
     }
-    const post = postHelper.getPostData( parsedData, account, action );
+    const post = parsedData.post;
 
+    post.body = `${post.body}\n This message was written by guest ${post.author}, and is available at ${config.waivio_auth.host}/@${post.author}/${post.permlink}`;
     if ( !_.has( parsedData, 'comment_options.extensions' ) ) return await dsteemModel.post( post, account.postingKey );
-    const options = postHelper.getOptions( parsedData, account, action );
+    const options = parsedData.comment_options;
 
     return await dsteemModel.postWithOptions( post, options, account.postingKey );
 };

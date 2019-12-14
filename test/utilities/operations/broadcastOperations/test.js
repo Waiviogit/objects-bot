@@ -1,21 +1,25 @@
-const { getRandomString, redisGetter, sinon, redisQueue, dsteemModel, actionsRsmqClient, redisSetter, broadcastOperations, expect, accountsData } = require( '../../../testHelper' );
-const { postMock } = require( '../../../mocks' );
+const { getRandomString, redisGetter, sinon, redisQueue, dsteemModel, actionsRsmqClient, redisSetter, broadcastOperations, expect, postingData } = require( '../../../testHelper' );
+const { postMock, botMock } = require( '../../../mocks' );
 const { postAction, commentAction } = require( '../../../../constants/guestRequestsData' );
-const _ = require( 'lodash' );
+const accountsData = require( '../../../../constants/accountsData' );
 
 describe( 'On broadcastOperations', async () => {
+    beforeEach( async () => {
+        sinon.stub( accountsData, 'guestOperationAccounts' ).value( botMock );
+    } );
     describe( 'On postBroadcaster', async() => {
         describe( 'On success', async () => {
-            let mock, message;
+            let mock, message, mockPostData;
 
             beforeEach( async () => {
                 sinon.stub( dsteemModel, 'post' ).returns( Promise.resolve( 'OK' ) );
                 sinon.stub( dsteemModel, 'postWithOptions' ).returns( Promise.resolve( 'OK' ) );
                 mock = postMock();
+                mockPostData = postingData.preparePostData( mock.data.operations[ 0 ], mock.data.operations[ 1 ] );
                 message = getRandomString( 10 );
                 await redisQueue.createQueue( { client: actionsRsmqClient, qname: postAction.qname } );
                 await redisQueue.sendMessage( { client: actionsRsmqClient, qname: postAction.qname, message } );
-                await redisSetter.setActionsData( message, JSON.stringify( mock ) );
+                await redisSetter.setActionsData( message, JSON.stringify( mockPostData ) );
             } );
             afterEach( async () => {
                 sinon.restore();
@@ -25,9 +29,9 @@ describe( 'On broadcastOperations', async () => {
                 expect( dsteemModel.postWithOptions.called ).to.true;
             } );
             it( 'should successfully create post without options if it exists in queue', async () => {
-                mock.comment_options = {};
+                mockPostData.comment_options = {};
                 await redisQueue.sendMessage( { client: actionsRsmqClient, qname: postAction.qname, message } );
-                await redisSetter.setActionsData( message, JSON.stringify( mock ) );
+                await redisSetter.setActionsData( message, JSON.stringify( mockPostData ) );
                 await broadcastOperations.postBroadcaster( 10, 10 );
                 expect( dsteemModel.post.called ).to.true;
             } );
@@ -37,14 +41,6 @@ describe( 'On broadcastOperations', async () => {
 
                 expect( error.message ).to.eq( 'No messages' );
             } );
-            it( 'should broadcasting post method will called with valid params', async () => {
-                mock.comment_options = {};
-                await redisQueue.sendMessage( { client: actionsRsmqClient, qname: postAction.qname, message } );
-                await redisSetter.setActionsData( message, JSON.stringify( mock ) );
-                await broadcastOperations.postBroadcaster( 10, 10 );
-                mock.body += `\n This message was written by guest ${mock.author}, and is available at waivio.com/@${mock.author}/${mock.permlink}`;
-                expect( dsteemModel.post.calledWith( _.omit( mock, [ 'comment_options' ] ), accountsData[ 0 ].postingKey ) ).to.true;
-            } );
             it( 'should delete data from redis after posting', async () => {
                 await broadcastOperations.postBroadcaster( 10, 10 );
                 const { result } = await redisGetter.getAllHashData( message );
@@ -53,7 +49,7 @@ describe( 'On broadcastOperations', async () => {
             } );
         } );
         describe( 'On errors', async() => {
-            let mock, message;
+            let mock, message, mockPostData;
 
             beforeEach( async () => {
                 sinon.stub( dsteemModel, 'post' ).returns( Promise.resolve( { error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL | RC.' } } ) );
@@ -79,8 +75,9 @@ describe( 'On broadcastOperations', async () => {
                 beforeEach( async() => {
                     message = getRandomString( 10 );
                     mock = postMock();
+                    mockPostData = postingData.preparePostData( mock.data.operations[ 0 ], mock.data.operations[ 1 ] );
                     await redisQueue.sendMessage( { client: actionsRsmqClient, qname: postAction.qname, message } );
-                    await redisSetter.setActionsData( message, JSON.stringify( mock ) );
+                    await redisSetter.setActionsData( message, JSON.stringify( mockPostData ) );
                     await broadcastOperations.postBroadcaster( 10, 10 );
                 } );
                 it( 'should not delete message from queue if it not posted', async () => {
@@ -91,7 +88,7 @@ describe( 'On broadcastOperations', async () => {
                 it( 'should not delete post data from redis if it not posted', async () => {
                     const { result } = await redisGetter.getAllHashData( message );
 
-                    expect( JSON.parse( result ) ).to.deep.eq( mock );
+                    expect( JSON.parse( result ) ).to.deep.eq( mockPostData );
                 } );
             } );
         } );
@@ -99,16 +96,17 @@ describe( 'On broadcastOperations', async () => {
     } );
     describe( 'On commentBroadcaster', async () => {
         describe( 'On success', async () => {
-            let mock, message;
+            let mock, message, mockPostData;
 
             beforeEach( async () => {
                 sinon.stub( dsteemModel, 'post' ).returns( Promise.resolve( 'OK' ) );
                 sinon.stub( dsteemModel, 'postWithOptions' ).returns( Promise.resolve( 'OK' ) );
                 mock = postMock( { parentAuthor: getRandomString( 10 ) } );
+                mockPostData = postingData.preparePostData( mock.data.operations[ 0 ], mock.data.operations[ 1 ] );
                 message = getRandomString( 15 );
                 await redisQueue.createQueue( { client: actionsRsmqClient, qname: commentAction.qname } );
                 await redisQueue.sendMessage( { client: actionsRsmqClient, qname: commentAction.qname, message } );
-                await redisSetter.setActionsData( message, JSON.stringify( mock ) );
+                await redisSetter.setActionsData( message, JSON.stringify( mockPostData ) );
             } );
             afterEach( async () => {
                 sinon.restore();
@@ -118,9 +116,9 @@ describe( 'On broadcastOperations', async () => {
                 expect( dsteemModel.postWithOptions.calledOnce ).to.true;
             } );
             it( 'should successfully send comment with valid data to chain', async () => {
-                mock.comment_options = {};
+                mockPostData.comment_options = {};
                 await redisQueue.sendMessage( { client: actionsRsmqClient, qname: commentAction.qname, message } );
-                await redisSetter.setActionsData( message, JSON.stringify( mock ) );
+                await redisSetter.setActionsData( message, JSON.stringify( mockPostData ) );
                 await broadcastOperations.commentBroadcaster( 10 );
 
                 expect( dsteemModel.post.calledOnce ).to.true;
@@ -137,17 +135,9 @@ describe( 'On broadcastOperations', async () => {
 
                 expect( result ).to.null;
             } );
-            it( 'should broadcasting comment method will called with valid params', async () => {
-                mock.comment_options = {};
-                await redisQueue.sendMessage( { client: actionsRsmqClient, qname: commentAction.qname, message } );
-                await redisSetter.setActionsData( message, JSON.stringify( mock ) );
-                await broadcastOperations.commentBroadcaster( 10, 10 );
-                mock.body += `\n This message was written by guest ${mock.author}, and is available at waivio.com/@${mock.author}/${mock.permlink}`;
-                expect( dsteemModel.post.calledWith( _.omit( mock, [ 'comment_options' ] ), accountsData[ 0 ].postingKey ) ).to.true;
-            } );
         } );
         describe( 'On errors', async() => {
-            let mock, message;
+            let mock, message, mockPostData;
 
             beforeEach( async () => {
                 sinon.stub( dsteemModel, 'post' ).returns( Promise.resolve( { error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL | RC.' } } ) );
@@ -173,8 +163,9 @@ describe( 'On broadcastOperations', async () => {
                 beforeEach( async() => {
                     message = getRandomString( 10 );
                     mock = postMock( { parentAuthor: getRandomString( 10 ) } );
+                    mockPostData = postingData.preparePostData( mock.data.operations[ 0 ], mock.data.operations[ 1 ] );
                     await redisQueue.sendMessage( { client: actionsRsmqClient, qname: commentAction.qname, message } );
-                    await redisSetter.setActionsData( message, JSON.stringify( mock ) );
+                    await redisSetter.setActionsData( message, JSON.stringify( mockPostData ) );
                     await broadcastOperations.commentBroadcaster( 10 );
                 } );
                 it( 'should not delete message from queue if it not posted', async () => {
@@ -185,7 +176,7 @@ describe( 'On broadcastOperations', async () => {
                 it( 'should not delete post data from redis if it not posted', async () => {
                     const { result } = await redisGetter.getAllHashData( message );
 
-                    expect( JSON.parse( result ) ).to.deep.eq( mock );
+                    expect( JSON.parse( result ) ).to.deep.eq( mockPostData );
                 } );
             } );
         } );

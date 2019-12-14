@@ -13,7 +13,7 @@ const genRandomString = ( stringLength ) => {
     return randomString;
 };
 
-const getPermlink = ( string ) => {
+module.exports = ( string ) => {
     const permlink = `${genRandomString( 3 )}-${string}`
         .toLowerCase()
         .replace( /[ _]/g, '-' )
@@ -22,6 +22,3 @@ const getPermlink = ( string ) => {
     return permlink.length > PERMLINK_MAX_LEN ? permlink.substring( 0, PERMLINK_MAX_LEN ) : permlink;
 };
 
-module.exports = {
-    getPermlink
-};

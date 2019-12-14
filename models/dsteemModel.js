@@ -19,4 +19,14 @@ const postWithOptions = async ( comment, options, key ) => {
     }
 };
 
-module.exports = { post, postWithOptions };
+const customJSON = async ( data ) => {
+
+    try{
+        return{ result: await client.broadcast.json( data.json, dsteem.PrivateKey.fromString( data.postingKey ) ) };
+    } catch( error ) {
+        console.log( error );
+        return { error };
+    }
+};
+
+module.exports = { post, postWithOptions, customJSON };
