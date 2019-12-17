@@ -9,16 +9,22 @@ const _ = require( 'lodash' );
 const switcher = async ( data, next ) => {
     switch ( data.id ) {
         case actionTypes.GUEST_VOTE :
-            if( _.has( data, 'data.operations[0][1]' ) ) return await guestVoteJSON( data.data.operations[ 0 ][ 1 ], next );
+            if( _.has( data, 'data.operations[0][1]' ) ) {
+                return await guestVoteJSON( data.data.operations[ 0 ][ 1 ], next );
+            }
             return errorGenerator( data, next );
         case actionTypes.GUEST_CREATE :
             if( data.json ) return await guestCreateJSON( data.json, next );
             return errorGenerator( data, next );
         case actionTypes.GUEST_FOLLOW_WOBJECT :
-            if( _.has( data, 'data.operations[0][1].json' ) ) return await guestFollowWobjectJSON( data.data.operations[ 0 ][ 1 ].json, next );
+            if( _.has( data, 'data.operations[0][1].json' ) ) {
+                return await guestFollowWobjectJSON( data.data.operations[ 0 ][ 1 ].json, next );
+            }
             return errorGenerator( data, next );
         case actionTypes.GUEST_FOLLOW :
-            if( _.has( data, 'data.operations[0][1].json' ) ) return await guestFollowJSON( data.data.operations[ 0 ][ 1 ].json, next );
+            if( _.has( data, 'data.operations[0][1].json' ) ) {
+                return await guestFollowJSON( data.data.operations[ 0 ][ 1 ].json, next );
+            }
             return errorGenerator( data, next );
         default :
             return errorGenerator( data, next );
@@ -95,7 +101,9 @@ const guestFollowJSON = async ( data, next ) => {
 };
 
 const accountsSwitcher = async ( data ) => {
-    const account = accountsData.guestOperationAccounts[ config.custom_json_account === accountsData.guestOperationAccounts.length - 1 ? config.custom_json_account = 0 : config.custom_json_account += 1 ];
+    const account = accountsData.guestOperationAccounts[
+        config.custom_json_account === accountsData.guestOperationAccounts.length - 1 ? config.custom_json_account = 0 : config.custom_json_account += 1
+    ];
 
     return await dsteemModel.customJSON( data, account );
 

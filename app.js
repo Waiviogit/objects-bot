@@ -16,7 +16,7 @@ app.use( ( req, res, next ) => {
 } );
 app.use( ( req, res, next ) => {
     session.set( 'access-token', req.headers[ 'access-token' ] );
-    session.set( 'isWaivioAuth', Boolean( req.headers[ 'waivio-auth' ] ) );
+    session.set( 'waivio-auth', Boolean( req.headers[ 'waivio-auth' ] ) );
     next();
 } );
 app.use( '/', routes );

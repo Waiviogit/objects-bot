@@ -13,13 +13,13 @@ const postBroadcaster = async ( noMessageWait = 5000, postingErrorWait = 60000 )
     } );
 
     if ( redisError ) {
-        console.log( redisError.message );
+        console.error( redisError.message );
         await new Promise( ( resolve ) => setTimeout( resolve, noMessageWait ) );
         config.posting_counter = 0;
         return;
     }
 
-    const { error: broadcastError } = await broadcastingSwitcher( queueMessage.message, account);
+    const { error: broadcastError } = await broadcastingSwitcher( queueMessage.message, account );
 
     if ( broadcastError && regExp.steemErrRegExp.test( broadcastError.message ) ) {
         config.posting_account === accountsData.guestOperationAccounts.length - 1 ? config.posting_account = 0 : config.posting_account += 1;
@@ -69,10 +69,10 @@ const broadcastingSwitcher = async ( message, account ) => {
     const post = parsedData.commentData;
 
     post.body = `${post.body}\n This message was written by guest ${post.author}, and is available at ${config.waivio_auth.host}/@${post.author}/${post.permlink}`;
+    post.author = account.name;
     if ( !_.has( parsedData, 'options' ) ) return await dsteemModel.post( post, account.postingKey );
-    const options = parsedData.options;
 
-    return await dsteemModel.postWithOptions( post, options, account.postingKey );
+    return await dsteemModel.postWithOptions( post, parsedData.options, account.postingKey );
 };
 
 module.exports = { postBroadcaster, commentBroadcaster };

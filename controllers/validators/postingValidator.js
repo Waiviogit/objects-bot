@@ -3,13 +3,16 @@ const Joi = require( '@hapi/joi' );
 exports.simpleSchema = Joi.object().keys( {
     author: Joi.string().required(),
     permlink: Joi.string().required(),
-    title: Joi.string().allow( '' ).default( '' ).required(),
-    parent_author: Joi.string().allow( '' ).default( '' ).required(),
+    parent_author: Joi.string().allow( '' ).default( '' ),
+    title: Joi.when('parent_author', {
+        is: '',
+        then: Joi.string().invalid('').required(),
+        otherwise: Joi.string().allow('').required()
+    }),
     parent_permlink: Joi.string(),
     body: Joi.string().required(),
     json_metadata: Joi.string().required()
 } ).required().options( { allowUnknown: true, stripUnknown: true } );
-
 
 exports.optionsSchema = Joi.object().keys( {
     author: Joi.string().required(),

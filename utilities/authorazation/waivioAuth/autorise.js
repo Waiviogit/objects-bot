@@ -8,9 +8,7 @@ const validateTokenRequest = async ( token ) => {
     try {
         const { data: response } = await axios.post( VALIDATE_TOKEN_URL, token );
 
-        if ( response ) {
-            return { response };
-        }
+        if ( response ) return { response };
         return { error: { message: 'Not enough response data!' } };
     } catch ( error ) {
         console.error( error );
