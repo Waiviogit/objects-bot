@@ -1,6 +1,6 @@
 const { getRandomString } = require( '../testHelper' );
 
-module.exports = ( { author, permlink, parentAuthor, title, metadata, beneficiaries } = {} ) => ( {
+module.exports = ( { author, permlink, parentAuthor, title, metadata, beneficiaries, votes } = {} ) => ( {
     id: 'comment',
     data: {
         operations: [
@@ -21,7 +21,7 @@ module.exports = ( { author, permlink, parentAuthor, title, metadata, beneficiar
                 {
                     author: 'burukin',
                     permlink: 'some-post',
-                    allow_votes: true,
+                    allow_votes: votes || true,
                     allow_curation_rewards: true,
                     max_accepted_payout: '1000000.000 SBD',
                     percent_steem_dollars: 10000,
@@ -43,48 +43,3 @@ module.exports = ( { author, permlink, parentAuthor, title, metadata, beneficiar
         ]
     }
 } );
-
-
-const bla = {
-    action_type: 'comment',
-    data: {
-        operations: [
-            [
-                'comment',
-                {
-                    parent_author: '',
-                    parent_permlink: 'waiviodev',
-                    author: 'burukin',
-                    permlink: 'some-post',
-                    title: 'Some post',
-                    body: '[sommer](https://www.waivio.com/object/sommer)\nHi there\n\n***\n<center>![](https://waivio.nyc3.digitaloceanspaces.com/1576238292_393af10f-99f5-4c86-b895-a1368c2d249f)</center>\n\n',
-                    json_metadata: '{"community":"waiviodev","app":"waiviodev/1.0.0","format":"markdown","tags":["palnet"],"users":[],"links":["https://www.waivio.com/object/sommer"],"image":["https://waivio.nyc3.digitaloceanspaces.com/1576238292_393af10f-99f5-4c86-b895-a1368c2d249f"],"wobj":{"wobjects":[{"objectName":"sommer","author_permlink":"sommer","percent":100}]}}'
-                }
-            ],
-            [
-                'comment_options',
-                {
-                    author: 'burukin',
-                    permlink: 'some-post',
-                    allow_votes: true,
-                    allow_curation_rewards: true,
-                    max_accepted_payout: '1000000.000 SBD',
-                    percent_steem_dollars: 10000,
-                    extensions: [
-                        [
-                            0,
-                            {
-                                beneficiaries: [
-                                    {
-                                        account: 'waivio',
-                                        weight: 1000
-                                    }
-                                ]
-                            }
-                        ]
-                    ]
-                }
-            ]
-        ]
-    }
-};

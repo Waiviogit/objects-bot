@@ -1,7 +1,7 @@
 module.exports = {
     posting: require( './postingValidator' ),
     object: require( './objectValidator' ),
-    appendObject: require( './appendObjectValidator' ),
+    customJson: require( './customJsonValidator' ),
     validate: ( data, schema, next ) => {
         const result = schema.validate( data, { abortEarly: false } );
 

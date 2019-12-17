@@ -18,7 +18,8 @@
     "posting_counter": 0,
     "comment_account": 0,
     "basic_operations_account": 0,
-    "attempts": 0
+    "attempts": 0,
+    "custom_json_account": 0
   },
   "staging": {
     "db": {
@@ -39,7 +40,8 @@
     "posting_counter": 0,
     "comment_account": 0,
     "basic_operations_account": 0,
-    "attempts": 0
+    "attempts": 0,
+    "custom_json_account": 0
   },
   "development": {
     "db": {
@@ -60,7 +62,8 @@
     "posting_counter": 0,
     "comment_account": 0,
     "basic_operations_account": 0,
-    "attempts": 0
+    "attempts": 0,
+    "custom_json_account": 0
   },
   "test": {
     "db": {
@@ -81,6 +84,7 @@
     "posting_counter": 0,
     "comment_account": 0,
     "basic_operations_account": 0,
-    "attempts": 0
+    "attempts": 0,
+    "custom_json_account": 0
   }
 }

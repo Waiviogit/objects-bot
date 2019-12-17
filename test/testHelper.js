@@ -12,7 +12,12 @@ const { dsteemModel } = require( '../models' );
 const { guestOperationAccounts } = require( '../constants/accountsData' );
 const config = require( '../config' );
 const { updateMetadata, broadcastOperations, postingData, queueOperations } = require( '../utilities' );
+const validationHelper = require( '../controllers/validators/validationHelper' );
 const getRandomString = ( length = 5 ) => {
+    return faker.internet.password( length, false, /[a-z]/ );
+};
+
+faker.random.string = ( length = 5 ) => {
     return faker.internet.password( length, false, /[a-z]/ );
 };
 
@@ -39,5 +44,6 @@ module.exports = {
     guestOperationAccounts,
     updateMetadata,
     postingData,
-    config
+    config,
+    validationHelper
 };

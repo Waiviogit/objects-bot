@@ -119,11 +119,11 @@ const getAppendRequestBody = ( reqData, accData ) => (
     }
 );
 
-const preparePostData = ( postData, options ) => {
+const preparePostData = ( data ) => {
     const preparedData = {};
 
-    preparedData.post = postData[ 1 ];
-    preparedData.comment_options = options[ 1 ];
+    preparedData.post = data[ 0 ][ 1 ];
+    data[ 1 ][ 1 ] ? preparedData.comment_options = data[ 1 ][ 1 ] : null;
     return preparedData;
 };
 

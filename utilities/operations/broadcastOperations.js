@@ -66,11 +66,11 @@ const broadcastingSwitcher = async ( message, account ) => {
     }catch( error ) {
         return { error };
     }
-    const post = parsedData.post;
+    const post = parsedData.commentData;
 
     post.body = `${post.body}\n This message was written by guest ${post.author}, and is available at ${config.waivio_auth.host}/@${post.author}/${post.permlink}`;
-    if ( !_.has( parsedData, 'comment_options.extensions' ) ) return await dsteemModel.post( post, account.postingKey );
-    const options = parsedData.comment_options;
+    if ( !_.has( parsedData, 'options' ) ) return await dsteemModel.post( post, account.postingKey );
+    const options = parsedData.options;
 
     return await dsteemModel.postWithOptions( post, options, account.postingKey );
 };

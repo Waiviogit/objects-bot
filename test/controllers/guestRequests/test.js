@@ -1,148 +1,539 @@
-const { chaiHttp, chai, app, sinon, faker, getRandomString, redisQueue, redisSetter, updateMetadata } = require( '../../testHelper' );
-const { postMock, userMock, botMock } = require( '../../mocks' );
+const { chaiHttp, chai, app, sinon, faker, getRandomString, redisQueue, redisSetter, updateMetadata, dsteemModel } = require( '../../testHelper' );
+const { postMock, userMock, botMock, customJsonMock } = require( '../../mocks' );
 const axios = require( 'axios' );
 const authoriseUser = require( '../../../utilities/authorazation/authoriseUser' );
-const accountsData = require( '../../../constants/accountsData' );
+const { accountsData, actionTypes } = require( '../../../constants' );
+const config = require( '../../../config' );
+const _ = require( 'lodash' );
 
 chai.use( chaiHttp );
 chai.should();
 const expect = chai.expect;
 
 describe( 'On guestRequestsController', async () => {
-
-    describe( 'On proxyPosting comment OK', async () => {
-        let author, result;
-
-        beforeEach( async ( ) => {
-            author = faker.name.firstName();
-            sinon.stub( accountsData, 'guestOperationAccounts' ).value( botMock );
-            sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock( { name: author } ) ) );
+    describe( 'On proxyPosting', async () => {
+        beforeEach( async() => {
             sinon.stub( updateMetadata, 'metadataModify' ).returns( 'test metadata' );
-            result = await chai.request( app )
-                .post( '/guest-create-comment' )
-                .set( { 'waivio-auth': 1 } )
-                .send( postMock( { author: author, parentAuthor: getRandomString() } ) );
+            sinon.stub( accountsData, 'guestOperationAccounts' ).value( botMock );
         } );
         afterEach( () => {
             sinon.restore();
         } );
-        it( 'should return status 200', async () => {
-            expect( result.status ).to.eq( 200 );
-        } );
-        it( 'should return correct waiting time for posting', async () => {
-            expect( result.body.waitingTime ).to.eq( 0 );
-        } );
-    } );
-    describe( 'On proxyPosting post OK', async () => {
-        let author, result;
+        describe( 'On proxyPosting comment OK', async () => {
+            let author, result;
 
-        beforeEach( async ( ) => {
-            author = faker.name.firstName();
-            sinon.stub( accountsData, 'guestOperationAccounts' ).value( botMock );
-            sinon.stub( updateMetadata, 'metadataModify' ).returns( 'test metadata' );
-            sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock( { name: author } ) ) );
-            result = await chai.request( app )
-                .post( '/guest-create-comment' )
-                .set( { 'waivio-auth': 1 } )
-                .send( postMock( { author: author, parentAuthor: '' } ) );
+            beforeEach( async () => {
+                author = faker.name.firstName();
+                sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock( { name: author } ) ) );
+                result = await chai.request( app )
+                    .post( '/guest-create-comment' )
+                    .set( { 'waivio-auth': 1 } )
+                    .send( postMock( { author: author, parentAuthor: getRandomString() } ) );
+            } );
+            it( 'should return status 200', async () => {
+                expect( result.status ).to.eq( 200 );
+            } );
+            it( 'should return correct waiting time for posting', async () => {
+                expect( result.body.waitingTime ).to.eq( 0 );
+            } );
         } );
-        afterEach( () => {
-            sinon.restore();
-        } );
-        it( 'should return status 200', async () => {
-            expect( result.status ).to.eq( 200 );
-        } );
-        it( 'should return correct waiting time for posting', async () => {
-            expect( result.body.waitingTime ).to.eq( Math.ceil( 5 ) );
-        } );
-    } );
-    describe( 'On validation', async () => {
-        let author, result;
+        describe( 'On proxyPosting post OK', async () => {
+            let author, result;
 
-        beforeEach( async ( ) => {
-            sinon.stub( accountsData, 'guestOperationAccounts' ).value( botMock );
-            sinon.spy( authoriseUser, 'authorise' );
-            author = faker.name.firstName();
-            sinon.stub( updateMetadata, 'metadataModify' ).returns( 'test metadata' );
-            sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock( { name: author } ) ) );
-            result = await chai.request( app )
-                .post( '/guest-create-comment' )
-                .set( { 'waivio-auth': 1 } )
-                .send( postMock( { author: 5, parentAuthor: '' } ) );
+            beforeEach( async () => {
+                author = faker.name.firstName();
+                sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock( { name: author } ) ) );
+                result = await chai.request( app )
+                    .post( '/guest-create-comment' )
+                    .set( { 'waivio-auth': 1 } )
+                    .send( postMock( { author: author, parentAuthor: '' } ) );
+            } );
+            it( 'should return status 200', async () => {
+                expect( result.status ).to.eq( 200 );
+            } );
+            it( 'should return correct waiting time for posting', async () => {
+                expect( result.body.waitingTime ).to.eq( Math.ceil( 5 ) );
+            } );
         } );
-        afterEach( () => {
-            sinon.restore();
+        describe( 'On validation error', async () => {
+            let author, result;
+
+            beforeEach( async () => {
+                sinon.spy( authoriseUser, 'authorise' );
+                author = faker.name.firstName();
+                sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock( { name: author } ) ) );
+                result = await chai.request( app )
+                    .post( '/guest-create-comment' )
+                    .set( { 'waivio-auth': 1 } )
+                    .send( postMock( { author: 5, parentAuthor: '' } ) );
+            } );
+            afterEach( () => {
+                sinon.restore();
+            } );
+            it( 'should return status 422 if data validation failed', async () => {
+                expect( result.status ).to.eq( 422 );
+            } );
+            it( 'should not called authorise method', async () => {
+                expect( authoriseUser.authorise.notCalled ).to.true;
+            } );
         } );
-        it( 'should return status 422 if data validation failed', async () => {
-            expect( result.status ).to.eq( 422 );
+        describe( 'On validation options errors', async () => {
+            let author, result;
+
+            beforeEach( async () => {
+                sinon.spy( authoriseUser, 'authorise' );
+                author = faker.name.firstName();
+                sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock( { name: author } ) ) );
+                result = await chai.request( app )
+                    .post( '/guest-create-comment' )
+                    .set( { 'waivio-auth': 1 } )
+                    .send( postMock( { votes: getRandomString() } ) );
+            } );
+            it( 'should return 422 status with incorrect options in request', async () => {
+                expect( result ).to.have.status( 422 );
+            } );
+            it( 'should return correct message in error', async () => {
+                expect( result.body.message ).to.eq( '"allow_votes" must be a boolean' );
+            } );
         } );
-        it( 'should not called authorise method', async () => {
-            expect( authoriseUser.authorise.notCalled ).to.true;
+        describe( 'On incorrect options errors', async () => {
+            let author, result, mock;
+
+            beforeEach( async () => {
+                sinon.spy( authoriseUser, 'authorise' );
+                author = faker.name.firstName();
+                mock = postMock();
+                mock.data.operations[ 1 ] = [];
+                sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock( { name: author } ) ) );
+                result = await chai.request( app )
+                    .post( '/guest-create-comment' )
+                    .set( { 'waivio-auth': 1 } )
+                    .send( mock );
+            } );
+            it( 'should return 422 status with incorrect options in request', async () => {
+                expect( result ).to.have.status( 422 );
+            } );
+            it( 'should return correct message in error', async () => {
+                expect( result.body.message ).to.eq( '"value" is required' );
+            } );
+        } );
+        describe( 'On incorrect request errors', async () => {
+            let author, result, mock;
+
+            beforeEach( async () => {
+                sinon.spy( authoriseUser, 'authorise' );
+                author = faker.name.firstName();
+                mock = postMock();
+                mock.data.operations[ 0 ] = [];
+                sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock( { name: author } ) ) );
+                result = await chai.request( app )
+                    .post( '/guest-create-comment' )
+                    .set( { 'waivio-auth': 1 } )
+                    .send( mock );
+            } );
+            it( 'should return 422 status with incorrect options in request', async () => {
+                expect( result ).to.have.status( 422 );
+            } );
+            it( 'should return correct message in error', async () => {
+                expect( result.body.message ).to.eq( 'Invalid options in request' );
+            } );
+        } );
+        describe( 'On proxyPosting errors', async () => {
+            it( 'should return status 401 without valid token', async () => {
+                const result = await chai.request( app )
+                    .post( '/guest-create-comment' )
+                    .send( postMock() );
+
+                expect( result.status ).to.eq( 401 );
+            } );
+            it( 'should return 401 status if username from authorisation request and author name not same', async () => {
+                sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock() ) );
+                const result = await chai.request( app )
+                    .post( '/guest-create-comment' )
+                    .set( { 'waivio-auth': 1 } )
+                    .send( postMock() );
+
+                expect( result.status ).to.eq( 401 );
+            } );
+            it( 'should return 401 status if validation request get error', async () => {
+                sinon.stub( axios, 'post' ).returns( Promise.resolve( { error: 'test error' } ) );
+                const result = await chai.request( app )
+                    .post( '/guest-create-comment' )
+                    .set( { 'waivio-auth': 1 } )
+                    .send( postMock() );
+
+                expect( result.status ).to.eq( 401 );
+            } );
+        } );
+        describe( 'creating post errors', async () => {
+            let author;
+
+            beforeEach( async () => {
+                author = faker.name.firstName();
+                sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock( { name: author } ) ) );
+            } );
+            afterEach( () => {
+                sinon.restore();
+            } );
+            it( 'should return status 500 with error with creating queue', async () => {
+                sinon.stub( redisQueue, 'createQueue' ).returns( Promise.resolve( { error: 'test error' } ) );
+                const result = await chai.request( app )
+                    .post( '/guest-create-comment' )
+                    .set( { 'waivio-auth': 1 } )
+                    .send( postMock( { author: author, parentAuthor: getRandomString() } ) );
+
+                expect( result.status ).to.eq( 500 );
+            } );
+            it( 'should return status 500 with adding to queue redis error ', async () => {
+                sinon.stub( redisSetter, 'setActionsData' ).returns( Promise.resolve( { error: 'test error' } ) );
+                const result = await chai.request( app )
+                    .post( '/guest-create-comment' )
+                    .set( { 'waivio-auth': 1 } )
+                    .send( postMock( { author: author, parentAuthor: getRandomString() } ) );
+
+                expect( result.status ).to.eq( 500 );
+            } );
         } );
     } );
-    describe( 'On proxyPosting errors', async () => {
+    describe( 'On proxyCustomJson', async () => {
+        let bot, author;
+
         beforeEach( async () => {
-            sinon.stub( accountsData, 'guestOperationAccounts' ).value( botMock );
-            sinon.stub( updateMetadata, 'metadataModify' ).returns( 'test metadata' );
-        } );
-        afterEach( () => {
-            sinon.restore();
-        } );
-        it( 'should return status 401 without valid token', async () => {
-            const result = await chai.request( app )
-                .post( '/guest-create-comment' )
-                .send( postMock( ) );
-
-            expect( result.status ).to.eq( 401 );
-        } );
-        it( 'should return 401 status if username from authorisation request and author name not same', async () => {
-            sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock( ) ) );
-            const result = await chai.request( app )
-                .post( '/guest-create-comment' )
-                .set( { 'waivio-auth': 1 } )
-                .send( postMock( ) );
-
-            expect( result.status ).to.eq( 401 );
-        } );
-        it( 'should return 401 status if validation request get error', async () => {
-            sinon.stub( axios, 'post' ).returns( Promise.resolve( { error: 'test error' } ) );
-            const result = await chai.request( app )
-                .post( '/guest-create-comment' )
-                .set( { 'waivio-auth': 1 } )
-                .send( postMock( ) );
-
-            expect( result.status ).to.eq( 401 );
-        } );
-    } );
-    describe( 'creating post errors', async () => {
-        let author;
-
-        beforeEach( async () => {
-            sinon.stub( accountsData, 'guestOperationAccounts' ).value( botMock );
             author = faker.name.firstName();
-            sinon.stub( updateMetadata, 'metadataModify' ).returns( 'test metadata' );
-            sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock( { name: author } ) ) );
+            bot = botMock;
+            sinon.stub( accountsData, 'guestOperationAccounts' ).value( bot );
         } );
-        afterEach( () => {
-            sinon.restore();
-        } );
-        it( 'should return status 500 with error with creating queue', async () => {
-            sinon.stub( redisQueue, 'createQueue' ).returns( Promise.resolve( { error: 'test error' } ) );
-            const result = await chai.request( app )
-                .post( '/guest-create-comment' )
-                .set( { 'waivio-auth': 1 } )
-                .send( postMock( { author: author, parentAuthor: getRandomString() } ) );
+        describe( 'On success', async () => {
+            beforeEach( async () => {
+                sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock( { name: author } ) ) );
+                sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { result: 'OK' } ) );
+            } );
+            afterEach( async () => {
+                sinon.restore();
+            } );
+            describe( 'On vote', async () => {
+                let mock, result;
 
-            expect( result.status ).to.eq( 500 );
-        } );
-        it( 'should return status 500 with adding to queue redis error ', async () => {
-            sinon.stub( redisSetter, 'setActionsData' ).returns( Promise.resolve( { error: 'test error' } ) );
-            const result = await chai.request( app )
-                .post( '/guest-create-comment' )
-                .set( { 'waivio-auth': 1 } )
-                .send( postMock( { author: author, parentAuthor: getRandomString() } ) );
+                beforeEach( async () => {
+                    mock = customJsonMock.vote( { voter: author } );
+                    result = await chai.request( app )
+                        .post( '/guest-custom-json' )
+                        .set( { 'waivio-auth': 1 } )
+                        .send( mock );
+                } );
+                it( 'should return status 200 with valid params in vote request', async () => {
+                    expect( result.status ).to.eq( 200 );
+                } );
+                it( 'should call dsteem method with valid params', async () => {
+                    expect( dsteemModel.customJSON.calledWith( { id: actionTypes.GUEST_VOTE,
+                        json: JSON.stringify( mock.data.operations[ 0 ][ 1 ] ) }, bot[ config.custom_json_account ] ) ).to.true;
+                } );
+            } );
+            describe( 'On follow wobject', async () => {
+                let mock, result;
 
-            expect( result.status ).to.eq( 500 );
+                beforeEach( async () => {
+                    mock = customJsonMock.followWobj( { user: author } );
+                    result = await chai.request( app )
+                        .post( '/guest-custom-json' )
+                        .set( { 'waivio-auth': 1 } )
+                        .send( mock );
+                } );
+                it( 'should return status 200 with valid params follow wobject in request', async () => {
+                    expect( result.status ).to.eq( 200 );
+                } );
+                it( 'should call dsteem method with valid params', async () => {
+                    expect( dsteemModel.customJSON.calledWith( { id: actionTypes.GUEST_FOLLOW_WOBJECT,
+                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ config.custom_json_account ] ) ).to.true;
+                } );
+            } );
+            describe( 'On follow user', async () => {
+                let mock, result;
+
+                beforeEach( async () => {
+                    mock = customJsonMock.follow( { follower: author } );
+                    result = await chai.request( app )
+                        .post( '/guest-custom-json' )
+                        .set( { 'waivio-auth': 1 } )
+                        .send( mock );
+                } );
+                it( 'should return status 200 with valid params follow in request', async () => {
+                    expect( result.status ).to.eq( 200 );
+                } );
+                it( 'should call dsteem method with valid params', async () => {
+                    expect( dsteemModel.customJSON.calledWith( { id: actionTypes.GUEST_FOLLOW,
+                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ config.custom_json_account ] ) ).to.true;
+                } );
+            } );
+            describe( 'On create user', async () => {
+                let mock, result;
+
+                beforeEach( async () => {
+                    mock = customJsonMock.create( { name: author } );
+                    result = await chai.request( app )
+                        .post( '/guest-custom-json' )
+                        .set( { 'waivio-auth': 1 } )
+                        .send( mock );
+                } );
+                it( 'should return status 200 with valid create user params in request', async () => {
+                    expect( result.status ).to.eq( 200 );
+                } );
+                it( 'should call dsteem method with valid params', async () => {
+                    expect( dsteemModel.customJSON.calledWith( { id: mock.id, json: JSON.stringify( mock.json ) }, bot[ config.custom_json_account ] ) ).to.true;
+                } );
+            } );
+        } );
+        describe( 'On errors', async () => {
+            let result, mock;
+
+            beforeEach( async () => {
+                sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock( { name: author } ) ) );
+            } );
+            afterEach( async () => {
+                sinon.restore();
+            } );
+            describe( 'On vote', async () => {
+                describe( 'On validation errors', async () => {
+                    beforeEach( async () => {
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { result: 'OK' } ) );
+                        mock = customJsonMock.vote( { voter: faker.random.number() } );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return status 422 with not valid data in request', async () => {
+                        expect( result ).to.have.status( 422 );
+                    } );
+                    it( 'should not call dsteem model method if request data not valid', async () => {
+                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                    } );
+                } );
+                describe( 'On authorisation errors', async () => {
+                    beforeEach( async () => {
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { result: 'OK' } ) );
+                        mock = customJsonMock.vote( );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return 401 status, if authorisation check return false', async () => {
+                        expect( result ).to.have.status( 401 );
+                    } );
+                    it( 'should not call dsteem model method if authorisation check failed', async () => {
+                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                    } );
+                } );
+                describe( 'On broadcast errors', async () => {
+                    beforeEach( async () => {
+                        mock = customJsonMock.vote( { voter: author } );
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { error: { message: 'test error' } } ) );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return status 500 if broadcast to chain method get error', async () => {
+                        expect( result ).to.have.status( 500 );
+                    } );
+                    it( 'should called broadcast method once', async () => {
+                        expect( dsteemModel.customJSON.calledOnce ).to.true;
+                    } );
+                    it( 'should return message from broadcast error', async () => {
+                        expect( result.body.message ).to.eq( 'test error' );
+                    } );
+                } );
+            } );
+            describe( 'On user follow', async () => {
+                describe( 'On validation errors', async () => {
+                    beforeEach( async () => {
+                        mock = customJsonMock.follow( );
+                        mock.data.operations = [];
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { result: 'OK' } ) );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return status 422 with not valid data in request', async () => {
+                        expect( result ).to.have.status( 422 );
+                    } );
+                    it( 'should not call dsteem model method if request data not valid', async () => {
+                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                    } );
+                } );
+                describe( 'On authorisation errors', async () => {
+                    beforeEach( async () => {
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { result: 'OK' } ) );
+                        mock = customJsonMock.follow( );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return 401 status, if authorisation check return false', async () => {
+                        expect( result ).to.have.status( 401 );
+                    } );
+                    it( 'should not call dsteem model method if authorisation check failed', async () => {
+                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                    } );
+                } );
+                describe( 'On broadcast errors', async () => {
+                    beforeEach( async () => {
+                        mock = customJsonMock.follow( { follower: author } );
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { error: { message: 'test error' } } ) );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return status 500 if broadcast to chain method get error', async () => {
+                        expect( result ).to.have.status( 500 );
+                    } );
+                    it( 'should called broadcast method once', async () => {
+                        expect( dsteemModel.customJSON.calledOnce ).to.true;
+                    } );
+                    it( 'should return message from broadcast error', async () => {
+                        expect( result.body.message ).to.eq( 'test error' );
+                    } );
+                } );
+            } );
+            describe( 'On wobject follow', async () => {
+                describe( 'On validation errors', async () => {
+                    beforeEach( async () => {
+                        mock = customJsonMock.followWobj( { user: faker.random.number() } );
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { result: 'OK' } ) );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return status 422 with not valid data in request', async () => {
+                        expect( result ).to.have.status( 422 );
+                    } );
+                    it( 'should not call dsteem model method if request data not valid', async () => {
+                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                    } );
+                } );
+                describe( 'On authorisation errors', async () => {
+                    beforeEach( async () => {
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { result: 'OK' } ) );
+                        mock = customJsonMock.followWobj( );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return 401 status, if authorisation check return false', async () => {
+                        expect( result ).to.have.status( 401 );
+                    } );
+                    it( 'should not call dsteem model method if authorisation check failed', async () => {
+                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                    } );
+                } );
+                describe( 'On broadcast errors', async () => {
+                    beforeEach( async () => {
+                        mock = customJsonMock.followWobj( { user: author } );
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { error: { message: 'test error' } } ) );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return status 500 if broadcast to chain method get error', async () => {
+                        expect( result ).to.have.status( 500 );
+                    } );
+                    it( 'should called broadcast method once', async () => {
+                        expect( dsteemModel.customJSON.calledOnce ).to.true;
+                    } );
+                    it( 'should return message from broadcast error', async () => {
+                        expect( result.body.message ).to.eq( 'test error' );
+                    } );
+                } );
+            } );
+            describe( 'On create user', async() => {
+                describe( 'On validation errors', async () => {
+                    beforeEach( async () => {
+                        mock = customJsonMock.create();
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { result: 'OK' } ) );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( _.omit( mock.json, [ 'json_metadata' ] ) );
+                    } );
+                    it( 'should return status 422 with not valid data in request', async () => {
+                        expect( result ).to.have.status( 422 );
+                    } );
+                    it( 'should not call dsteem model method if request data not valid', async () => {
+                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                    } );
+                } );
+                describe( 'On authorisation errors', async () => {
+                    beforeEach( async () => {
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { result: 'OK' } ) );
+                        mock = customJsonMock.create( );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return 401 status, if authorisation check return false', async () => {
+                        expect( result ).to.have.status( 401 );
+                    } );
+                    it( 'should not call dsteem model method if authorisation check failed', async () => {
+                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                    } );
+                } );
+                describe( 'On broadcast errors', async () => {
+                    beforeEach( async () => {
+                        mock = customJsonMock.create( { name: author } );
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { error: { message: 'test error' } } ) );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return status 500 if broadcast method get error', async () => {
+                        expect( result ).to.have.status( 500 );
+                    } );
+                    it( 'should called broadcast method once', async () => {
+                        expect( dsteemModel.customJSON.calledOnce ).to.true;
+                    } );
+                    it( 'should return message from broadcast error', async () => {
+                        expect( result.body.message ).to.eq( 'test error' );
+                    } );
+                } );
+                describe( 'On another errors', async () => {
+                    beforeEach( async () => {
+                        mock = customJsonMock.create();
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { result: 'OK' } ) );
+                    } );
+                    it( 'should return status 422 if in request no json', async () => {
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( _.omit( mock, [ 'json' ] ) );
+                        expect( result ).to.have.status( 422 );
+                    } );
+                    it( 'should return 422 if request has wrong id', async () => {
+                        mock.id = faker.random.string();
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( _.omit( mock, [ 'json' ] ) );
+                        expect( result ).to.have.status( 422 );
+                    } );
+                    it( 'should return error with correct message if request has wrong id', async () => {
+                        mock.id = faker.random.string();
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( _.omit( mock, [ 'json' ] ) );
+                        expect( result.body.message ).to.eq( 'Invalid request data' );
+                    } );
+                } );
+            } );
         } );
     } );
 } );

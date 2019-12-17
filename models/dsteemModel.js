@@ -19,10 +19,16 @@ const postWithOptions = async ( comment, options, key ) => {
     }
 };
 
-const customJSON = async ( data ) => {
+const customJSON = async ( data, account ) => {
 
     try{
-        return{ result: await client.broadcast.json( data.json, dsteem.PrivateKey.fromString( data.postingKey ) ) };
+        return{ result: await client.broadcast.json( {
+            id: data.id,
+            json: data.json,
+            required_auth: [],
+            required_posting_auth: [ account.name ]
+        },
+        dsteem.PrivateKey.fromString( data.postingKey ) ) };
     } catch( error ) {
         console.log( error );
         return { error };

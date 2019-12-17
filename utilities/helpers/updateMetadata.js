@@ -12,10 +12,19 @@ const metadataModify = ( json_metadata ) => {
     }
     metadata.comment = {
         userId: authorised_user.name,
-        displayName: authorised_user.alias,
         social: authorised_user.auth.provider
     };
     return JSON.stringify( metadata );
 };
 
-module.exports = { metadataModify };
+const parseMetadata = ( json_metadata, next ) => {
+    try{
+        return JSON.parse( json_metadata );
+    } catch( e ) {
+        const error = { status: 422, message: e.message };
+
+        return next( error );
+    }
+};
+
+module.exports = { metadataModify, parseMetadata };

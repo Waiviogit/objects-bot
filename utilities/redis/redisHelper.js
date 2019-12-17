@@ -8,13 +8,13 @@ const addToQueue = async ( data, actionData ) => {
     const { error: createError } = await redisQueue.createQueue( { client: actionsRsmqClient, qname: actionData.qname } );
 
     if ( createError ) return { error: { status: 500, message: createError } };
-    const { result: currentUserComments } = await redisGetter.getHashKeysAll( `${actionData.operation}:${data.post.author}:*` );
+    const { result: currentUserComments } = await redisGetter.getHashKeysAll( `${actionData.operation}:${data.commentData.author}:*` );
 
     if ( currentUserComments.length >= actionData.limit ) {
-        return { error: { message: `To many comments from ${data.post.author} in queue` } };
+        return { error: { message: `To many comments from ${data.commentData.author} in queue` } };
     }
-    data.post.json_metadata = updateMetadata.metadataModify( data.post.json_metadata );
-    const message = `${actionData.operation}:${data.post.author}:${Math.random().toString( 36 ).substring( 2, 15 )}-${Math.random().toString( 36 ).substring( 2, 15 )}`;
+    data.commentData.json_metadata = updateMetadata.metadataModify( data.commentData.json_metadata );
+    const message = `${actionData.operation}:${data.commentData.author}:${Math.random().toString( 36 ).substring( 2, 15 )}-${Math.random().toString( 36 ).substring( 2, 15 )}`;
     const { error: sendMessError } = await redisQueue.sendMessage( {
         client: actionsRsmqClient,
         qname: actionData.qname,

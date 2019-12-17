@@ -4,5 +4,6 @@ module.exports = {
     userMock: require( './userMock' ),
     forecastMock: require( './forecastMock' ),
     botMock: require( './botMock' ),
-    objectMock: require( './objectMock' )
+    objectMock: require( './objectMock' ),
+    customJsonMock: require( './customJsonMock' )
 };
