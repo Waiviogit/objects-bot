@@ -1,14 +1,10 @@
-const { chaiHttp, chai, app, sinon, faker, getRandomString, redisQueue, redisSetter, updateMetadata, dsteemModel } = require( '../../testHelper' );
+const { expect, chai, app, sinon, faker, getRandomString, redisQueue, redisSetter, updateMetadata, dsteemModel } = require( '../../testHelper' );
 const { postMock, userMock, botMock, customJsonMock } = require( '../../mocks' );
 const axios = require( 'axios' );
 const authoriseUser = require( '../../../utilities/authorazation/authoriseUser' );
 const { accountsData, actionTypes } = require( '../../../constants' );
 const config = require( '../../../config' );
 const _ = require( 'lodash' );
-
-chai.use( chaiHttp );
-chai.should();
-const expect = chai.expect;
 
 describe( 'On guestRequestsController', async () => {
     describe( 'On proxyPosting', async () => {
@@ -31,10 +27,10 @@ describe( 'On guestRequestsController', async () => {
                     .send( postMock( { author: author, parentAuthor: getRandomString() } ) );
             } );
             it( 'should return status 200', async () => {
-                expect( result.status ).to.eq( 200 );
+                expect( result ).to.have.status( 200 );
             } );
             it( 'should return correct waiting time for posting', async () => {
-                expect( result.body.waitingTime ).to.eq( 0 );
+                expect( result.body.waitingTime ).to.be.eq( 0 );
             } );
         } );
         describe( 'On proxyPosting post OK', async () => {
@@ -49,10 +45,10 @@ describe( 'On guestRequestsController', async () => {
                     .send( postMock( { author: author, parentAuthor: '' } ) );
             } );
             it( 'should return status 200', async () => {
-                expect( result.status ).to.eq( 200 );
+                expect( result ).to.have.status( 200 );
             } );
             it( 'should return correct waiting time for posting', async () => {
-                expect( result.body.waitingTime ).to.eq( Math.ceil( 5 ) );
+                expect( result.body.waitingTime ).to.be.eq( Math.ceil( 5 ) );
             } );
         } );
         describe( 'On validation error', async () => {
@@ -71,10 +67,10 @@ describe( 'On guestRequestsController', async () => {
                 sinon.restore();
             } );
             it( 'should return status 422 if data validation failed', async () => {
-                expect( result.status ).to.eq( 422 );
+                expect( result ).to.have.status( 422 );
             } );
             it( 'should not called authorise method', async () => {
-                expect( authoriseUser.authorise.notCalled ).to.true;
+                expect( authoriseUser.authorise ).to.be.not.called;
             } );
         } );
         describe( 'On validation options errors', async () => {
@@ -93,7 +89,7 @@ describe( 'On guestRequestsController', async () => {
                 expect( result ).to.have.status( 422 );
             } );
             it( 'should return correct message in error', async () => {
-                expect( result.body.message ).to.eq( '"allow_votes" must be a boolean' );
+                expect( result.body.message ).to.be.eq( '"allow_votes" must be a boolean' );
             } );
         } );
         describe( 'On incorrect options errors', async () => {
@@ -114,7 +110,7 @@ describe( 'On guestRequestsController', async () => {
                 expect( result ).to.have.status( 422 );
             } );
             it( 'should return correct message in error', async () => {
-                expect( result.body.message ).to.eq( '"value" is required' );
+                expect( result.body.message ).to.be.eq( '"value" is required' );
             } );
         } );
         describe( 'On incorrect request errors', async () => {
@@ -135,7 +131,7 @@ describe( 'On guestRequestsController', async () => {
                 expect( result ).to.have.status( 422 );
             } );
             it( 'should return correct message in error', async () => {
-                expect( result.body.message ).to.eq( 'Invalid options in request' );
+                expect( result.body.message ).to.be.eq( 'Invalid options in request' );
             } );
         } );
         describe( 'On proxyPosting errors', async () => {
@@ -144,7 +140,7 @@ describe( 'On guestRequestsController', async () => {
                     .post( '/guest-create-comment' )
                     .send( postMock() );
 
-                expect( result.status ).to.eq( 401 );
+                expect( result ).to.have.status( 401 );
             } );
             it( 'should return 401 status if username from authorisation request and author name not same', async () => {
                 sinon.stub( axios, 'post' ).returns( Promise.resolve( userMock() ) );
@@ -153,7 +149,7 @@ describe( 'On guestRequestsController', async () => {
                     .set( { 'waivio-auth': 1 } )
                     .send( postMock() );
 
-                expect( result.status ).to.eq( 401 );
+                expect( result ).to.have.status( 401 );
             } );
             it( 'should return 401 status if validation request get error', async () => {
                 sinon.stub( axios, 'post' ).returns( Promise.resolve( { error: 'test error' } ) );
@@ -162,7 +158,7 @@ describe( 'On guestRequestsController', async () => {
                     .set( { 'waivio-auth': 1 } )
                     .send( postMock() );
 
-                expect( result.status ).to.eq( 401 );
+                expect( result ).to.have.status( 401 );
             } );
         } );
         describe( 'creating post errors', async () => {
@@ -182,7 +178,7 @@ describe( 'On guestRequestsController', async () => {
                     .set( { 'waivio-auth': 1 } )
                     .send( postMock( { author: author, parentAuthor: getRandomString() } ) );
 
-                expect( result.status ).to.eq( 500 );
+                expect( result ).to.have.status( 500 );
             } );
             it( 'should return status 500 with adding to queue redis error ', async () => {
                 sinon.stub( redisSetter, 'setActionsData' ).returns( Promise.resolve( { error: 'test error' } ) );
@@ -191,7 +187,7 @@ describe( 'On guestRequestsController', async () => {
                     .set( { 'waivio-auth': 1 } )
                     .send( postMock( { author: author, parentAuthor: getRandomString() } ) );
 
-                expect( result.status ).to.eq( 500 );
+                expect( result ).to.have.status( 500 );
             } );
         } );
     } );
@@ -222,11 +218,11 @@ describe( 'On guestRequestsController', async () => {
                         .send( mock );
                 } );
                 it( 'should return status 200 with valid params in vote request', async () => {
-                    expect( result.status ).to.eq( 200 );
+                    expect( result ).to.have.status( 200 );
                 } );
                 it( 'should call dsteem method with valid params', async () => {
-                    expect( dsteemModel.customJSON.calledWith( { id: actionTypes.GUEST_VOTE,
-                        json: JSON.stringify( mock.data.operations[ 0 ][ 1 ] ) }, bot[ config.custom_json_account ] ) ).to.true;
+                    expect( dsteemModel.customJSON ).to.be.calledWith( { id: actionTypes.GUEST_VOTE,
+                        json: JSON.stringify( mock.data.operations[ 0 ][ 1 ] ) }, bot[ config.custom_json_account ] );
                 } );
             } );
             describe( 'On follow wobject', async () => {
@@ -240,11 +236,11 @@ describe( 'On guestRequestsController', async () => {
                         .send( mock );
                 } );
                 it( 'should return status 200 with valid params follow wobject in request', async () => {
-                    expect( result.status ).to.eq( 200 );
+                    expect( result ).to.have.status( 200 );
                 } );
                 it( 'should call dsteem method with valid params', async () => {
-                    expect( dsteemModel.customJSON.calledWith( { id: actionTypes.GUEST_FOLLOW_WOBJECT,
-                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ config.custom_json_account ] ) ).to.true;
+                    expect( dsteemModel.customJSON ).to.be.calledWith( { id: actionTypes.GUEST_FOLLOW_WOBJECT,
+                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ config.custom_json_account ] ) ;
                 } );
             } );
             describe( 'On follow user', async () => {
@@ -258,11 +254,11 @@ describe( 'On guestRequestsController', async () => {
                         .send( mock );
                 } );
                 it( 'should return status 200 with valid params follow in request', async () => {
-                    expect( result.status ).to.eq( 200 );
+                    expect( result ).to.have.status( 200 );
                 } );
                 it( 'should call dsteem method with valid params', async () => {
-                    expect( dsteemModel.customJSON.calledWith( { id: actionTypes.GUEST_FOLLOW,
-                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ config.custom_json_account ] ) ).to.true;
+                    expect( dsteemModel.customJSON ).to.be.calledWith( { id: actionTypes.GUEST_FOLLOW,
+                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ config.custom_json_account ] ) ;
                 } );
             } );
             describe( 'On create user', async () => {
@@ -276,10 +272,10 @@ describe( 'On guestRequestsController', async () => {
                         .send( mock );
                 } );
                 it( 'should return status 200 with valid create user params in request', async () => {
-                    expect( result.status ).to.eq( 200 );
+                    expect( result ).to.have.status( 200 );
                 } );
                 it( 'should call dsteem method with valid params', async () => {
-                    expect( dsteemModel.customJSON.calledWith( { id: mock.id, json: JSON.stringify( mock.json ) }, bot[ config.custom_json_account ] ) ).to.true;
+                    expect( dsteemModel.customJSON ).to.be.calledWith( { id: mock.id, json: JSON.stringify( mock.json ) }, bot[ config.custom_json_account ] ) ;
                 } );
             } );
         } );
@@ -306,7 +302,7 @@ describe( 'On guestRequestsController', async () => {
                         expect( result ).to.have.status( 422 );
                     } );
                     it( 'should not call dsteem model method if request data not valid', async () => {
-                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                        expect( dsteemModel.customJSON ).to.be.not.called;
                     } );
                 } );
                 describe( 'On authorisation errors', async () => {
@@ -322,7 +318,7 @@ describe( 'On guestRequestsController', async () => {
                         expect( result ).to.have.status( 401 );
                     } );
                     it( 'should not call dsteem model method if authorisation check failed', async () => {
-                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                        expect( dsteemModel.customJSON ).to.be.not.called;
                     } );
                 } );
                 describe( 'On broadcast errors', async () => {
@@ -338,10 +334,10 @@ describe( 'On guestRequestsController', async () => {
                         expect( result ).to.have.status( 500 );
                     } );
                     it( 'should called broadcast method once', async () => {
-                        expect( dsteemModel.customJSON.calledOnce ).to.true;
+                        expect( dsteemModel.customJSON ).to.be.calledOnce;
                     } );
                     it( 'should return message from broadcast error', async () => {
-                        expect( result.body.message ).to.eq( 'test error' );
+                        expect( result.body.message ).to.be.eq( 'test error' );
                     } );
                 } );
             } );
@@ -360,7 +356,7 @@ describe( 'On guestRequestsController', async () => {
                         expect( result ).to.have.status( 422 );
                     } );
                     it( 'should not call dsteem model method if request data not valid', async () => {
-                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                        expect( dsteemModel.customJSON ).to.be.not.called;
                     } );
                 } );
                 describe( 'On authorisation errors', async () => {
@@ -376,7 +372,7 @@ describe( 'On guestRequestsController', async () => {
                         expect( result ).to.have.status( 401 );
                     } );
                     it( 'should not call dsteem model method if authorisation check failed', async () => {
-                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                        expect( dsteemModel.customJSON ).to.be.not.called;
                     } );
                 } );
                 describe( 'On broadcast errors', async () => {
@@ -392,10 +388,10 @@ describe( 'On guestRequestsController', async () => {
                         expect( result ).to.have.status( 500 );
                     } );
                     it( 'should called broadcast method once', async () => {
-                        expect( dsteemModel.customJSON.calledOnce ).to.true;
+                        expect( dsteemModel.customJSON ).to.be.calledOnce;
                     } );
                     it( 'should return message from broadcast error', async () => {
-                        expect( result.body.message ).to.eq( 'test error' );
+                        expect( result.body.message ).to.be.eq( 'test error' );
                     } );
                 } );
             } );
@@ -413,7 +409,7 @@ describe( 'On guestRequestsController', async () => {
                         expect( result ).to.have.status( 422 );
                     } );
                     it( 'should not call dsteem model method if request data not valid', async () => {
-                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                        expect( dsteemModel.customJSON ).to.be.not.called;
                     } );
                 } );
                 describe( 'On authorisation errors', async () => {
@@ -429,7 +425,7 @@ describe( 'On guestRequestsController', async () => {
                         expect( result ).to.have.status( 401 );
                     } );
                     it( 'should not call dsteem model method if authorisation check failed', async () => {
-                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                        expect( dsteemModel.customJSON ).to.be.not.called;
                     } );
                 } );
                 describe( 'On broadcast errors', async () => {
@@ -445,10 +441,10 @@ describe( 'On guestRequestsController', async () => {
                         expect( result ).to.have.status( 500 );
                     } );
                     it( 'should called broadcast method once', async () => {
-                        expect( dsteemModel.customJSON.calledOnce ).to.true;
+                        expect( dsteemModel.customJSON ).to.be.calledOnce;
                     } );
                     it( 'should return message from broadcast error', async () => {
-                        expect( result.body.message ).to.eq( 'test error' );
+                        expect( result.body.message ).to.be.eq( 'test error' );
                     } );
                 } );
             } );
@@ -466,7 +462,7 @@ describe( 'On guestRequestsController', async () => {
                         expect( result ).to.have.status( 422 );
                     } );
                     it( 'should not call dsteem model method if request data not valid', async () => {
-                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                        expect( dsteemModel.customJSON ).to.be.not.called;
                     } );
                 } );
                 describe( 'On authorisation errors', async () => {
@@ -482,7 +478,7 @@ describe( 'On guestRequestsController', async () => {
                         expect( result ).to.have.status( 401 );
                     } );
                     it( 'should not call dsteem model method if authorisation check failed', async () => {
-                        expect( dsteemModel.customJSON.notCalled ).to.true;
+                        expect( dsteemModel.customJSON ).to.be.not.called;
                     } );
                 } );
                 describe( 'On broadcast errors', async () => {
@@ -498,10 +494,10 @@ describe( 'On guestRequestsController', async () => {
                         expect( result ).to.have.status( 500 );
                     } );
                     it( 'should called broadcast method once', async () => {
-                        expect( dsteemModel.customJSON.calledOnce ).to.true;
+                        expect( dsteemModel.customJSON ).to.be.calledOnce;
                     } );
                     it( 'should return message from broadcast error', async () => {
-                        expect( result.body.message ).to.eq( 'test error' );
+                        expect( result.body.message ).to.be.eq( 'test error' );
                     } );
                 } );
                 describe( 'On another errors', async () => {
@@ -530,7 +526,7 @@ describe( 'On guestRequestsController', async () => {
                             .post( '/guest-custom-json' )
                             .set( { 'waivio-auth': 1 } )
                             .send( _.omit( mock, [ 'json' ] ) );
-                        expect( result.body.message ).to.eq( 'Invalid request data' );
+                        expect( result.body.message ).to.be.eq( 'Invalid request data' );
                     } );
                 } );
             } );

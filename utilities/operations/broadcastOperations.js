@@ -42,7 +42,7 @@ const commentBroadcaster = async ( noMessageWait = 5000 ) => {
     } );
 
     if ( redisError || !queueMessage ) {
-        console.log( redisError.message || 'Queue is empty' );
+        console.error( redisError.message || 'Queue is empty' );
         await new Promise( ( resolve ) => setTimeout( resolve, noMessageWait ) );
         return;
     }

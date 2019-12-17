@@ -23,10 +23,10 @@ describe( 'On object controller', async () => {
                 result = await chai.request( app ).post( '/create-object-type' ).send( { objectType: objectType } );
             } );
             it( 'should return status 200', async () => {
-                expect( result.status ).to.eq( 200 );
+                expect( result ).to.have.status( 200 );
             } );
             it( 'should return correct json in response', async () => {
-                expect( result.body.author ).to.deep.eq( basicAccounts[ 0 ].name );
+                expect( result.body.author ).to.be.eq( basicAccounts[ 0 ].name );
             } );
         } );
         describe( 'On errors', async() => {
@@ -38,10 +38,10 @@ describe( 'On object controller', async () => {
                     result = await chai.request( app ).post( '/create-object-type' ).send( { objectType: objectType } );
                 } );
                 it( 'should return status 503 with RPError', async () => {
-                    expect( result.status ).to.eq( 503 );
+                    expect( result ).to.have.status( 503 );
                 } );
                 it( 'should try to send comment to chain by all bots', async () => {
-                    expect( dsteemModel.postWithOptions.callCount ).to.eq( basicAccounts.length );
+                    expect( dsteemModel.postWithOptions ).to.be.callCount( basicAccounts.length );
                 } );
             } );
             describe( 'On another errors', async () => {
@@ -52,10 +52,10 @@ describe( 'On object controller', async () => {
                     result = await chai.request( app ).post( '/create-object-type' ).send( { objectType: objectType } );
                 } );
                 it( 'should return status 422 with not RPCError', async () => {
-                    expect( result.status ).to.eq( 422 );
+                    expect( result ).to.have.status( 422 );
                 } );
                 it( 'should not try to send comment to chain by all bots with not RPCError', async () => {
-                    expect( dsteemModel.postWithOptions.calledOnce ).to.true;
+                    expect( dsteemModel.postWithOptions ).to.be.calledOnce;
                 } );
             } );
             describe( 'On validation error', async() => {
@@ -65,10 +65,10 @@ describe( 'On object controller', async () => {
                     result = await chai.request( app ).post( '/create-object-type' ).send( );
                 } );
                 it( 'should return error status with validation error', async () => {
-                    expect( result.status ).to.eq( 422 );
+                    expect( result ).to.have.status( 422 );
                 } );
                 it( 'should return error message with not enough data', async () => {
-                    expect( result.body.message ).to.eq( 'Not enough data' );
+                    expect( result.body.message ).to.be.eq( 'Not enough data' );
                 } );
             } );
         } );
@@ -87,14 +87,14 @@ describe( 'On object controller', async () => {
                 result = await chai.request( app ).post( '/create-object' ).send( mock );
             } );
             it( 'should return status 200', async () => {
-                expect( result.status ).to.eq( 200 );
+                expect( result ).to.have.status( 200 );
             } );
             it( 'should return correct json in response', async () => {
-                expect( result.body.parentPermlink ).to.eq( mock.permlink );
+                expect( result.body.parentPermlink ).to.be.eq( mock.permlink );
             } );
             it( 'should called post method with valid params', async () => {
-                expect( dsteemModel.postWithOptions.calledWith( getPostData( mock, basicAccounts[ 0 ], CREATE_OBJECT ),
-                    getOptions( mock, basicAccounts[ 0 ] ), basicAccounts[ 0 ].postingKey ) ).to.true;
+                expect( dsteemModel.postWithOptions ).to.calledWith( getPostData( mock, basicAccounts[ 0 ], CREATE_OBJECT ),
+                    getOptions( mock, basicAccounts[ 0 ] ), basicAccounts[ 0 ].postingKey );
             } );
         } );
         describe( 'On errors', async() => {
@@ -106,10 +106,10 @@ describe( 'On object controller', async () => {
                     result = await chai.request( app ).post( '/create-object' ).send( mock );
                 } );
                 it( 'should return status 503 with RPError', async () => {
-                    expect( result.status ).to.eq( 503 );
+                    expect( result ).to.have.status( 503 );
                 } );
                 it( 'should try to send comment to chain by all bots', async () => {
-                    expect( dsteemModel.postWithOptions.callCount ).to.eq( basicAccounts.length );
+                    expect( dsteemModel.postWithOptions ).to.be.callCount( basicAccounts.length );
                 } );
             } );
             describe( 'On another errors', async () => {
@@ -120,23 +120,23 @@ describe( 'On object controller', async () => {
                     result = await chai.request( app ).post( '/create-object' ).send( mock );
                 } );
                 it( 'should return status 422 with not RPCError', async () => {
-                    expect( result.status ).to.eq( 422 );
+                    expect( result ).to.have.status( 422 );
                 } );
                 it( 'should not try to send comment to chain by all bots with not RPCError', async () => {
-                    expect( dsteemModel.postWithOptions.calledOnce ).to.true;
+                    expect( dsteemModel.postWithOptions ).to.be.calledOnce;
                 } );
             } );
             describe( 'On validation error', async() => {
                 it( 'should return error status 422 with validation error with incorrect extending data in request', async () => {
                     const result = await chai.request( app ).post( '/create-object' ).send( objectMock( { extending: getRandomString() } ) );
 
-                    expect( result.status ).to.eq( 422 );
+                    expect( result ).to.have.status( 422 );
                 } );
                 it( 'should return error status 422 with validation error with incorrect without author in request', async () => {
                     const errorMOck = objectMock();
                     const result = await chai.request( app ).post( '/create-object' ).send( _.omit( errorMOck, [ 'author' ] ) );
 
-                    expect( result.status ).to.eq( 422 );
+                    expect( result ).to.have.status( 422 );
                 } );
             } );
         } );
@@ -155,14 +155,14 @@ describe( 'On object controller', async () => {
                 result = await chai.request( app ).post( '/append-object' ).send( mock );
             } );
             it( 'should return status 200', async () => {
-                expect( result.status ).to.eq( 200 );
+                expect( result ).to.have.status( 200 );
             } );
             it( 'should return correct json in response', async () => {
                 expect( result.body.parentPermlink ).to.eq( mock.parentPermlink );
             } );
             it( 'should called post method with valid params', async () => {
-                expect( dsteemModel.postWithOptions.calledWith( getPostData( mock, basicAccounts[ 0 ], APPEND_OBJECT ),
-                    getOptions( mock, basicAccounts[ 0 ] ), basicAccounts[ 0 ].postingKey ) ).to.true;
+                expect( dsteemModel.postWithOptions ).to.be.calledWith( getPostData( mock, basicAccounts[ 0 ], APPEND_OBJECT ),
+                    getOptions( mock, basicAccounts[ 0 ] ), basicAccounts[ 0 ].postingKey ) ;
             } );
         } );
         describe( 'On errors', async() => {
@@ -174,10 +174,10 @@ describe( 'On object controller', async () => {
                     result = await chai.request( app ).post( '/append-object' ).send( mock );
                 } );
                 it( 'should return status 503 with RPError', async () => {
-                    expect( result.status ).to.eq( 503 );
+                    expect( result ).to.have.status( 503 );
                 } );
                 it( 'should try to send comment to chain by all bots', async () => {
-                    expect( dsteemModel.postWithOptions.callCount ).to.eq( basicAccounts.length );
+                    expect( dsteemModel.postWithOptions ).to.be.callCount( basicAccounts.length );
                 } );
             } );
             describe( 'On another errors', async () => {
@@ -188,23 +188,23 @@ describe( 'On object controller', async () => {
                     result = await chai.request( app ).post( '/append-object' ).send( mock );
                 } );
                 it( 'should return status 422 with not RPCError', async () => {
-                    expect( result.status ).to.eq( 422 );
+                    expect( result ).to.have.status( 422 );
                 } );
                 it( 'should not try to send comment to chain by all bots with not RPCError', async () => {
-                    expect( dsteemModel.postWithOptions.calledOnce ).to.true;
+                    expect( dsteemModel.postWithOptions ).to.be.calledOnce;
                 } );
             } );
             describe( 'On validation error', async() => {
                 it( 'should return error status 422 with validation error with incorrect author in request', async () => {
                     const result = await chai.request( app ).post( '/append-object' ).send( objectMock( { author: 1 } ) );
 
-                    expect( result.status ).to.eq( 422 );
+                    expect( result ).to.have.status( 422 );
                 } );
                 it( 'should return error status 422 with validation error with incorrect without author in request', async () => {
                     const errorMOck = objectMock();
                     const result = await chai.request( app ).post( '/append-object' ).send( _.omit( errorMOck, [ 'author' ] ) );
 
-                    expect( result.status ).to.eq( 422 );
+                    expect( result ).to.have.status( 422 );
                 } );
             } );
         } );

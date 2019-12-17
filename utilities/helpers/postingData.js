@@ -119,14 +119,6 @@ const getAppendRequestBody = ( reqData, accData ) => (
     }
 );
 
-const preparePostData = ( data ) => {
-    const preparedData = {};
-
-    preparedData.post = data[ 0 ][ 1 ];
-    data[ 1 ][ 1 ] ? preparedData.comment_options = data[ 1 ][ 1 ] : null;
-    return preparedData;
-};
-
 module.exports = {
-    getPostData, getOptions, getAppendRequestBody, preparePostData
+    getPostData, getOptions, getAppendRequestBody
 };

@@ -2,6 +2,7 @@ const sinon = require( 'sinon' );
 const chai = require( 'chai' );
 const chaiHttp = require( 'chai-http' );
 const sinonChai = require( 'sinon-chai' );
+chai.use( chaiHttp );
 chai.use( sinonChai );
 const expect = chai.expect;
 const app = require( '../app' );
@@ -26,7 +27,6 @@ faker.random.string = ( length = 5 ) => {
 module.exports = {
     sinon,
     chai,
-    chaiHttp,
     expect,
     app,
     mockRequest,

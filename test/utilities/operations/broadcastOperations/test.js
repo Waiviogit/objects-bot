@@ -27,25 +27,25 @@ describe( 'On broadcastOperations', async () => {
             } );
             it( 'should successfully create post with options if it exists in queue', async () => {
                 await broadcastOperations.postBroadcaster( 10, 10 );
-                expect( dsteemModel.postWithOptions.called ).to.true;
+                expect( dsteemModel.postWithOptions ).to.be.called;
             } );
             it( 'should successfully create post without options if it exists in queue', async () => {
                 await redisQueue.sendMessage( { client: actionsRsmqClient, qname: postAction.qname, message } );
                 await redisSetter.setActionsData( message, JSON.stringify( _.omit( mockPostData, 'options' ) ) );
                 await broadcastOperations.postBroadcaster( 10, 10 );
-                expect( dsteemModel.post.called ).to.true;
+                expect( dsteemModel.post ).to.be.called;
             } );
             it( 'should successfully delete message from queue after posting', async () => {
                 await broadcastOperations.postBroadcaster( 10, 10 );
                 const { error } = await redisQueue.receiveMessage( { client: actionsRsmqClient, qname: postAction.qname } );
 
-                expect( error.message ).to.eq( 'No messages' );
+                expect( error.message ).to.be.eq( 'No messages' );
             } );
             it( 'should delete data from redis after posting', async () => {
                 await broadcastOperations.postBroadcaster( 10, 10 );
                 const { result } = await redisGetter.getAllHashData( message );
 
-                expect( result ).to.null;
+                expect( result ).to.be.null;
             } );
         } );
         describe( 'On errors', async() => {
@@ -80,12 +80,12 @@ describe( 'On broadcastOperations', async () => {
                 it( 'should not delete message from queue if it not posted', async () => {
                     const { result } = await redisQueue.receiveMessage( { client: actionsRsmqClient, qname: postAction.qname } );
 
-                    expect( result.message ).to.eq( message );
+                    expect( result.message ).to.be.eq( message );
                 } );
                 it( 'should not delete post data from redis if it not posted', async () => {
                     const { result } = await redisGetter.getAllHashData( message );
 
-                    expect( JSON.parse( result ) ).to.deep.eq( mockPostData );
+                    expect( JSON.parse( result ) ).to.be.deep.eq( mockPostData );
                 } );
             } );
         } );
@@ -120,7 +120,7 @@ describe( 'On broadcastOperations', async () => {
                 await broadcastOperations.commentBroadcaster( 10 );
                 const { error } = await redisQueue.receiveMessage( { client: actionsRsmqClient, qname: commentAction.qname } );
 
-                expect( error.message ).to.eq( 'No messages' );
+                expect( error.message ).to.be.eq( 'No messages' );
             } );
             it( 'should delete comment data from redis after posting', async () => {
                 await broadcastOperations.commentBroadcaster( 10 );
@@ -136,17 +136,17 @@ describe( 'On broadcastOperations', async () => {
                 sinon.stub( dsteemModel, 'post' ).returns( Promise.resolve( { error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL | RC.' } } ) );
                 sinon.stub( dsteemModel, 'postWithOptions' ).returns( Promise.resolve( { error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL | RC.' } } ) );
                 await redisQueue.createQueue( { client: actionsRsmqClient, qname: commentAction.qname } );
-                sinon.spy( console, 'log' );
+                sinon.spy( console, 'error' );
             } );
             describe( 'Empty queue', async () => {
                 beforeEach( async () => {
                     await broadcastOperations.commentBroadcaster( 10 );
                 } );
                 it( 'should returns and write log if queue will be empty', async () => {
-                    expect( console.log.calledWith( 'No messages' ) );
+                    expect( console.error ).to.be.calledWith( 'No messages' );
                 } );
                 it( 'should successfully returns if queue is empty', async () => {
-                    expect( dsteemModel.postWithOptions.notCalled ).to.true;
+                    expect( dsteemModel.postWithOptions ).to.be.not.called;
                 } );
             } );
             describe( 'switcher errors', async() => {
@@ -161,12 +161,12 @@ describe( 'On broadcastOperations', async () => {
                 it( 'should not delete message from queue if it not posted', async () => {
                     const { result } = await redisQueue.receiveMessage( { client: actionsRsmqClient, qname: commentAction.qname } );
 
-                    expect( result.message ).to.eq( message );
+                    expect( result.message ).to.be.eq( message );
                 } );
                 it( 'should not delete post data from redis if it not posted', async () => {
                     const { result } = await redisGetter.getAllHashData( message );
 
-                    expect( JSON.parse( result ) ).to.deep.eq( mockPostData );
+                    expect( JSON.parse( result ) ).to.be.deep.eq( mockPostData );
                 } );
             } );
         } );
