@@ -1,13 +1,9 @@
-const { chaiHttp, chai, app, sinon, getRandomString, dsteemModel } = require( '../../testHelper' );
+const { expect, chai, app, sinon, getRandomString, dsteemModel } = require( '../../testHelper' );
 const { objectMock } = require( '../../mocks' );
 const { basicAccounts } = require( '../../../constants/accountsData' );
 const { getOptions, getPostData } = require( '../../../utilities/helpers/postingData' );
 const { APPEND_OBJECT, CREATE_OBJECT } = require( '../../../constants/actionTypes' );
 const _ = require( 'lodash' );
-
-chai.use( chaiHttp );
-chai.should();
-const expect = chai.expect;
 
 describe( 'On object controller', async () => {
     afterEach( async () => {

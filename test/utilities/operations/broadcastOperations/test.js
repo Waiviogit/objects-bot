@@ -55,17 +55,17 @@ describe( 'On broadcastOperations', async () => {
                 sinon.stub( dsteemModel, 'post' ).returns( Promise.resolve( { error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL | RC.' } } ) );
                 sinon.stub( dsteemModel, 'postWithOptions' ).returns( Promise.resolve( { error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL | RC.' } } ) );
                 await redisQueue.createQueue( { client: actionsRsmqClient, qname: postAction.qname } );
-                sinon.spy( console, 'log' );
+                sinon.spy( console, 'error' );
             } );
             describe( 'Empty queue', async () => {
                 beforeEach( async () => {
                     await broadcastOperations.postBroadcaster( 10, 10 );
                 } );
                 it( 'should returns and write log if queue will be empty', async () => {
-                    expect( console.log.calledWith( 'No messages' ) );
+                    expect( console.error ).to.be.calledWith( 'No messages' );
                 } );
                 it( 'should successfully returns if queue is empty', async () => {
-                    expect( dsteemModel.postWithOptions.notCalled ).to.true;
+                    expect( dsteemModel.postWithOptions ).to.be.not.called;
                 } );
             } );
             describe( 'switcher errors', async() => {
@@ -107,14 +107,14 @@ describe( 'On broadcastOperations', async () => {
             } );
             it( 'should successfully send comment with options with valid data to chain', async () => {
                 await broadcastOperations.commentBroadcaster( 10 );
-                expect( dsteemModel.postWithOptions.calledOnce ).to.true;
+                expect( dsteemModel.postWithOptions ).to.be.calledOnce;
             } );
             it( 'should successfully send comment with valid data to chain', async () => {
                 await redisQueue.sendMessage( { client: actionsRsmqClient, qname: commentAction.qname, message } );
                 await redisSetter.setActionsData( message, JSON.stringify( _.omit( mockPostData, 'options' ) ) );
                 await broadcastOperations.commentBroadcaster( 10 );
 
-                expect( dsteemModel.post.calledOnce ).to.true;
+                expect( dsteemModel.post ).to.be.calledOnce;
             } );
             it( 'should delete message from queue after posting ', async () => {
                 await broadcastOperations.commentBroadcaster( 10 );
@@ -126,7 +126,7 @@ describe( 'On broadcastOperations', async () => {
                 await broadcastOperations.commentBroadcaster( 10 );
                 const { result } = await redisGetter.getAllHashData( message );
 
-                expect( result ).to.null;
+                expect( result ).to.be.null;
             } );
         } );
         describe( 'On errors', async() => {

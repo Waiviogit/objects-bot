@@ -1,6 +1,8 @@
 const sinon = require( 'sinon' );
 const chai = require( 'chai' );
 const chaiHttp = require( 'chai-http' );
+const sinonChai = require( 'sinon-chai' );
+chai.use( sinonChai );
 const expect = chai.expect;
 const app = require( '../app' );
 const { mockRequest, mockResponse } = require( 'mock-req-res' );

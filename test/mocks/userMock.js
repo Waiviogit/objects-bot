@@ -7,5 +7,4 @@ module.exports = ( { name, alias } = {} ) => ( {
             alias: alias || getRandomString( 10 )
         }
     }
-
 } );
