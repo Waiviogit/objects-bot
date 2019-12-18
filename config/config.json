@@ -1,0 +1,90 @@
+{
+  "production": {
+    "db": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waivio"
+    },
+    "redis": {
+      "actionsQueue": 3,
+      "actionsData": 5
+    },
+    "waivio_auth": {
+      "host": "www.waivio.com",
+      "baseUrl": "auth",
+      "validateTokenPath": "validate_token"
+    },
+    "posting_account": 0,
+    "posting_counter": 0,
+    "comment_account": 0,
+    "basic_operations_account": 0,
+    "attempts": 0,
+    "custom_json_account": 0
+  },
+  "staging": {
+    "db": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waivio"
+    },
+    "redis": {
+      "actionsQueue": 3,
+      "actionsData": 5
+    },
+    "waivio_auth": {
+      "host": "waiviodev.com",
+      "baseUrl": "auth",
+      "validateTokenPath": "validate_auth_token"
+    },
+    "posting_account": 0,
+    "posting_counter": 0,
+    "comment_account": 0,
+    "basic_operations_account": 0,
+    "attempts": 0,
+    "custom_json_account": 0
+  },
+  "development": {
+    "db": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waivio"
+    },
+    "redis": {
+      "actionsQueue": 3,
+      "actionsData": 5
+    },
+    "waivio_auth": {
+      "host": "waiviodev.com",
+      "baseUrl": "auth",
+      "validateTokenPath": "validate_auth_token"
+    },
+    "posting_account": 0,
+    "posting_counter": 0,
+    "comment_account": 0,
+    "basic_operations_account": 0,
+    "attempts": 0,
+    "custom_json_account": 0
+  },
+  "test": {
+    "db": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waiviotest"
+    },
+    "redis": {
+      "actionsQueue": 7,
+      "actionsData": 7
+    },
+    "waivio_auth": {
+      "host": "waiviodev.com",
+      "baseUrl": "auth",
+      "validateTokenPath": "validate_auth_token"
+    },
+    "posting_account": 0,
+    "posting_counter": 0,
+    "comment_account": 0,
+    "basic_operations_account": 0,
+    "attempts": 0,
+    "custom_json_account": 0
+  }
+}
