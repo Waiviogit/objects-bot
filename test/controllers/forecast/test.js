@@ -23,7 +23,7 @@ describe( 'On forecast controller', async() => {
                 expect( result ).to.have.status( 200 );
             } );
             it( 'should return correct json in response', async () => {
-                expect( result.body ).to.be.deep.eq( { permlink: `exp-${mock.expForecast.expiredAt}`, author: basicAccounts[ 0 ].name } );
+                expect( result.body ).to.be.deep.eq( { permlink: `exp-${mock.expForecast.expiredAt}`, author: basicAccounts[ 1 ].name } );
             } );
         } );
         describe( 'On errors', async() => {

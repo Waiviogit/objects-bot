@@ -13,7 +13,7 @@ const proxyPosting = async ( req, res, next ) => { // add data to queue
 
         if( postingError ) return next( postingError );
 
-        res.result = { status: 200, json: timeToPublication };
+        res.result = { status: 200, json: { json: timeToPublication } };
         next();
     }
 };

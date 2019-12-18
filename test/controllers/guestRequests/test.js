@@ -30,7 +30,7 @@ describe( 'On guestRequestsController', async () => {
                 expect( result ).to.have.status( 200 );
             } );
             it( 'should return correct waiting time for posting', async () => {
-                expect( result.body.waitingTime ).to.be.eq( 0 );
+                expect( result.body.json.waitingTime ).to.be.eq( 0 );
             } );
         } );
         describe( 'On proxyPosting post OK', async () => {
@@ -48,7 +48,7 @@ describe( 'On guestRequestsController', async () => {
                 expect( result ).to.have.status( 200 );
             } );
             it( 'should return correct waiting time for posting', async () => {
-                expect( result.body.waitingTime ).to.be.eq( Math.ceil( 5 ) );
+                expect( result.body.json.waitingTime ).to.be.eq( Math.ceil( 5 ) );
             } );
         } );
         describe( 'On validation error', async () => {
