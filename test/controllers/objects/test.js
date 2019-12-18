@@ -26,7 +26,7 @@ describe( 'On object controller', async () => {
                 expect( result ).to.have.status( 200 );
             } );
             it( 'should return correct json in response', async () => {
-                expect( result.body.author ).to.be.eq( basicAccounts[ 0 ].name );
+                expect( result.body.author ).to.be.eq( basicAccounts[ 1 ].name );
             } );
         } );
         describe( 'On errors', async() => {

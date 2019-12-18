@@ -1,10 +1,5 @@
 {
   "production": {
-    "db": {
-      "host": "localhost",
-      "port": 27017,
-      "database": "waivio"
-    },
     "redis": {
       "actionsQueue": 3,
       "actionsData": 5
@@ -19,14 +14,17 @@
     "comment_account": 0,
     "basic_operations_account": 0,
     "attempts": 0,
-    "custom_json_account": 0
+    "custom_json_account": 0,
+    "forecasts": {
+      "account": 0,
+      "attempts": 0
+    },
+    "objects": {
+      "account": 0,
+      "attempts": 0
+    }
   },
   "staging": {
-    "db": {
-      "host": "localhost",
-      "port": 27017,
-      "database": "waivio"
-    },
     "redis": {
       "actionsQueue": 3,
       "actionsData": 5
@@ -41,14 +39,17 @@
     "comment_account": 0,
     "basic_operations_account": 0,
     "attempts": 0,
-    "custom_json_account": 0
+    "custom_json_account": 0,
+    "forecasts": {
+      "account": 0,
+      "attempts": 0
+    },
+    "objects": {
+      "account": 0,
+      "attempts": 0
+    }
   },
   "development": {
-    "db": {
-      "host": "localhost",
-      "port": 27017,
-      "database": "waivio"
-    },
     "redis": {
       "actionsQueue": 3,
       "actionsData": 5
@@ -63,14 +64,17 @@
     "comment_account": 0,
     "basic_operations_account": 0,
     "attempts": 0,
-    "custom_json_account": 0
+    "custom_json_account": 0,
+    "forecasts": {
+      "account": 0,
+      "attempts": 0
+    },
+    "objects": {
+      "account": 0,
+      "attempts": 0
+    }
   },
   "test": {
-    "db": {
-      "host": "localhost",
-      "port": 27017,
-      "database": "waiviotest"
-    },
     "redis": {
       "actionsQueue": 7,
       "actionsData": 7
@@ -85,6 +89,14 @@
     "comment_account": 0,
     "basic_operations_account": 0,
     "attempts": 0,
-    "custom_json_account": 0
+    "custom_json_account": 0,
+    "forecasts": {
+      "account": 0,
+      "attempts": 0
+    },
+    "objects": {
+      "account": 0,
+      "attempts": 0
+    }
   }
 }
