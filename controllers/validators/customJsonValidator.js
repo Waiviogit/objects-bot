@@ -10,9 +10,8 @@ exports.voteSchema = Joi.object().keys( {
 
 exports.createSchema = Joi.object().keys( {
     userId: Joi.string().required(),
-    displayName: Joi.string().required(),
-    json_metadata: Joi.string().required()
-} ).options( { allowUnknown: true, stripUnknown: true } );
+    json_metadata: Joi.string().allow( '' ).required()
+} ).options( { allowUnknown: true } );
 
 
 exports.followWobjSchema = Joi.array().ordered(
