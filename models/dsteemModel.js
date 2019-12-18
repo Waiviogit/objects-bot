@@ -28,7 +28,7 @@ const customJSON = async ( data, account ) => {
             required_auth: [],
             required_posting_auth: [ account.name ]
         },
-        dsteem.PrivateKey.fromString( data.postingKey ) ) };
+        dsteem.PrivateKey.fromString( account.postingKey ) ) };
     } catch( error ) {
         console.error( error );
         return { error };
