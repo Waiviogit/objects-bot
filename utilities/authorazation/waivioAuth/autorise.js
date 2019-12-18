@@ -6,7 +6,7 @@ const { getNamespace } = require( 'cls-hooked' );
 
 const validateTokenRequest = async ( token ) => {
     try {
-        const { data: response } = await axios.post( VALIDATE_TOKEN_URL, token );
+        const { data: response } = await axios.post( VALIDATE_TOKEN_URL, {}, { headers: { 'access-token': token } } );
 
         if ( response ) return { response };
         return { error: { message: 'Not enough response data!' } };
