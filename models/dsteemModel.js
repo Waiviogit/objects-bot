@@ -25,8 +25,8 @@ const customJSON = async ( data, account ) => {
         return{ result: await client.broadcast.json( {
             id: data.id,
             json: data.json,
-            required_auth: [],
-            required_posting_auth: [ account.name ]
+            required_auths: [ ],
+            required_posting_auths: [ account.name ]
         },
         dsteem.PrivateKey.fromString( account.postingKey ) ) };
     } catch( error ) {
