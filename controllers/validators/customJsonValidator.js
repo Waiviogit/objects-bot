@@ -10,7 +10,7 @@ exports.voteSchema = Joi.object().keys( {
 
 exports.createSchema = Joi.object().keys( {
     userId: Joi.string().required(),
-    displayName: Joi.string().default( '' ),
+    displayName: Joi.string().allow( '' ).default( '' ),
     json_metadata: Joi.string().allow( '' ).required()
 } ).options( { allowUnknown: true } );
 
