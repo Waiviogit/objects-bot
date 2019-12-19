@@ -11,7 +11,9 @@
     },
     "guest_comment": {
       "account": 0,
-      "attempts": 0
+      "accountForComm": 0,
+      "attempts": 0,
+      "attemptsComm": 0
     },
     "basic_operations_account": 0,
     "attempts": 0,
@@ -37,7 +39,9 @@
     },
     "guest_comment": {
       "account": 0,
-      "attempts": 0
+      "attempts": 0,
+      "accountForComm": 0,
+      "attemptsComm": 0
     },
     "basic_operations_account": 0,
     "attempts": 0,
@@ -63,7 +67,9 @@
     },
     "guest_comment": {
       "account": 0,
-      "attempts": 0
+      "attempts": 0,
+      "accountForComm": 0,
+      "attemptsComm": 0
     },
     "basic_operations_account": 0,
     "attempts": 0,
@@ -89,7 +95,9 @@
     },
     "guest_comment": {
       "account": 0,
-      "attempts": 0
+      "attempts": 0,
+      "accountForComm": 0,
+      "attemptsComm": 0
     },
     "basic_operations_account": 0,
     "attempts": 0,
