@@ -14,6 +14,7 @@ app.use( express.urlencoded( { extended: true } ) );
 app.use( ( req, res, next ) => {
     session.run( () => next() );
 } );
+
 app.use( ( req, res, next ) => {
     session.set( 'access-token', req.headers[ 'access-token' ] );
     session.set( 'waivio-auth', Boolean( req.headers[ 'waivio-auth' ] ) );
@@ -32,5 +33,8 @@ app.use( ( err, req, res, next ) => {
     // render the error page
     res.status( err.status || 500 ).json( { message: err.message } );
 } );
+
+job.runPosts();
+job.runComments();
 
 module.exports = app;

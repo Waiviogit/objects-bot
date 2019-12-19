@@ -62,7 +62,7 @@ describe( 'On broadcastOperations', async () => {
                     await broadcastOperations.postBroadcaster( 10, 10 );
                 } );
                 it( 'should returns and write log if queue will be empty', async () => {
-                    expect( console.error ).to.be.calledWith( 'No messages' );
+                    expect( console.error ).to.be.calledWith( 'ERR[PostBroadcasting] No messages' );
                 } );
                 it( 'should successfully returns if queue is empty', async () => {
                     expect( dsteemModel.postWithOptions ).to.be.not.called;
@@ -143,7 +143,7 @@ describe( 'On broadcastOperations', async () => {
                     await broadcastOperations.commentBroadcaster( 10 );
                 } );
                 it( 'should returns and write log if queue will be empty', async () => {
-                    expect( console.error ).to.be.calledWith( 'No comment messages' );
+                    expect( console.error ).to.be.calledWith( 'ERR[CommentBroadcasting] No messages' );
                 } );
                 it( 'should successfully returns if queue is empty', async () => {
                     expect( dsteemModel.postWithOptions ).to.be.not.called;
@@ -156,7 +156,7 @@ describe( 'On broadcastOperations', async () => {
                     mockPostData = validationHelper.postingValidator( mock );
                     await redisQueue.sendMessage( { client: actionsRsmqClient, qname: commentAction.qname, message } );
                     await redisSetter.setActionsData( message, JSON.stringify( mockPostData ) );
-                    await broadcastOperations.commentBroadcaster( 10 );
+                    await broadcastOperations.commentBroadcaster( 10, 10 );
                 } );
                 it( 'should not delete message from queue if it not posted', async () => {
                     const { result } = await redisQueue.receiveMessage( { client: actionsRsmqClient, qname: commentAction.qname } );
