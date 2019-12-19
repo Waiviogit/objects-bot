@@ -13,7 +13,7 @@ const addToQueue = async ( data, actionData ) => {
     const { result: currentUserComments } = await redisGetter.getHashKeysAll( `${actionData.operation}:${data.commentData.author}:*` );
 
     if ( currentUserComments.length >= actionData.limit ) {
-        return { error: { message: `To many comments from ${data.commentData.author} in queue` } };
+        return { error: {status: 422, message: `To many comments from ${data.commentData.author} in queue` } };
     }
     data.commentData.json_metadata = updateMetadata.metadataModify( data.commentData.json_metadata );
 

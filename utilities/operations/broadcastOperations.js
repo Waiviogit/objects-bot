@@ -55,6 +55,7 @@ const commentBroadcaster = async ( noMessageWait = 5000 ) => {
     const { error: broadcastError } = await broadcastingSwitcher( queueMessage.message, account );
 
     if ( broadcastError && regExp.steemErrRegExp.test( broadcastError.message ) ) {
+        console.warn( `ERR[PostBroadcasting] RPCError: ${broadcastError.message}` );
         config.guest_comment.account === accountsData.guestOperationAccounts.length - 1 ? config.guest_comment.account = 0 : config.guest_comment.account += 1;
         return;
     }

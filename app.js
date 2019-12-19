@@ -5,7 +5,7 @@ const { routes } = require( './routes' );
 const app = express();
 const { createNamespace } = require( 'cls-hooked' );
 const session = createNamespace( 'request-session' );
-
+const job = require( './jobs/sendToChain' );
 
 app.use( logger( 'dev' ) );
 app.use( express.json() );
