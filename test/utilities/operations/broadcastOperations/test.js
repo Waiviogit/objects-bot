@@ -143,7 +143,7 @@ describe( 'On broadcastOperations', async () => {
                     await broadcastOperations.commentBroadcaster( 10 );
                 } );
                 it( 'should returns and write log if queue will be empty', async () => {
-                    expect( console.error ).to.be.calledWith( 'No messages' );
+                    expect( console.error ).to.be.calledWith( 'No comment messages' );
                 } );
                 it( 'should successfully returns if queue is empty', async () => {
                     expect( dsteemModel.postWithOptions ).to.be.not.called;

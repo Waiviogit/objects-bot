@@ -6,7 +6,7 @@ const proxyPosting = async ( req, res, next ) => { // add data to queue
     const comment = validationHelper.postingValidator( req.body, next );
     if( !comment ) return;
 
-    const { error, isValid } = await authoriseUser.authorise( comment.commentData.author );
+    const { error, isValid } = await authoriseUser.authorise( comment.comment.author );
     if ( error ) return next( error );
     else if( isValid ) {
         const { result: timeToPublication, error: postingError } = await queueOperations.queueSwitcher( comment );

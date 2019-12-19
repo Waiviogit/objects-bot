@@ -41,14 +41,15 @@ const postBroadcaster = async ( noMessageWait = 5000, postingErrorWait = 60000 )
 };
 
 const commentBroadcaster = async ( noMessageWait = 5000 ) => {
-    const account = accountsData.guestOperationAccounts[ config.guest_comment.account ];
+    const account = accountsData.guestOperationAccounts[
+        config.guest_comment.account === accountsData.guestOperationAccounts.length - 1 ? config.guest_comment.account = 0 : config.guest_comment.account += 1 ];
     const { error: redisError, result: queueMessage } = await redisQueue.receiveMessage( {
         client: actionsRsmqClient,
         qname: guestRequestsData.commentAction.qname
     } );
 
     if ( redisError || !queueMessage ) {
-        console.error( redisError.message || 'Queue is empty' );
+        console.error( 'No comment messages' );
         await new Promise( ( resolve ) => setTimeout( resolve, noMessageWait ) );
         return;
     }
@@ -56,14 +57,11 @@ const commentBroadcaster = async ( noMessageWait = 5000 ) => {
 
     if ( broadcastError && regExp.steemErrRegExp.test( broadcastError.message ) ) {
         console.warn( `ERR[PostBroadcasting] RPCError: ${broadcastError.message}` );
-        config.guest_comment.account === accountsData.guestOperationAccounts.length - 1 ? config.guest_comment.account = 0 : config.guest_comment.account += 1;
         return;
     }
-    config.guest_comment.account === accountsData.guestOperationAccounts.length - 1 ? config.guest_comment.account = 0 : config.guest_comment.account += 1;
     await redisQueue.deleteMessage( { client: actionsRsmqClient, qname: guestRequestsData.commentAction.qname, id: queueMessage.id } );
     await redisSetter.delActionsData( queueMessage.message );
 };
-
 
 const broadcastingSwitcher = async ( message, account ) => {
     const { result: postingData } = await redisGetter.getAllHashData( message );
@@ -74,7 +72,7 @@ const broadcastingSwitcher = async ( message, account ) => {
     }catch( error ) {
         return { error };
     }
-    const post = parsedData.commentData;
+    const post = parsedData.comment;
     console.info( `Try to create comment by | ${account.name}` );
     post.body = `${post.body}\n This message was written by guest ${post.author}, and is available at ${config.waivio_auth.host}/@${post.author}/${post.permlink}`;
     post.author = account.name;

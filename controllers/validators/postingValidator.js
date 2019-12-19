@@ -4,11 +4,11 @@ exports.simpleSchema = Joi.object().keys( {
     author: Joi.string().required(),
     permlink: Joi.string().required(),
     parent_author: Joi.string().allow( '' ).default( '' ),
-    title: Joi.when('parent_author', {
+    title: Joi.when( 'parent_author', {
         is: '',
-        then: Joi.string().invalid('').required(),
-        otherwise: Joi.string().allow('').required()
-    }),
+        then: Joi.string().invalid( '' ).required(),
+        otherwise: Joi.string().allow( '' ).required()
+    } ),
     parent_permlink: Joi.string(),
     body: Joi.string().required(),
     json_metadata: Joi.string().required()
@@ -23,7 +23,7 @@ exports.optionsSchema = Joi.object().keys( {
     percent_steem_dollars: Joi.number().allow( 0 ).required(),
     extensions: Joi.array().items(
         Joi.array().ordered(
-            Joi.number().allow( 0 ),
+            Joi.number().allow( 0 ).required(),
             Joi.object().keys( {
                 beneficiaries: Joi.array().items(
                     Joi.object().keys( {

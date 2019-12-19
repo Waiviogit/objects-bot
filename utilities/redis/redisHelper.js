@@ -10,14 +10,14 @@ const addToQueue = async ( data, actionData ) => {
     const { error: createError } = await redisQueue.createQueue( { client: actionsRsmqClient, qname: actionData.qname } );
 
     if ( createError ) return { error: { status: 500, message: createError } };
-    const { result: currentUserComments } = await redisGetter.getHashKeysAll( `${actionData.operation}:${data.commentData.author}:*` );
+    const { result: currentUserComments } = await redisGetter.getHashKeysAll( `${actionData.operation}:${data.comment.author}:*` );
 
     if ( currentUserComments.length >= actionData.limit ) {
-        return { error: { status: 429, message: `To many comments from ${data.commentData.author} in queue` } };
+        return { error: { status: 429, message: `To many comments from ${data.comment.author} in queue` } };
     }
-    data.commentData.json_metadata = updateMetadata.metadataModify( data.commentData.json_metadata );
+    data.comment.json_metadata = updateMetadata.metadataModify( data.comment.json_metadata );
 
-    const message_id = `${actionData.operation}:${data.commentData.author}:${uuid()}`;
+    const message_id = `${actionData.operation}:${data.comment.author}:${uuid()}`;
 
     const { error: sendMessError } = await redisQueue.sendMessage( {
         client: actionsRsmqClient,
