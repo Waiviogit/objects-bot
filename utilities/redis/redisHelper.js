@@ -13,7 +13,7 @@ const addToQueue = async ( data, actionData ) => {
     const { result: currentUserComments } = await redisGetter.getHashKeysAll( `${actionData.operation}:${data.commentData.author}:*` );
 
     if ( currentUserComments.length >= actionData.limit ) {
-        return { error: {status: 422, message: `To many comments from ${data.commentData.author} in queue` } };
+        return { error: { status: 429, message: `To many comments from ${data.commentData.author} in queue` } };
     }
     data.commentData.json_metadata = updateMetadata.metadataModify( data.commentData.json_metadata );
 
@@ -27,7 +27,7 @@ const addToQueue = async ( data, actionData ) => {
     const redisDataError = await redisSetter.setActionsData( message_id, JSON.stringify( data ) );
 
     if ( sendMessError || redisDataError ) {
-        return { error: { status: 500, message: sendMessError || redisDataError } };
+        return { error: { status: 503, message: sendMessError || redisDataError } };
     }
     const result = { waitingTime: await timeToPosting( actionData ) };
 

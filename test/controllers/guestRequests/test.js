@@ -187,7 +187,7 @@ describe( 'On guestRequestsController', async () => {
                     .set( { 'waivio-auth': 1 } )
                     .send( postMock( { author: author, parentAuthor: getRandomString() } ) );
 
-                expect( result ).to.have.status( 500 );
+                expect( result ).to.have.status( 503 );
             } );
         } );
     } );
