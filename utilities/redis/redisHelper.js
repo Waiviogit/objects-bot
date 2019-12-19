@@ -3,7 +3,7 @@ const redisSetter = require( './redisSetter' );
 const { actionsRsmqClient, redisQueue } = require( './rsmq' );
 const accountsData = require( '../../constants/accountsData' );
 const updateMetadata = require( '../helpers/updateMetadata' );
-const { uuid } = require('uuidv4');
+const { uuid } = require( 'uuidv4' );
 
 // Create queue if it not exist, and add "data" to this queue
 const addToQueue = async ( data, actionData ) => {
@@ -39,7 +39,7 @@ const timeToPosting = async ( actionData ) => {
     const { result: allQueueItems } = await redisGetter.getHashKeysAll( `${actionData.operation}:*` );
 
     if( actionData.operation === 'proxy-post' ) {
-        return ( Math.ceil( ( ( allQueueItems.length * actionData.rechargeTime ) / accountsData.guestOperationAccounts.length ) / 5 ) * 5 );
+        return ( ( Math.ceil( ( ( allQueueItems.length * actionData.rechargeTime ) / accountsData.guestOperationAccounts.length ) / 5 ) * 5 ) - 5 );
     }
     return Math.round( ( allQueueItems.length * actionData.rechargeTime ) / accountsData.guestOperationAccounts.length );
 };
