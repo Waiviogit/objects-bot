@@ -17,7 +17,7 @@ describe( 'On broadcastOperations', async () => {
 
             beforeEach( async () => {
                 sinon.stub( dsteemModel, 'post' ).returns( Promise.resolve( 'OK' ) );
-                sinon.stub( dsteemModel, 'postWithOptions' ).returns( Promise.resolve( 'OK' ) );
+                sinon.stub( dsteemModel, 'postWithOptions' ).returns( Promise.resolve( { result: 'OK' } ) );
                 mock = postMock();
                 mockPostData = validationHelper.postingValidator( mock );
                 message = getRandomString( 10 );
@@ -37,7 +37,7 @@ describe( 'On broadcastOperations', async () => {
             } );
             it( 'should successfully delete message from queue after posting', async () => {
                 await broadcastOperations.postBroadcaster( 10, 10 );
-                const { error } = await redisQueue.receiveMessage( { client: actionsRsmqClient, qname: postAction.qname } );
+                const { error, result } = await redisQueue.receiveMessage( { client: actionsRsmqClient, qname: postAction.qname } );
 
                 expect( error.message ).to.be.eq( 'No messages' );
             } );

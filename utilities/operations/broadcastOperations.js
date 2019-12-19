@@ -6,7 +6,7 @@ const config = require( '../../config' );
 const _ = require( 'lodash' );
 
 const postBroadcaster = async ( noMessageWait = 5000, postingErrorWait = 60000 ) => {
-    const account = accountsData.guestOperationAccounts[ config.posting_account ];
+    const account = accountsData.guestOperationAccounts[ config.guest_comment.account ];
     const { error: redisError, result: queueMessage } = await redisQueue.receiveMessage( {
         client: actionsRsmqClient,
         qname: guestRequestsData.postAction.qname
@@ -15,27 +15,33 @@ const postBroadcaster = async ( noMessageWait = 5000, postingErrorWait = 60000 )
     if ( redisError ) {
         console.error( redisError.message );
         await new Promise( ( resolve ) => setTimeout( resolve, noMessageWait ) );
-        config.posting_counter = 0;
+        config.guest_comment.attempts = 0;
         return;
     }
+    const { error: broadcastError, result: transactionStatus } = await broadcastingSwitcher( queueMessage.message, account );
 
-    const { error: broadcastError } = await broadcastingSwitcher( queueMessage.message, account );
-
-    if ( broadcastError && regExp.steemErrRegExp.test( broadcastError.message ) ) {
-        config.posting_account === accountsData.guestOperationAccounts.length - 1 ? config.posting_account = 0 : config.posting_account += 1;
+    if( transactionStatus ) {
+        config.guest_comment.account === accountsData.guestOperationAccounts.length - 1 ? config.guest_comment.account = 0 : config.guest_comment.account += 1;
+        config.guest_comment.attempts = 0;
+        console.info( `INFO[PostBroadcasting] Post successfully send | transaction id ${transactionStatus.id}` );
+    } else if ( config.guest_comment.attempts === ( accountsData.guestOperationAccounts.length - 1 ) ) {
+        console.error( `ERR[PostBroadcasting] RPCError: ${broadcastError.message}` );
+        await new Promise( ( resolve ) => setTimeout( resolve, postingErrorWait ) );
+        config.guest_comment.attempts = 0;
+        return;
+    } else if ( broadcastError && regExp.steemErrRegExp.test( broadcastError.message ) ) {
+        console.warn( `ERR[PostBroadcasting] RPCError: ${broadcastError.message}` );
+        config.guest_comment.attempts += 1;
+        config.guest_comment.account === accountsData.guestOperationAccounts.length - 1 ? config.guest_comment.account = 0 : config.guest_comment.account += 1;
+        await postBroadcaster( noMessageWait, postingErrorWait );
         return;
     }
     await redisQueue.deleteMessage( { client: actionsRsmqClient, qname: guestRequestsData.postAction.qname, id: queueMessage.id } );
     await redisSetter.delActionsData( queueMessage.message );
-    if ( config.posting_counter === ( accountsData.guestOperationAccounts.length - 1 ) ) {
-        await new Promise( ( resolve ) => setTimeout( resolve, postingErrorWait ) );
-        config.posting_counter = 0;
-    }
-    config.posting_counter++;
 };
 
 const commentBroadcaster = async ( noMessageWait = 5000 ) => {
-    const account = accountsData.guestOperationAccounts[ config.comment_account ];
+    const account = accountsData.guestOperationAccounts[ config.guest_comment.account ];
     const { error: redisError, result: queueMessage } = await redisQueue.receiveMessage( {
         client: actionsRsmqClient,
         qname: guestRequestsData.commentAction.qname
@@ -49,9 +55,10 @@ const commentBroadcaster = async ( noMessageWait = 5000 ) => {
     const { error: broadcastError } = await broadcastingSwitcher( queueMessage.message, account );
 
     if ( broadcastError && regExp.steemErrRegExp.test( broadcastError.message ) ) {
-        config.comment_account === accountsData.guestOperationAccounts.length - 1 ? config.comment_account = 0 : config.comment_account += 1;
+        config.guest_comment.account === accountsData.guestOperationAccounts.length - 1 ? config.guest_comment.account = 0 : config.guest_comment.account += 1;
         return;
     }
+    config.guest_comment.account === accountsData.guestOperationAccounts.length - 1 ? config.guest_comment.account = 0 : config.guest_comment.account += 1;
     await redisQueue.deleteMessage( { client: actionsRsmqClient, qname: guestRequestsData.commentAction.qname, id: queueMessage.id } );
     await redisSetter.delActionsData( queueMessage.message );
 };
@@ -67,7 +74,7 @@ const broadcastingSwitcher = async ( message, account ) => {
         return { error };
     }
     const post = parsedData.commentData;
-
+    console.info( `Try to create comment by | ${account.name}` );
     post.body = `${post.body}\n This message was written by guest ${post.author}, and is available at ${config.waivio_auth.host}/@${post.author}/${post.permlink}`;
     post.author = account.name;
     if ( !_.has( parsedData, 'options' ) ) return await dsteemModel.post( post, account.postingKey );

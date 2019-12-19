@@ -9,9 +9,10 @@
       "baseUrl": "auth",
       "validateTokenPath": "validate_token"
     },
-    "posting_account": 0,
-    "posting_counter": 0,
-    "comment_account": 0,
+    "guest_comment": {
+      "account": 0,
+      "attempts": 0
+    },
     "basic_operations_account": 0,
     "attempts": 0,
     "custom_json_account": 0,
@@ -34,9 +35,10 @@
       "baseUrl": "auth",
       "validateTokenPath": "validate_auth_token"
     },
-    "posting_account": 0,
-    "posting_counter": 0,
-    "comment_account": 0,
+    "guest_comment": {
+      "account": 0,
+      "attempts": 0
+    },
     "basic_operations_account": 0,
     "attempts": 0,
     "custom_json_account": 0,
@@ -59,9 +61,10 @@
       "baseUrl": "auth",
       "validateTokenPath": "validate_auth_token"
     },
-    "posting_account": 0,
-    "posting_counter": 0,
-    "comment_account": 0,
+    "guest_comment": {
+      "account": 0,
+      "attempts": 0
+    },
     "basic_operations_account": 0,
     "attempts": 0,
     "custom_json_account": 0,
@@ -84,9 +87,10 @@
       "baseUrl": "auth",
       "validateTokenPath": "validate_auth_token"
     },
-    "posting_account": 0,
-    "posting_counter": 0,
-    "comment_account": 0,
+    "guest_comment": {
+      "account": 0,
+      "attempts": 0
+    },
     "basic_operations_account": 0,
     "attempts": 0,
     "custom_json_account": 0,
