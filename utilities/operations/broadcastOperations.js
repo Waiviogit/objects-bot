@@ -77,9 +77,9 @@ const broadcastingSwitcher = async ( message, account ) => {
     post.body = `${post.body}\n This message was written by guest ${post.author}, and is available at ${config.waivio_auth.host}/@${post.author}/${post.permlink}`;
     post.author = account.name;
     if ( !_.has( parsedData, 'options' ) ) return await dsteemModel.post( post, account.postingKey );
-
+    const options = parsedData.options;
+    options.author = account.name;
     return await dsteemModel.postWithOptions( post, parsedData.options, account.postingKey );
 };
 
 module.exports = { postBroadcaster, commentBroadcaster };
-
