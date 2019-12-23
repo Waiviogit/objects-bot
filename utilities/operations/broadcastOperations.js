@@ -13,7 +13,7 @@ const postBroadcaster = async ( noMessageWait = 6000, postingErrorWait = 60000 )
 
     if ( redisError ) {
         if ( redisError.message === 'No messages' ) {
-            console.error( `ERR[PostBroadcasting] ${redisError.message}` );
+            // console.error( `ERR[PostBroadcasting] ${redisError.message}` );
             await new Promise( ( r ) => setTimeout( r, noMessageWait ) );
             return;
         }
@@ -50,7 +50,7 @@ const commentBroadcaster = async ( noMessageWait = 10000, postingErrorWait = 100
 
     if ( redisError ) {
         if ( redisError.message === 'No messages' ) {
-            console.error( `ERR[CommentBroadcasting] ${redisError.message}` );
+            // console.error( `ERR[CommentBroadcasting] ${redisError.message}` );
             await new Promise( ( r ) => setTimeout( r, noMessageWait ) );
             return;
         }
@@ -90,12 +90,14 @@ const broadcastingSwitcher = async ( message, account ) => {
     }
     const post = parsedData.comment;
     console.info( `Try to create comment by | ${account.name}` );
-    post.body = `${post.body}\n This message was written by guest ${post.author}, and is available at ${config.waivio_auth.host}/@${post.author}/${post.permlink}`;
+    post.body = `${post.body}\n This message was written by guest ${post.author}, and is [available at ${config.waivio_auth.host}](https://${config.waivio_auth.host}/@${post.author}/${post.permlink})`;
     post.author = account.name;
     if ( !_.has( parsedData, 'options' ) ) return await dsteemModel.post( post, account.postingKey );
     const options = parsedData.options;
     options.author = account.name;
-    return await dsteemModel.postWithOptions( post, parsedData.options, account.postingKey );
+    const { result, error } = await dsteemModel.postWithOptions( post, parsedData.options, account.postingKey );
+    if ( error && error.message.match( 'beneficiaries' ) ) return await dsteemModel.post( post, account.postingKey );
+    return {result, error};
 };
 
 module.exports = { postBroadcaster, commentBroadcaster };

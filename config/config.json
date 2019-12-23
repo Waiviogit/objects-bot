@@ -15,9 +15,10 @@
       "attempts": 0,
       "attemptsComm": 0
     },
-    "basic_operations_account": 0,
-    "attempts": 0,
-    "custom_json_account": 0,
+    "custom_json": {
+      "account": 0,
+      "attempts": 0
+    },
     "forecasts": {
       "account": 0,
       "attempts": 0
@@ -43,9 +44,10 @@
       "accountForComm": 0,
       "attemptsComm": 0
     },
-    "basic_operations_account": 0,
-    "attempts": 0,
-    "custom_json_account": 0,
+    "custom_json": {
+      "account": 0,
+      "attempts": 0
+    },
     "forecasts": {
       "account": 0,
       "attempts": 0
@@ -71,8 +73,10 @@
       "accountForComm": 0,
       "attemptsComm": 0
     },
-    "basic_operations_account": 0,
-    "attempts": 0,
+    "custom_json": {
+      "account": 0,
+      "attempts": 0
+    },
     "custom_json_account": 0,
     "forecasts": {
       "account": 0,
@@ -99,8 +103,10 @@
       "accountForComm": 0,
       "attemptsComm": 0
     },
-    "basic_operations_account": 0,
-    "attempts": 0,
+    "custom_json": {
+      "account": 0,
+      "attempts": 0
+    },
     "custom_json_account": 0,
     "forecasts": {
       "account": 0,

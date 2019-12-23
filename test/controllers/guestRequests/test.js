@@ -321,6 +321,22 @@ describe( 'On guestRequestsController', async () => {
                         expect( dsteemModel.customJSON ).to.be.not.called;
                     } );
                 } );
+                describe( 'On RPC errors', async () => {
+                    beforeEach( async () => {
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } } ) );
+                        mock = customJsonMock.vote( { voter: author } );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should try to send custom json by account length times', async () => {
+                        expect( dsteemModel.customJSON ).to.be.callCount( botMock.length );
+                    } );
+                    it( 'should return error status 500', async () => {
+                        expect( result ).to.have.status( 500 );
+                    } );
+                } );
                 describe( 'On broadcast errors', async () => {
                     beforeEach( async () => {
                         mock = customJsonMock.vote( { voter: author } );
@@ -357,6 +373,22 @@ describe( 'On guestRequestsController', async () => {
                     } );
                     it( 'should not call dsteem model method if request data not valid', async () => {
                         expect( dsteemModel.customJSON ).to.be.not.called;
+                    } );
+                } );
+                describe( 'On RPC errors', async () => {
+                    beforeEach( async () => {
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } } ) );
+                        mock = customJsonMock.follow( { follower: author } );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should try to send custom json by account length times', async () => {
+                        expect( dsteemModel.customJSON ).to.be.callCount( botMock.length );
+                    } );
+                    it( 'should return error status 500', async () => {
+                        expect( result ).to.have.status( 500 );
                     } );
                 } );
                 describe( 'On authorisation errors', async () => {
@@ -410,6 +442,22 @@ describe( 'On guestRequestsController', async () => {
                     } );
                     it( 'should not call dsteem model method if request data not valid', async () => {
                         expect( dsteemModel.customJSON ).to.be.not.called;
+                    } );
+                } );
+                describe( 'On RPC errors', async () => {
+                    beforeEach( async () => {
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } } ) );
+                        mock = customJsonMock.followWobj( { user: author } );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should try to send custom json by account length times', async () => {
+                        expect( dsteemModel.customJSON ).to.be.callCount( botMock.length );
+                    } );
+                    it( 'should return error status 500', async () => {
+                        expect( result ).to.have.status( 500 );
                     } );
                 } );
                 describe( 'On authorisation errors', async () => {
@@ -479,6 +527,22 @@ describe( 'On guestRequestsController', async () => {
                     } );
                     it( 'should not call dsteem model method if authorisation check failed', async () => {
                         expect( dsteemModel.customJSON ).to.be.not.called;
+                    } );
+                } );
+                describe( 'On RPC errors', async () => {
+                    beforeEach( async () => {
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } } ) );
+                        mock = customJsonMock.create( { name: author } );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should try to send custom json by account length times', async () => {
+                        expect( dsteemModel.customJSON ).to.be.callCount( botMock.length );
+                    } );
+                    it( 'should return error status 500', async () => {
+                        expect( result ).to.have.status( 500 );
                     } );
                 } );
                 describe( 'On broadcast errors', async () => {
