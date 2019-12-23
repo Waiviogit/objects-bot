@@ -13,7 +13,7 @@ const postBroadcaster = async ( noMessageWait = 6000, postingErrorWait = 60000 )
 
     if ( redisError ) {
         if ( redisError.message === 'No messages' ) {
-            console.error( `ERR[PostBroadcasting] ${redisError.message}` );
+            // console.error( `ERR[PostBroadcasting] ${redisError.message}` );
             await new Promise( ( r ) => setTimeout( r, noMessageWait ) );
             return;
         }
@@ -50,7 +50,7 @@ const commentBroadcaster = async ( noMessageWait = 10000, postingErrorWait = 100
 
     if ( redisError ) {
         if ( redisError.message === 'No messages' ) {
-            console.error( `ERR[CommentBroadcasting] ${redisError.message}` );
+            // console.error( `ERR[CommentBroadcasting] ${redisError.message}` );
             await new Promise( ( r ) => setTimeout( r, noMessageWait ) );
             return;
         }
