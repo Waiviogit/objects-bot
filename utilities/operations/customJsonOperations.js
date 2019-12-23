@@ -1,4 +1,4 @@
-const { actionTypes, accountsData } = require( '../../constants' );
+const { actionTypes, accountsData, regExp } = require( '../../constants' );
 const validators = require( '../../controllers/validators' );
 const { parseMetadata } = require( '../helpers/updateMetadata' );
 const config = require( '../../config' );
@@ -102,11 +102,19 @@ const guestFollowJSON = async ( data, next ) => {
 
 const accountsSwitcher = async ( data ) => {
     const account = accountsData.guestOperationAccounts[
-        config.custom_json_account === accountsData.guestOperationAccounts.length - 1 ? config.custom_json_account = 0 : config.custom_json_account += 1
+        config.custom_json.account === accountsData.guestOperationAccounts.length - 1 ? config.custom_json.account = 0 : config.custom_json.account += 1
     ];
 
-    return await dsteemModel.customJSON( data, account );
-
+    const { result, error } = await dsteemModel.customJSON( data, account );
+    if( result ) {
+        config.custom_json.attempts = 0;
+        return { result };
+    }else if( error && regExp.steemErrRegExp.test( error.message ) && config.custom_json.attempts < accountsData.guestOperationAccounts.length -1 ) {
+        config.custom_json.attempts += 1;
+        await accountsSwitcher( data );
+    }
+    config.custom_json.attempts = 0;
+    return { error };
 };
 
 const errorGenerator = ( data, next ) => {

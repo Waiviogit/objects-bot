@@ -90,12 +90,14 @@ const broadcastingSwitcher = async ( message, account ) => {
     }
     const post = parsedData.comment;
     console.info( `Try to create comment by | ${account.name}` );
-    post.body = `${post.body}\n This message was written by guest ${post.author}, and is available at ${config.waivio_auth.host}/@${post.author}/${post.permlink}`;
+    post.body = `${post.body}\n This message was written by guest ${post.author}, and is [available at ${config.waivio_auth.host}](https://${config.waivio_auth.host}/@${post.author}/${post.permlink})`;
     post.author = account.name;
     if ( !_.has( parsedData, 'options' ) ) return await dsteemModel.post( post, account.postingKey );
     const options = parsedData.options;
     options.author = account.name;
-    return await dsteemModel.postWithOptions( post, parsedData.options, account.postingKey );
+    const { result, error } = await dsteemModel.postWithOptions( post, parsedData.options, account.postingKey );
+    if ( error && error.message.match( 'beneficiaries' ) ) return await dsteemModel.post( post, account.postingKey );
+    return {result, error};
 };
 
 module.exports = { postBroadcaster, commentBroadcaster };
