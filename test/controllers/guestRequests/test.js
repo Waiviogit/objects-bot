@@ -1,18 +1,20 @@
-const { expect, chai, app, sinon, faker, getRandomString, redisQueue, redisSetter, updateMetadata, dsteemModel } = require( '../../testHelper' );
+const { expect, chai, sinon, faker, getRandomString, redisQueue, redisSetter, updateMetadata, dsteemModel, redis } = require( '../../testHelper' );
 const { postMock, userMock, botMock, customJsonMock } = require( '../../mocks' );
 const axios = require( 'axios' );
 const authoriseUser = require( '../../../utilities/authorazation/authoriseUser' );
 const { accountsData, actionTypes } = require( '../../../constants' );
-const config = require( '../../../config' );
 const _ = require( 'lodash' );
+const app = require( '../../../app' );
 
 describe( 'On guestRequestsController', async () => {
     describe( 'On proxyPosting', async () => {
         beforeEach( async() => {
+            await redis.actionsDataClient.flushdbAsync();
             sinon.stub( updateMetadata, 'metadataModify' ).returns( 'test metadata' );
             sinon.stub( accountsData, 'guestOperationAccounts' ).value( botMock );
         } );
-        afterEach( () => {
+        afterEach( async () => {
+            await redis.actionsDataClient.flushdbAsync();
             sinon.restore();
         } );
         describe( 'On proxyPosting comment OK', async () => {
@@ -195,6 +197,7 @@ describe( 'On guestRequestsController', async () => {
         let bot, author;
 
         beforeEach( async () => {
+            await redis.actionsDataClient.flushdbAsync();
             author = faker.name.firstName();
             bot = botMock;
             sinon.stub( accountsData, 'guestOperationAccounts' ).value( bot );
@@ -222,7 +225,7 @@ describe( 'On guestRequestsController', async () => {
                 } );
                 it( 'should call dsteem method with valid params', async () => {
                     expect( dsteemModel.customJSON ).to.be.calledWith( { id: actionTypes.GUEST_VOTE,
-                        json: JSON.stringify( mock.data.operations[ 0 ][ 1 ] ) }, bot[ config.custom_json_account ] );
+                        json: JSON.stringify( mock.data.operations[ 0 ][ 1 ] ) }, bot[ 1 ] );
                 } );
             } );
             describe( 'On reblog', async () => {
@@ -240,7 +243,7 @@ describe( 'On guestRequestsController', async () => {
                 } );
                 it( 'should call dsteem method with valid params', async () => {
                     expect( dsteemModel.customJSON ).to.be.calledWith( { id: actionTypes.GUEST_REBLOG,
-                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ config.custom_json_account ] );
+                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ 1 ] );
                 } );
             } );
             describe( 'On update account', async () => {
@@ -258,7 +261,7 @@ describe( 'On guestRequestsController', async () => {
                 } );
                 it( 'should call dsteem method with valid params', async () => {
                     expect( dsteemModel.customJSON ).to.be.calledWith( { id: actionTypes.GUEST_UPDATE_ACCOUNT,
-                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ config.custom_json_account ] );
+                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ 1 ] );
                 } );
             } );
             describe( 'On follow wobject', async () => {
@@ -276,7 +279,7 @@ describe( 'On guestRequestsController', async () => {
                 } );
                 it( 'should call dsteem method with valid params', async () => {
                     expect( dsteemModel.customJSON ).to.be.calledWith( { id: actionTypes.GUEST_FOLLOW_WOBJECT,
-                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ config.custom_json_account ] ) ;
+                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ 1 ] ) ;
                 } );
             } );
             describe( 'On follow user', async () => {
@@ -294,7 +297,7 @@ describe( 'On guestRequestsController', async () => {
                 } );
                 it( 'should call dsteem method with valid params', async () => {
                     expect( dsteemModel.customJSON ).to.be.calledWith( { id: actionTypes.GUEST_FOLLOW,
-                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ config.custom_json_account ] ) ;
+                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ 1 ] ) ;
                 } );
             } );
             describe( 'On create user', async () => {
@@ -311,7 +314,7 @@ describe( 'On guestRequestsController', async () => {
                     expect( result ).to.have.status( 200 );
                 } );
                 it( 'should call dsteem method with valid params', async () => {
-                    expect( dsteemModel.customJSON ).to.be.calledWith( { id: mock.id, json: JSON.stringify( mock.json ) }, bot[ config.custom_json_account ] ) ;
+                    expect( dsteemModel.customJSON ).to.be.calledWith( { id: mock.id, json: JSON.stringify( mock.json ) }, bot[ 1 ] ) ;
                 } );
             } );
         } );

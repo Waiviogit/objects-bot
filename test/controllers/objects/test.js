@@ -1,12 +1,18 @@
-const { expect, chai, app, sinon, getRandomString, dsteemModel } = require( '../../testHelper' );
+const { expect, chai, sinon, getRandomString, dsteemModel, redis } = require( '../../testHelper' );
 const { objectMock } = require( '../../mocks' );
 const { basicAccounts } = require( '../../../constants/accountsData' );
 const { getOptions, getPostData } = require( '../../../utilities/helpers/postingData' );
 const { APPEND_OBJECT, CREATE_OBJECT } = require( '../../../constants/actionTypes' );
 const _ = require( 'lodash' );
+const app = require( '../../../app' );
+
 
 describe( 'On object controller', async () => {
+    beforeEach( async () => {
+        await redis.actionsDataClient.flushdbAsync();
+    } );
     afterEach( async () => {
+        await redis.actionsDataClient.flushdbAsync();
         sinon.restore();
     } );
     describe( 'On createObjectTypeOp', async () => {
@@ -26,7 +32,7 @@ describe( 'On object controller', async () => {
                 expect( result ).to.have.status( 200 );
             } );
             it( 'should return correct json in response', async () => {
-                expect( result.body.author ).to.be.eq( basicAccounts[ 1 ].name );
+                expect( result.body.author ).to.be.eq( basicAccounts[ 0 ].name );
             } );
         } );
         describe( 'On errors', async() => {
@@ -93,8 +99,8 @@ describe( 'On object controller', async () => {
                 expect( result.body.parentPermlink ).to.be.eq( mock.permlink );
             } );
             it( 'should called post method with valid params', async () => {
-                expect( dsteemModel.postWithOptions ).to.calledWith( getPostData( mock, basicAccounts[ 0 ], CREATE_OBJECT ),
-                    getOptions( mock, basicAccounts[ 0 ] ), basicAccounts[ 0 ].postingKey );
+                expect( dsteemModel.postWithOptions ).to.calledWith( getPostData( mock, basicAccounts[ 1 ], CREATE_OBJECT ),
+                    getOptions( mock, basicAccounts[ 1 ] ), basicAccounts[ 1 ].postingKey );
             } );
         } );
         describe( 'On errors', async() => {
@@ -161,8 +167,8 @@ describe( 'On object controller', async () => {
                 expect( result.body.parentPermlink ).to.eq( mock.parentPermlink );
             } );
             it( 'should called post method with valid params', async () => {
-                expect( dsteemModel.postWithOptions ).to.be.calledWith( getPostData( mock, basicAccounts[ 0 ], APPEND_OBJECT ),
-                    getOptions( mock, basicAccounts[ 0 ] ), basicAccounts[ 0 ].postingKey ) ;
+                expect( dsteemModel.postWithOptions ).to.be.calledWith( getPostData( mock, basicAccounts[ 1 ], APPEND_OBJECT ),
+                    getOptions( mock, basicAccounts[ 1 ] ), basicAccounts[ 1 ].postingKey ) ;
             } );
         } );
         describe( 'On errors', async() => {

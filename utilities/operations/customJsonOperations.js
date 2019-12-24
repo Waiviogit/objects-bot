@@ -141,20 +141,24 @@ const guestUpdateAccountJSON = async( data, next ) => {
 };
 
 const accountsSwitcher = async ( data ) => {
-    const account = accountsData.guestOperationAccounts[
-        config.custom_json.account === accountsData.guestOperationAccounts.length - 1 ? config.custom_json.account = 0 : config.custom_json.account += 1
-    ];
-
-    const { result, error } = await dsteemModel.customJSON( data, account );
-    if( result ) {
-        config.custom_json.attempts = 0;
-        return { result };
-    }else if( error && regExp.steemErrRegExp.test( error.message ) && config.custom_json.attempts < accountsData.guestOperationAccounts.length - 1 ) {
-        config.custom_json.attempts += 1;
-        await accountsSwitcher( data );
+    config.forecasts.account === accountsData.basicAccounts.length - 1 ? config.forecasts.account = 0 : config.forecasts.account += 1;
+    let err;
+    for ( let counter = 0; counter < accountsData.guestOperationAccounts.length; counter++ ) {
+        const account = accountsData.guestOperationAccounts[ config.custom_json.account ];
+        const { result, error } = await dsteemModel.customJSON( data, account );
+        if( result ) {
+            config.custom_json.account === accountsData.guestOperationAccounts.length - 1 ? config.custom_json.account = 0 : config.custom_json.account += 1;
+            return { result };
+        }else if( error && regExp.steemErrRegExp.test( error.message ) ) {
+            config.custom_json.account === accountsData.guestOperationAccounts.length - 1 ? config.custom_json.account = 0 : config.custom_json.account += 1;
+            err = error;
+            console.warn( `ERR[Custom_Json] RPCError: ${error.message}` );
+            continue;
+        }
+        err = error;
+        break;
     }
-    config.custom_json.attempts = 0;
-    return { error };
+    return { error: err };
 };
 
 const errorGenerator = ( next ) => {

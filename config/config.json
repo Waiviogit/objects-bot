@@ -21,16 +21,13 @@
       "attemptsComm": 0
     },
     "custom_json": {
-      "account": 0,
-      "attempts": 0
+      "account": 0
     },
     "forecasts": {
-      "account": 0,
-      "attempts": 0
+      "account": 0
     },
     "objects": {
-      "account": 0,
-      "attempts": 0
+      "account": 0
     }
   },
   "staging": {
@@ -55,16 +52,13 @@
       "attemptsComm": 0
     },
     "custom_json": {
-      "account": 0,
-      "attempts": 0
+      "account": 0
     },
     "forecasts": {
-      "account": 0,
-      "attempts": 0
+      "account": 0
     },
     "objects": {
-      "account": 0,
-      "attempts": 0
+      "account": 0
     }
   },
   "development": {
@@ -89,17 +83,13 @@
       "attemptsComm": 0
     },
     "custom_json": {
-      "account": 0,
-      "attempts": 0
+      "account": 0
     },
-    "custom_json_account": 0,
     "forecasts": {
-      "account": 0,
-      "attempts": 0
+      "account": 0
     },
     "objects": {
-      "account": 0,
-      "attempts": 0
+      "account": 0
     }
   },
   "test": {
@@ -124,17 +114,13 @@
       "attemptsComm": 0
     },
     "custom_json": {
-      "account": 0,
-      "attempts": 0
+      "account": 0
     },
-    "custom_json_account": 0,
     "forecasts": {
-      "account": 0,
-      "attempts": 0
+      "account": 0
     },
     "objects": {
-      "account": 0,
-      "attempts": 0
+      "account": 0
     }
   }
 }
