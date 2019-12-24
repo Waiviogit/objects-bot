@@ -1,4 +1,4 @@
-const { expect, chai, app, sinon, dsteemModel } = require( '../../testHelper' );
+const { expect, chai, app, sinon, dsteemModel, redis } = require( '../../testHelper' );
 const { forecastMock } = require( '../../mocks' );
 const { basicAccounts } = require( '../../../constants/accountsData' );
 
@@ -6,6 +6,7 @@ describe( 'On forecast controller', async() => {
     let mock;
 
     beforeEach( async () => {
+        await redis.actionsDataClient.flushdbAsync();
         mock = forecastMock();
     } );
     afterEach( async () => {

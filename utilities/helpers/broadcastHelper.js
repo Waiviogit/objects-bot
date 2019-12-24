@@ -40,6 +40,7 @@ const switcher = async ( message, account ) => {
 
 const updateHelper = async ( author, comment ) => {
     const root_acc = _.find( accountsData.guestOperationAccounts, ( acc ) => acc.name === author );
+    comment.author = root_acc.name;
     const { result: updateResult, error: updateError } = await dsteemModel.post( comment, root_acc.postingKey );
     if ( updateResult )return { result: updateResult };
     if ( regExp.steemErrRegExp.test( updateError.message ) ) return{ error: { message: 'update error' } };
