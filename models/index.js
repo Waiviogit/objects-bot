@@ -1,3 +1,4 @@
 module.exports = {
-    dsteemModel: require( './dsteemModel' )
+    dsteemModel: require( './dsteemModel' ),
+    postModel: require('./postModel')
 };

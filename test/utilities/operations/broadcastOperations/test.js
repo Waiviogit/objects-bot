@@ -1,22 +1,24 @@
-const { getRandomString, redisGetter, sinon, redisQueue, dsteemModel, actionsRsmqClient, redisSetter, broadcastOperations, expect, validationHelper } = require( '../../../testHelper' );
+const { getRandomString, redisGetter, sinon, redisQueue, dsteemModel, actionsRsmqClient, redisSetter, broadcastOperations, expect, validationHelper, dropDatabase, redis } = require( '../../../testHelper' );
 const { postMock, botMock } = require( '../../../mocks' );
 const { postAction, commentAction } = require( '../../../../constants/guestRequestsData' );
 const accountsData = require( '../../../../constants/accountsData' );
 const _ = require( 'lodash' );
+const { postFactory } = require( '../../../factory' );
 
 describe( 'On broadcastOperations', async () => {
     beforeEach( async () => {
+        await redis.actionsQueueClient.FLUSHDB();
         sinon.stub( accountsData, 'guestOperationAccounts' ).value( botMock );
     } );
     afterEach( async () => {
         sinon.restore();
     } );
-    describe( 'On postBroadcaster', async() => {
+    describe( 'On postBroadcaster', async () => {
         describe( 'On success', async () => {
             let mock, message, mockPostData;
 
             beforeEach( async () => {
-                sinon.stub( dsteemModel, 'post' ).returns( Promise.resolve( 'OK' ) );
+                sinon.stub( dsteemModel, 'post' ).returns( Promise.resolve( { result: 'OK' } ) );
                 sinon.stub( dsteemModel, 'postWithOptions' ).returns( Promise.resolve( { result: 'OK' } ) );
                 mock = postMock();
                 mockPostData = validationHelper.postingValidator( mock );
@@ -37,7 +39,7 @@ describe( 'On broadcastOperations', async () => {
             } );
             it( 'should successfully delete message from queue after posting', async () => {
                 await broadcastOperations.postBroadcaster( 10, 10 );
-                const { error, result } = await redisQueue.receiveMessage( { client: actionsRsmqClient, qname: postAction.qname } );
+                const { error } = await redisQueue.receiveMessage( { client: actionsRsmqClient, qname: postAction.qname } );
 
                 expect( error.message ).to.be.eq( 'No messages' );
             } );
@@ -48,7 +50,49 @@ describe( 'On broadcastOperations', async () => {
                 expect( result ).to.be.null;
             } );
         } );
-        describe( 'On errors', async() => {
+        describe( 'On success update post', async () => {
+            let post, message, mock, mockPostData;
+            beforeEach( async () => {
+                await dropDatabase();
+                sinon.stub( dsteemModel, 'post' ).returns( Promise.resolve( { result: 'OK' } ) );
+                sinon.stub( dsteemModel, 'postWithOptions' ).returns( Promise.resolve( { result: 'OK' } ) );
+                post = await postFactory.Create( );
+                mock = postMock( { author: post.author, permlink: post.permlink } );
+                mockPostData = validationHelper.postingValidator( mock );
+                message = getRandomString( 10 );
+                await redisQueue.createQueue( { client: actionsRsmqClient, qname: postAction.qname } );
+                await redisQueue.sendMessage( { client: actionsRsmqClient, qname: postAction.qname, message } );
+                await redisSetter.setActionsData( message, JSON.stringify( mockPostData ) );
+                await broadcastOperations.postBroadcaster( 10, 10 );
+            } );
+            it( 'should successfully update post', async () => {
+                expect( dsteemModel.post ).to.be.calledOnce;
+            } );
+        } );
+        describe( 'On update post errors', async () => {
+            let post, message, mock, mockPostData;
+            beforeEach( async () => {
+                await dropDatabase();
+                sinon.stub( dsteemModel, 'post' ).returns( Promise.resolve( { error: { message: 'update error' } } ) );
+                post = await postFactory.Create( );
+                mock = postMock( { author: post.author, permlink: post.permlink } );
+                mockPostData = validationHelper.postingValidator( mock );
+                message = getRandomString( 10 );
+                await redisQueue.createQueue( { client: actionsRsmqClient, qname: postAction.qname } );
+                await redisQueue.sendMessage( { client: actionsRsmqClient, qname: postAction.qname, message } );
+                await redisSetter.setActionsData( message, JSON.stringify( mockPostData ) );
+                await broadcastOperations.postBroadcaster( 10, 10 );
+            } );
+            it( 'should add update post message in queue if dsteem get error', async () => {
+                const result = await redisQueue.receiveMessage( { client: actionsRsmqClient, qname: postAction.qname } );
+                expect( result.result.message ).to.be.eq( message );
+            } );
+            it( 'should not delete post data in redis if dsteem get update error', async () => {
+                const result = await redisGetter.getAllHashData( message );
+                expect( result.result ).to.exist;
+            } );
+        } );
+        describe( 'On errors', async () => {
             let mock, message, mockPostData;
 
             beforeEach( async () => {
@@ -61,15 +105,12 @@ describe( 'On broadcastOperations', async () => {
                 beforeEach( async () => {
                     await broadcastOperations.postBroadcaster( 10, 10 );
                 } );
-                it( 'should returns and write log if queue will be empty', async () => {
-                    expect( console.error ).to.be.calledWith( 'ERR[PostBroadcasting] No messages' );
-                } );
                 it( 'should successfully returns if queue is empty', async () => {
                     expect( dsteemModel.postWithOptions ).to.be.not.called;
                 } );
             } );
-            describe( 'switcher errors', async() => {
-                beforeEach( async() => {
+            describe( 'switcher errors', async () => {
+                beforeEach( async () => {
                     message = getRandomString( 10 );
                     mock = postMock();
                     mockPostData = validationHelper.postingValidator( mock );
@@ -78,7 +119,10 @@ describe( 'On broadcastOperations', async () => {
                     await broadcastOperations.postBroadcaster( 10, 10 );
                 } );
                 it( 'should not delete message from queue if it not posted', async () => {
-                    const { result } = await redisQueue.receiveMessage( { client: actionsRsmqClient, qname: postAction.qname } );
+                    const { result } = await redisQueue.receiveMessage( {
+                        client: actionsRsmqClient,
+                        qname: postAction.qname
+                    } );
 
                     expect( result.message ).to.be.eq( message );
                 } );
@@ -118,7 +162,10 @@ describe( 'On broadcastOperations', async () => {
             } );
             it( 'should delete message from queue after posting ', async () => {
                 await broadcastOperations.commentBroadcaster( 10 );
-                const { error } = await redisQueue.receiveMessage( { client: actionsRsmqClient, qname: commentAction.qname } );
+                const { error } = await redisQueue.receiveMessage( {
+                    client: actionsRsmqClient,
+                    qname: commentAction.qname
+                } );
 
                 expect( error.message ).to.be.eq( 'No messages' );
             } );
@@ -129,7 +176,7 @@ describe( 'On broadcastOperations', async () => {
                 expect( result ).to.be.null;
             } );
         } );
-        describe( 'On errors', async() => {
+        describe( 'On errors', async () => {
             let mock, message, mockPostData;
 
             beforeEach( async () => {
@@ -142,15 +189,12 @@ describe( 'On broadcastOperations', async () => {
                 beforeEach( async () => {
                     await broadcastOperations.commentBroadcaster( 10 );
                 } );
-                it( 'should returns and write log if queue will be empty', async () => {
-                    expect( console.error ).to.be.calledWith( 'ERR[CommentBroadcasting] No messages' );
-                } );
                 it( 'should successfully returns if queue is empty', async () => {
                     expect( dsteemModel.postWithOptions ).to.be.not.called;
                 } );
             } );
-            describe( 'switcher errors', async() => {
-                beforeEach( async() => {
+            describe( 'switcher errors', async () => {
+                beforeEach( async () => {
                     message = getRandomString( 10 );
                     mock = postMock( { parentAuthor: getRandomString( 10 ) } );
                     mockPostData = validationHelper.postingValidator( mock );
@@ -159,7 +203,10 @@ describe( 'On broadcastOperations', async () => {
                     await broadcastOperations.commentBroadcaster( 10, 10 );
                 } );
                 it( 'should not delete message from queue if it not posted', async () => {
-                    const { result } = await redisQueue.receiveMessage( { client: actionsRsmqClient, qname: commentAction.qname } );
+                    const { result } = await redisQueue.receiveMessage( {
+                        client: actionsRsmqClient,
+                        qname: commentAction.qname
+                    } );
 
                     expect( result.message ).to.be.eq( message );
                 } );

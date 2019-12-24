@@ -8,26 +8,36 @@ const _ = require( 'lodash' );
 
 const switcher = async ( data, next ) => {
     switch ( data.id ) {
+        case actionTypes.GUEST_UPDATE_ACCOUNT :
+            if( _.has( data, 'data.operations[0][1].json' ) && data.data.operations[ 0 ][ 1 ].id === 'account_update' ) {
+                return await guestUpdateAccountJSON( data.data.operations[ 0 ][ 1 ].json, next );
+            }
+            return errorGenerator( next );
+        case actionTypes.GUEST_REBLOG :
+            if( _.has( data, 'data.operations[0][1].json' ) ) {
+                return await guestReblogJSON( data.data.operations[ 0 ][ 1 ].json, next );
+            }
+            return errorGenerator( next );
         case actionTypes.GUEST_VOTE :
             if( _.has( data, 'data.operations[0][1]' ) ) {
                 return await guestVoteJSON( data.data.operations[ 0 ][ 1 ], next );
             }
-            return errorGenerator( data, next );
+            return errorGenerator( next );
         case actionTypes.GUEST_CREATE :
             if( data.json ) return await guestCreateJSON( data.json, next );
-            return errorGenerator( data, next );
+            return errorGenerator( next );
         case actionTypes.GUEST_FOLLOW_WOBJECT :
             if( _.has( data, 'data.operations[0][1].json' ) ) {
                 return await guestFollowWobjectJSON( data.data.operations[ 0 ][ 1 ].json, next );
             }
-            return errorGenerator( data, next );
+            return errorGenerator( next );
         case actionTypes.GUEST_FOLLOW :
             if( _.has( data, 'data.operations[0][1].json' ) ) {
                 return await guestFollowJSON( data.data.operations[ 0 ][ 1 ].json, next );
             }
-            return errorGenerator( data, next );
+            return errorGenerator( next );
         default :
-            return errorGenerator( data, next );
+            return errorGenerator( next );
     }
 };
 
@@ -100,6 +110,36 @@ const guestFollowJSON = async ( data, next ) => {
     }
 };
 
+const guestReblogJSON = async( data, next ) => {
+    const value = validators.validate( parseMetadata( data, next ), validators.customJson.reblogSchema, next );
+
+    if ( !value ) return;
+    const { error, isValid } = await authoriseUser.authorise( value[ 1 ].account );
+
+    if ( error ) return next( error );
+    else if( isValid ) {
+        const { result, error: broadcastError } = await accountsSwitcher( { id: actionTypes.GUEST_REBLOG, json: JSON.stringify( value ) } );
+
+        if ( broadcastError ) return next( broadcastError );
+        return result;
+    }
+};
+
+const guestUpdateAccountJSON = async( data, next ) => {
+    const value = validators.validate( parseMetadata( data, next ), validators.customJson.updateSchema, next );
+
+    if ( !value ) return;
+    const { error, isValid } = await authoriseUser.authorise( value.account );
+
+    if ( error ) return next( error );
+    else if( isValid ) {
+        const { result, error: broadcastError } = await accountsSwitcher( { id: actionTypes.GUEST_UPDATE_ACCOUNT, json: JSON.stringify( value ) } );
+
+        if ( broadcastError ) return next( broadcastError );
+        return result;
+    }
+};
+
 const accountsSwitcher = async ( data ) => {
     const account = accountsData.guestOperationAccounts[
         config.custom_json.account === accountsData.guestOperationAccounts.length - 1 ? config.custom_json.account = 0 : config.custom_json.account += 1
@@ -109,7 +149,7 @@ const accountsSwitcher = async ( data ) => {
     if( result ) {
         config.custom_json.attempts = 0;
         return { result };
-    }else if( error && regExp.steemErrRegExp.test( error.message ) && config.custom_json.attempts < accountsData.guestOperationAccounts.length -1 ) {
+    }else if( error && regExp.steemErrRegExp.test( error.message ) && config.custom_json.attempts < accountsData.guestOperationAccounts.length - 1 ) {
         config.custom_json.attempts += 1;
         await accountsSwitcher( data );
     }
@@ -117,7 +157,7 @@ const accountsSwitcher = async ( data ) => {
     return { error };
 };
 
-const errorGenerator = ( data, next ) => {
+const errorGenerator = ( next ) => {
     const error = { status: 422, message: 'Invalid request data' };
 
     return next( error );
