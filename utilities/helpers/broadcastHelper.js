@@ -28,7 +28,7 @@ const switcher = async ( message, account ) => {
     const post = parsedData.comment;
     console.info( `Try to create comment by | ${account.name}` );
     post.body = `${post.body}\n This message was written by guest ${post.author}, and is 
-    [available at ${config.waivio_auth.host}](https://${config.waivio_auth.host}/@${account.author}/${post.permlink})`;
+    [available at ${config.waivio_auth.host}](https://${config.waivio_auth.host}/@${account.name}/${post.permlink})`;
     post.author = account.name;
     if ( !_.has( parsedData, 'options' ) ) return await dsteemModel.post( post, account.postingKey );
     const options = parsedData.options;
