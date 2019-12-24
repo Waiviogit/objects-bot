@@ -5,7 +5,6 @@ const sinonChai = require( 'sinon-chai' );
 chai.use( chaiHttp );
 chai.use( sinonChai );
 const expect = chai.expect;
-const app = require( '../app' );
 const { mockRequest, mockResponse } = require( 'mock-req-res' );
 const { redis, redisGetter, redisSetter, redisHelper } = require( '../utilities/redis' );
 const { redisQueue, actionsRsmqClient } = require( '../utilities/redis/rsmq' );
@@ -35,7 +34,6 @@ module.exports = {
     sinon,
     chai,
     expect,
-    app,
     mockRequest,
     mockResponse,
     redis,

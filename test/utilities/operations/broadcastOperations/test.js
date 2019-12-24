@@ -7,11 +7,12 @@ const { postFactory } = require( '../../../factory' );
 
 describe( 'On broadcastOperations', async () => {
     beforeEach( async () => {
-        await redis.actionsQueueClient.FLUSHDB();
+        await redis.actionsDataClient.flushdbAsync();
         sinon.stub( accountsData, 'guestOperationAccounts' ).value( botMock );
     } );
     afterEach( async () => {
         sinon.restore();
+        await redis.actionsDataClient.flushdbAsync();
     } );
     describe( 'On postBroadcaster', async () => {
         describe( 'On success', async () => {
