@@ -1,6 +1,7 @@
-const { expect, chai, app, sinon, dsteemModel, redis } = require( '../../testHelper' );
+const { expect, chai, sinon, dsteemModel, redis } = require( '../../testHelper' );
 const { forecastMock } = require( '../../mocks' );
 const { basicAccounts } = require( '../../../constants/accountsData' );
+const app = require( '../../../app' );
 
 describe( 'On forecast controller', async() => {
     let mock;
@@ -10,6 +11,7 @@ describe( 'On forecast controller', async() => {
         mock = forecastMock();
     } );
     afterEach( async () => {
+        await redis.actionsDataClient.flushdbAsync();
         sinon.restore();
     } );
     describe( 'On markForecastAsExpired', async () => {
@@ -24,7 +26,7 @@ describe( 'On forecast controller', async() => {
                 expect( result ).to.have.status( 200 );
             } );
             it( 'should return correct json in response', async () => {
-                expect( result.body ).to.be.deep.eq( { permlink: `exp-${mock.expForecast.expiredAt}`, author: basicAccounts[ 1 ].name } );
+                expect( result.body ).to.be.deep.eq( { permlink: `exp-${mock.expForecast.expiredAt}`, author: basicAccounts[ 0 ].name } );
             } );
         } );
         describe( 'On errors', async() => {
