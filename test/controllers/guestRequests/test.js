@@ -225,6 +225,42 @@ describe( 'On guestRequestsController', async () => {
                         json: JSON.stringify( mock.data.operations[ 0 ][ 1 ] ) }, bot[ config.custom_json_account ] );
                 } );
             } );
+            describe( 'On reblog', async () => {
+                let mock, result;
+
+                beforeEach( async () => {
+                    mock = customJsonMock.reblog( { account: author } );
+                    result = await chai.request( app )
+                        .post( '/guest-custom-json' )
+                        .set( { 'waivio-auth': 1 } )
+                        .send( mock );
+                } );
+                it( 'should return status 200 with valid params in reblog request', async () => {
+                    expect( result ).to.have.status( 200 );
+                } );
+                it( 'should call dsteem method with valid params', async () => {
+                    expect( dsteemModel.customJSON ).to.be.calledWith( { id: actionTypes.GUEST_REBLOG,
+                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ config.custom_json_account ] );
+                } );
+            } );
+            describe( 'On update account', async () => {
+                let mock, result;
+
+                beforeEach( async () => {
+                    mock = customJsonMock.update( { account: author } );
+                    result = await chai.request( app )
+                        .post( '/guest-custom-json' )
+                        .set( { 'waivio-auth': 1 } )
+                        .send( mock );
+                } );
+                it( 'should return status 200 with valid params in update request', async () => {
+                    expect( result ).to.have.status( 200 );
+                } );
+                it( 'should call dsteem method with valid params', async () => {
+                    expect( dsteemModel.customJSON ).to.be.calledWith( { id: actionTypes.GUEST_UPDATE_ACCOUNT,
+                        json: mock.data.operations[ 0 ][ 1 ].json }, bot[ config.custom_json_account ] );
+                } );
+            } );
             describe( 'On follow wobject', async () => {
                 let mock, result;
 
@@ -410,6 +446,146 @@ describe( 'On guestRequestsController', async () => {
                 describe( 'On broadcast errors', async () => {
                     beforeEach( async () => {
                         mock = customJsonMock.follow( { follower: author } );
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { error: { message: 'test error' } } ) );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return status 500 if broadcast to chain method get error', async () => {
+                        expect( result ).to.have.status( 500 );
+                    } );
+                    it( 'should called broadcast method once', async () => {
+                        expect( dsteemModel.customJSON ).to.be.calledOnce;
+                    } );
+                    it( 'should return message from broadcast error', async () => {
+                        expect( result.body.message ).to.be.eq( 'test error' );
+                    } );
+                } );
+            } );
+            describe( 'On reblog', async () => {
+                describe( 'On validation errors', async () => {
+                    beforeEach( async () => {
+                        mock = customJsonMock.reblog( );
+                        mock.data.operations = [];
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { result: 'OK' } ) );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return status 422 with not valid data in request', async () => {
+                        expect( result ).to.have.status( 422 );
+                    } );
+                    it( 'should not call dsteem model method if request data not valid', async () => {
+                        expect( dsteemModel.customJSON ).to.be.not.called;
+                    } );
+                } );
+                describe( 'On RPC errors', async () => {
+                    beforeEach( async () => {
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } } ) );
+                        mock = customJsonMock.reblog( { account: author } );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should try to send custom json by account length times', async () => {
+                        expect( dsteemModel.customJSON ).to.be.callCount( botMock.length );
+                    } );
+                    it( 'should return error status 500', async () => {
+                        expect( result ).to.have.status( 500 );
+                    } );
+                } );
+                describe( 'On authorisation errors', async () => {
+                    beforeEach( async () => {
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { result: 'OK' } ) );
+                        mock = customJsonMock.reblog( );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return 401 status, if authorisation check return false', async () => {
+                        expect( result ).to.have.status( 401 );
+                    } );
+                    it( 'should not call dsteem model method if authorisation check failed', async () => {
+                        expect( dsteemModel.customJSON ).to.be.not.called;
+                    } );
+                } );
+                describe( 'On broadcast errors', async () => {
+                    beforeEach( async () => {
+                        mock = customJsonMock.reblog( { account: author } );
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { error: { message: 'test error' } } ) );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return status 500 if broadcast to chain method get error', async () => {
+                        expect( result ).to.have.status( 500 );
+                    } );
+                    it( 'should called broadcast method once', async () => {
+                        expect( dsteemModel.customJSON ).to.be.calledOnce;
+                    } );
+                    it( 'should return message from broadcast error', async () => {
+                        expect( result.body.message ).to.be.eq( 'test error' );
+                    } );
+                } );
+            } );
+            describe( 'On update account', async () => {
+                describe( 'On validation errors', async () => {
+                    beforeEach( async () => {
+                        mock = customJsonMock.update( );
+                        mock.data.operations = [];
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { result: 'OK' } ) );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return status 422 with not valid data in request', async () => {
+                        expect( result ).to.have.status( 422 );
+                    } );
+                    it( 'should not call dsteem model method if request data not valid', async () => {
+                        expect( dsteemModel.customJSON ).to.be.not.called;
+                    } );
+                } );
+                describe( 'On RPC errors', async () => {
+                    beforeEach( async () => {
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } } ) );
+                        mock = customJsonMock.update( { account: author } );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should try to send custom json by account length times', async () => {
+                        expect( dsteemModel.customJSON ).to.be.callCount( botMock.length );
+                    } );
+                    it( 'should return error status 500', async () => {
+                        expect( result ).to.have.status( 500 );
+                    } );
+                } );
+                describe( 'On authorisation errors', async () => {
+                    beforeEach( async () => {
+                        sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { result: 'OK' } ) );
+                        mock = customJsonMock.update( );
+                        result = await chai.request( app )
+                            .post( '/guest-custom-json' )
+                            .set( { 'waivio-auth': 1 } )
+                            .send( mock );
+                    } );
+                    it( 'should return 401 status, if authorisation check return false', async () => {
+                        expect( result ).to.have.status( 401 );
+                    } );
+                    it( 'should not call dsteem model method if authorisation check failed', async () => {
+                        expect( dsteemModel.customJSON ).to.be.not.called;
+                    } );
+                } );
+                describe( 'On broadcast errors', async () => {
+                    beforeEach( async () => {
+                        mock = customJsonMock.update( { account: author } );
                         sinon.stub( dsteemModel, 'customJSON' ).returns( Promise.resolve( { error: { message: 'test error' } } ) );
                         result = await chai.request( app )
                             .post( '/guest-custom-json' )

@@ -87,3 +87,44 @@ exports.create = ( { name, alias, metadata } = {} ) => ( {
         } )
     }
 } );
+
+exports.reblog = ( { account, author } = {} ) => ( {
+    id: actionTypes.GUEST_REBLOG,
+    data: {
+        operations: [
+            [
+                faker.random.string(),
+                {
+                    json: JSON.stringify( [
+                        'reblog',
+                        {
+                            account: account || faker.name.firstName(),
+                            author: author || faker.name.firstName(),
+                            permlink: faker.random.string()
+                        }
+                    ] )
+                }
+            ]
+        ]
+    }
+} );
+
+exports.update = ( { account } = {} ) => ( {
+    id: actionTypes.GUEST_UPDATE_ACCOUNT,
+    data: {
+        operations: [
+            [
+                faker.random.string(),
+                {
+                    id: 'account_update',
+                    json: JSON.stringify(
+                        {
+                            account: account || faker.name.firstName(),
+                            json_metadata: faker.random.string()
+                        }
+                    )
+                }
+            ]
+        ]
+    }
+} );

@@ -32,3 +32,19 @@ exports.followSchema = Joi.array().ordered(
         following: Joi.string().required(),
         what: Joi.array().default( [] ).required()
     } ) ).options( { allowUnknown: true, stripUnknown: true } );
+
+
+exports.reblogSchema = Joi.array().ordered(
+    Joi.string().valid( 'reblog' ).required(),
+    Joi.object().keys( {
+        account: Joi.string().required(),
+        author: Joi.string().required(),
+        permlink: Joi.string().required()
+    } )
+).options( { allowUnknown: true, stripUnknown: true } );
+
+
+exports.updateSchema = Joi.object().keys( {
+    account: Joi.string().required(),
+    json_metadata: Joi.string().allow( '' ).required()
+} ).options( { allowUnknown: true, stripUnknown: true } );

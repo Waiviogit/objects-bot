@@ -1,5 +1,10 @@
 {
   "production": {
+    "db": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waivio"
+    },
     "redis": {
       "actionsQueue": 3,
       "actionsData": 5
@@ -29,6 +34,11 @@
     }
   },
   "staging": {
+    "db": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waivio"
+    },
     "redis": {
       "actionsQueue": 3,
       "actionsData": 5
@@ -58,6 +68,11 @@
     }
   },
   "development": {
+    "db": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waivio"
+    },
     "redis": {
       "actionsQueue": 3,
       "actionsData": 5
@@ -88,6 +103,11 @@
     }
   },
   "test": {
+    "db": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waiviotest"
+    },
     "redis": {
       "actionsQueue": 7,
       "actionsData": 7
