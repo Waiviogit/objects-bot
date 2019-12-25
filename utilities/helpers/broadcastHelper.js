@@ -22,6 +22,9 @@ const switcher = async ( message, account ) => {
             const checkInBase = await commentFinder( parsedData.comment.author, parsedData.comment.permlink );
             if ( _.has( checkInBase, 'author' ) ) return await updateHelper( checkInBase.author, parsedData.comment );
         }
+        if ( parsedData.comment.parent_author && parsedData.comment.guest_root_author ) {
+            return await updateHelper( parsedData.comment.guest_root_author, _.omit( parsedData.comment, [ 'guest_root_author' ] ) );
+        }
     }catch( e ) {
         return { error: e };
     }
@@ -48,3 +51,4 @@ const updateHelper = async ( author, comment ) => {
 };
 
 module.exports = { switcher };
+
