@@ -1,6 +1,7 @@
 const { queueOperations, customJsonOperations } = require( '../utilities' );
 const validationHelper = require( './validators/validationHelper' );
 const authoriseUser = require( '../utilities/authorazation/authoriseUser' );
+const commentHelper = require( '../utilities/helpers/commentHelper' );
 
 const proxyPosting = async ( req, res, next ) => { // add data to queue
     const comment = validationHelper.postingValidator( req.body, next );
@@ -9,6 +10,10 @@ const proxyPosting = async ( req, res, next ) => { // add data to queue
     const { error, isValid } = await authoriseUser.authorise( comment.comment.author );
     if ( error ) return next( error );
     else if( isValid ) {
+        if ( comment.comment.guest_root_author ) {
+            const { result: isValidComment } = await commentHelper.validateComment( comment.comment, next );
+            if ( !isValidComment ) return;
+        }
         const { result: timeToPublication, error: postingError } = await queueOperations.queueSwitcher( comment );
 
         if( postingError ) return next( postingError );

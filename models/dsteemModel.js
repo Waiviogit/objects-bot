@@ -35,4 +35,13 @@ const customJSON = async ( data, account ) => {
     }
 };
 
-module.exports = { post, postWithOptions, customJSON };
+const getComment = async ( author, permlink ) => {
+    const userComment = await client.database.call( 'get_content', [ author, permlink ] );
+
+    if ( userComment.author ) {
+        return { userComment };
+    }
+    return { error: { message: 'Comment not found!', status: 404 } };
+};
+
+module.exports = { post, postWithOptions, customJSON, getComment };
