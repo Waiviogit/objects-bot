@@ -10,9 +10,9 @@ const proxyPosting = async ( req, res, next ) => { // add data to queue
     const { error, isValid } = await authoriseUser.authorise( comment.comment.author );
     if ( error ) return next( error );
     else if( isValid ) {
-        if ( comment.comment.guest_root_author ) {
-            const { result: isValidComment } = await commentHelper.validateComment( comment.comment, next );
-            if ( !isValidComment ) return;
+        if ( comment.comment.guest_root_author && comment.comment.parent_author !== '' ) {
+            const result = await commentHelper.validateComment( comment.comment, next );
+            if ( !result ) return;
         }
         const { result: timeToPublication, error: postingError } = await queueOperations.queueSwitcher( comment );
 

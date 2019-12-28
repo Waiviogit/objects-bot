@@ -10,5 +10,5 @@ exports.validateComment = async ( comment, next ) => {
     const{ error } = await dsteemModel.getComment( comment.guest_root_author, comment.permlink );
     if ( error ) return next( { error: error } );
 
-    return { result: true };
+    return true;
 };
