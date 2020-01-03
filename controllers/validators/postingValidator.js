@@ -4,6 +4,7 @@ exports.simpleSchema = Joi.object().keys( {
     author: Joi.string().required(),
     permlink: Joi.string().required(),
     guest_root_author: Joi.string().default( '' ),
+    post_root_author: Joi.string().default( '' ),
     parent_author: Joi.string().allow( '' ).default( '' ),
     title: Joi.when( 'parent_author', {
         is: '',

@@ -33,6 +33,7 @@ const switcher = async ( message, account ) => {
     post.body = `${post.body}\n This message was written by guest ${post.author}, and is 
     [available at ${config.waivio_auth.host}](https://${config.waivio_auth.host}/@${account.name}/${post.permlink})`;
     post.author = account.name;
+    if( _.has( post, 'post_root_author' ) ) post.parent_author = post.post_root_author;
     if ( !_.has( parsedData, 'options' ) ) return await dsteemModel.post( post, account.postingKey );
     const options = parsedData.options;
     options.author = account.name;
@@ -44,6 +45,7 @@ const switcher = async ( message, account ) => {
 const updateHelper = async ( author, comment ) => {
     const root_acc = _.find( accountsData.guestOperationAccounts, ( acc ) => acc.name === author );
     comment.author = root_acc.name;
+    if( _.has( comment, 'post_root_author' ) ) comment.parent_author = comment.post_root_author;
     const { result: updateResult, error: updateError } = await dsteemModel.post( comment, root_acc.postingKey );
     if ( updateResult )return { result: updateResult };
     if ( regExp.steemErrRegExp.test( updateError.message ) ) return{ error: { message: 'update error' } };
