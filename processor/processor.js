@@ -78,10 +78,11 @@ async function processCreateObjectType(req, res) {
 
 async function processCreateObject(req, res) {
     this.attempts = this.attempts < accountsData.length ? this.attempts + 1 : 1;
+    const data = req.body;
+    let botAcc;
     try {
-        const data = req.body;
         if (validator.validateCreateObject(data)) {
-            const botAcc = botsAcc.getNext();
+            botAcc = botsAcc.getNext();
             console.info(`INFO[CreateObject] Try create | attempt: ${this.attempts} | bot: ${botAcc.name} | request body: ${JSON.stringify(req.body)}`);
             const transactionStatus = await api.createPost(
                 getPostData(data, botAcc, actionTypes.CREATE_OBJECT),
@@ -107,6 +108,19 @@ async function processCreateObject(req, res) {
         if (e.name === 'RPCError' && this.attempts < accountsData.length) {
             console.warn(`ERR[CreateObject] RPCError: ${e.message}`);
             await processCreateObject.call(this ,req, res);
+        } else if(e.message === '_c.beneficiaries.size() == 0: Comment already has beneficiaries specified.' && this.attempts < accountsData.length +1){
+            console.warn(`ERR[CreateObject] RPCError: ${e.message}, trying to create without options`);
+            await new Promise( ( resolve ) => setTimeout( resolve, 3000 ) );
+            const transactionStatus = await api.postWithoutOpts(
+                getPostData(data, botAcc, actionTypes.CREATE_OBJECT),
+                PrivateKey.fromString(botAcc.postingKey)
+            );
+            if (transactionStatus){
+                this.attempts = 0;
+                console.info(`INFO[CreateObject] Successfully created`);
+                console.info(`INFO[CreateObject] Recall Append object`);
+                await processAppendObject(getAppendRequestBody(data, botAcc), res);
+            }
         } else {
             console.error(`ERR[CreateObject] Create failed | Error: ${e.message}`);
             handleError(this, res, { error: e.message });

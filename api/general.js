@@ -12,10 +12,12 @@ const client = new dsteem.Client('https://api.steemit.com');
 
   const createPost = async (comment, options, key) => await client.broadcast.commentWithOptions(comment, options, key);
 
+const postWithoutOpts = async (comment, key) => await client.broadcast.comment(comment, key);
   // const votePost = async (payload) => await client.broadcast.vote(payload.payload, payload.privateKey);
 
   // const broadcastOperations = async (operations, key) => await client.broadcast.sendOperations(operations, key);
 
 module.exports = {
-    createPost
+    createPost,
+    postWithoutOpts
 };
