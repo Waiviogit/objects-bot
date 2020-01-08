@@ -79,6 +79,7 @@ const AppendObjectOp = async ( body ) => {
             console.info( `INFO[CreateObjectType] Object type successfully created | response body: ${JSON.stringify( payload )}` );
             return { result: { status: 200, json: payload } };
         } else if ( e && e.name === 'RPCError' ) {
+            config.objects.account === accountsData.basicAccounts.length - 1 ? config.objects.account = 0 : config.objects.account += 1;
             console.warn( `ERR[AppendObject] RPCError: ${e.message}` );
             error = e.message;
             continue;
