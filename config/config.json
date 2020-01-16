@@ -1,0 +1,126 @@
+{
+  "production": {
+    "db": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waivio"
+    },
+    "redis": {
+      "actionsQueue": 3,
+      "actionsData": 5
+    },
+    "waivio_auth": {
+      "host": "www.waivio.com",
+      "baseUrl": "auth",
+      "validateTokenPath": "validate_token"
+    },
+    "guest_comment": {
+      "account": 0,
+      "accountForComm": 0,
+      "attempts": 0,
+      "attemptsComm": 0
+    },
+    "custom_json": {
+      "account": 0
+    },
+    "forecasts": {
+      "account": 0
+    },
+    "objects": {
+      "account": 0
+    }
+  },
+  "staging": {
+    "db": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waivio"
+    },
+    "redis": {
+      "actionsQueue": 3,
+      "actionsData": 5
+    },
+    "waivio_auth": {
+      "host": "waiviodev.com",
+      "baseUrl": "auth",
+      "validateTokenPath": "validate_auth_token"
+    },
+    "guest_comment": {
+      "account": 0,
+      "attempts": 0,
+      "accountForComm": 0,
+      "attemptsComm": 0
+    },
+    "custom_json": {
+      "account": 0
+    },
+    "forecasts": {
+      "account": 0
+    },
+    "objects": {
+      "account": 0
+    }
+  },
+  "development": {
+    "db": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waivio"
+    },
+    "redis": {
+      "actionsQueue": 3,
+      "actionsData": 5
+    },
+    "waivio_auth": {
+      "host": "waiviodev.com",
+      "baseUrl": "auth",
+      "validateTokenPath": "validate_auth_token"
+    },
+    "guest_comment": {
+      "account": 0,
+      "attempts": 0,
+      "accountForComm": 0,
+      "attemptsComm": 0
+    },
+    "custom_json": {
+      "account": 0
+    },
+    "forecasts": {
+      "account": 0
+    },
+    "objects": {
+      "account": 0
+    }
+  },
+  "test": {
+    "db": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waiviotest"
+    },
+    "redis": {
+      "actionsQueue": 7,
+      "actionsData": 7
+    },
+    "waivio_auth": {
+      "host": "waiviodev.com",
+      "baseUrl": "auth",
+      "validateTokenPath": "validate_auth_token"
+    },
+    "guest_comment": {
+      "account": 0,
+      "attempts": 0,
+      "accountForComm": 0,
+      "attemptsComm": 0
+    },
+    "custom_json": {
+      "account": 0
+    },
+    "forecasts": {
+      "account": 0
+    },
+    "objects": {
+      "account": 0
+    }
+  }
+}
