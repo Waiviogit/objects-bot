@@ -75,7 +75,12 @@ const AppendObjectOp = async ( body ) => {
             account.postingKey
         );
         if( transactionStatus ) {
-            const payload = { author: account.name, permlink: body.permlink, parentAuthor: body.parentAuthor, parentPermlink: body.parentPermlink };
+            const payload = {
+                author: account.name,
+                permlink: body.permlink,
+                parentAuthor: body.parentAuthor,
+                parentPermlink: body.parentPermlink,
+                transactionId: transactionStatus.id };
             console.info( `INFO[CreateObjectType] Object type successfully created | response body: ${JSON.stringify( payload )}` );
             return { result: { status: 200, json: payload } };
         } else if ( e && e.name === 'RPCError' ) {
