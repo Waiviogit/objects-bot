@@ -12,7 +12,7 @@
     "waivio_auth": {
       "host": "www.waivio.com",
       "baseUrl": "auth",
-      "validateTokenPath": "validate_token"
+      "validateTokenPath": "validate_auth_token"
     },
     "guest_comment": {
       "account": 0,
