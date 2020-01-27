@@ -17,7 +17,7 @@ const processCreateObject = async ( req, res, next ) => {
     const value = validators.validate( req.body, validators.object.createSchema, next );
 
     if( !value ) return;
-    const { error, result } = await objectOperations.createObjectOp( req.body );
+    const { error, result } = await objectOperations.createObjectOp( value );
 
     if( error ) return next( error );
     res.result = result;
@@ -28,7 +28,7 @@ const processAppendObject = async( req, res, next ) => {
     const value = validators.validate( req.body, validators.object.appendSchema, next );
 
     if( !value ) return;
-    const { error, result } = await objectOperations.AppendObjectOp( req.body );
+    const { error, result } = await objectOperations.AppendObjectOp( value );
 
     if( error ) return next( error );
     res.result = result;
