@@ -11,7 +11,7 @@ exports.createSchema = Joi.object().keys( {
     isPostingOpen: Joi.boolean().required(),
     parentAuthor: Joi.string().allow( '' ).required(),
     parentPermlink: Joi.string().required()
-} ).options( { allowUnknown: true, stripUnknown: true } );
+} ).options( { allowUnknown: true } );
 
 exports.appendSchema = Joi.object().keys( {
     author: Joi.string().required(),
@@ -25,4 +25,4 @@ exports.appendSchema = Joi.object().keys( {
         body: Joi.string().allow( '' ).default( '' ).required(),
         locale: Joi.string().required()
     } ).required()
-} ).options( { allowUnknown: true, stripUnknown: true } );
+} ).options( { allowUnknown: true } );
