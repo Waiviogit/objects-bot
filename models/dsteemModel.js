@@ -5,7 +5,6 @@ const post = async ( data, key ) => {
     try{
         return{ result: await client.broadcast.comment( data, dsteem.PrivateKey.fromString( key ) ) };
     } catch( error ) {
-        console.error( error );
         return { error };
     }
 };
@@ -14,7 +13,6 @@ const postWithOptions = async ( comment, options, key ) => {
     try{
         return{ result: await client.broadcast.commentWithOptions( comment, options, dsteem.PrivateKey.fromString( key ) ) };
     } catch( error ) {
-        console.error( error );
         return { error };
     }
 };
@@ -30,7 +28,7 @@ const customJSON = async ( data, account ) => {
         },
         dsteem.PrivateKey.fromString( account.postingKey ) ) };
     } catch( error ) {
-        console.error( error );
+        console.error( error.message );
         return { error };
     }
 };
