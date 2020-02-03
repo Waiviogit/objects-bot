@@ -14,7 +14,7 @@ const commentFinder = async ( author, permlink ) => {
 
 const switcher = async ( message, account ) => {
     const { result: postingData } = await redisGetter.getAllHashData( message );
-    let parsedData;
+    let parsedData, parsedMetadata;
 
     try{
         parsedData = JSON.parse( postingData );
@@ -25,13 +25,15 @@ const switcher = async ( message, account ) => {
         if ( parsedData.comment.parent_author && parsedData.comment.guest_root_author ) {
             return await updateHelper( parsedData.comment.guest_root_author, _.omit( parsedData.comment, [ 'guest_root_author' ] ) );
         }
+        parsedMetadata = JSON.parse( parsedData.comment.json_metadata );
     }catch( e ) {
         return { error: e };
     }
     const post = parsedData.comment;
     console.info( `Try to create comment by | ${account.name}` );
+    const app = new RegExp( /waivio/ ).test( parsedMetadata.app ) ? 'waivio' : 'investarena';
     post.body = `${post.body}\n This message was written by guest ${post.author}, and is 
-    [available at www.waivio.com](https://www.waivio.com/@${account.name}/${post.permlink})`;
+    [available at www.${app}.com](https://www.${app}.com/@${account.name}/${post.permlink})`;
     post.author = account.name;
     if( post.post_root_author ) post.parent_author = post.post_root_author;
     if ( !_.has( parsedData, 'options' ) ) return await dsteemModel.post( post, account.postingKey );
@@ -53,4 +55,3 @@ const updateHelper = async ( author, comment ) => {
 };
 
 module.exports = { switcher };
-
