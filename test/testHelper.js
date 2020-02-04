@@ -1,58 +1,45 @@
-const sinon = require( 'sinon' );
-const chai = require( 'chai' );
-const chaiHttp = require( 'chai-http' );
-const sinonChai = require( 'sinon-chai' );
-chai.use( chaiHttp );
-chai.use( sinonChai );
-const expect = chai.expect;
-const { mockRequest, mockResponse } = require( 'mock-req-res' );
-const { redis, redisGetter, redisSetter, redisHelper } = require( '../utilities/redis' );
-const { redisQueue, actionsRsmqClient } = require( '../utilities/redis/rsmq' );
-const faker = require( 'faker' );
-const authorise = require( '../utilities/authorazation/waivioAuth/autorise' );
-const { dsteemModel } = require( '../models' );
-const { guestOperationAccounts } = require( '../constants/accountsData' );
-const config = require( '../config' );
-const { updateMetadata, broadcastOperations, postingData, queueOperations } = require( '../utilities' );
-const validationHelper = require( '../controllers/validators/validationHelper' );
-const getRandomString = ( length = 5 ) => {
-    return faker.internet.password( length, false, /[a-z]/ );
-};
-const { Mongoose } = require( '../database' );
-faker.random.string = ( length = 5 ) => {
-    return faker.internet.password( length, false, /[a-z]/ );
-};
+const chai = require('chai');
+const faker = require('faker');
+const sinon = require('sinon');
+const chaiHttp = require('chai-http');
+const sinonChai = require('sinon-chai');
+
+chai.use(chaiHttp);
+chai.use(sinonChai);
+const { expect } = chai;
+const config = require('config');
+const { Mongoose } = require('database');
+const { mockRequest, mockResponse } = require('mock-req-res');
+const { guestOperationAccounts } = require('constants/accountsData');
+const authorise = require('utilities/authorazation/waivioAuth/autorise');
+const validationHelper = require('controllers/validators/validationHelper');
+
+faker.random.string = (length = 5) => faker.internet.password(length, false, /[a-z]/);
+const getRandomString = (length = 5) => faker.internet.password(length, false, /[a-z]/);
 
 const dropDatabase = async () => {
-    const { models } = require( '../database' );
-    for( const model in models ) {
-        await models[ model ].deleteMany();
-    }
+  const { models } = require('../database');
+  for (const model in models) {
+    await models[model].deleteMany();
+  }
 };
 
 module.exports = {
-    sinon,
-    chai,
-    expect,
-    mockRequest,
-    mockResponse,
-    redis,
-    redisHelper,
-    redisGetter,
-    redisSetter,
-    faker,
-    getRandomString,
-    redisQueue,
-    authorise,
-    queueOperations,
-    actionsRsmqClient,
-    dsteemModel,
-    broadcastOperations,
-    guestOperationAccounts,
-    updateMetadata,
-    postingData,
-    config,
-    validationHelper,
-    dropDatabase,
-    Mongoose
+  sinon,
+  chai,
+  expect,
+  mockRequest,
+  mockResponse,
+  ...require('models'),
+  ...require('utilities/redis/rsmq'),
+  ...require('utilities/redis'),
+  faker,
+  getRandomString,
+  authorise,
+  guestOperationAccounts,
+  ...require('utilities'),
+  config,
+  validationHelper,
+  dropDatabase,
+  Mongoose,
 };

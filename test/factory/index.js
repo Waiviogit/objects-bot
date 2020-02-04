@@ -1,4 +1,4 @@
 
 module.exports = {
-    postFactory: require( './postFactory' )
+  postFactory: require('./postFactory'),
 };

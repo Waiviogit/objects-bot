@@ -1,5 +1,5 @@
 module.exports = {
-    guestRequests: require( './guestRequestsController' ),
-    forecast: require( './forecastsController' ),
-    object: require( './objectsController' )
+  guestRequests: require('./guestRequestsController'),
+  forecast: require('./forecastsController'),
+  object: require('./objectsController'),
 };
