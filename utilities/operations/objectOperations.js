@@ -16,7 +16,7 @@ const createObjectTypeOp = async (body) => {
     console.info(`INFO[CreateObjectType] Try to create object type | bot: ${account.name} | request body: ${JSON.stringify(body)}`);
     const { error: e, result: transactionStatus } = await dsteemModel.postWithOptions(
       getPostData(data, account, actionTypes.CREATE_OBJECT_TYPE),
-      getOptions(data, account, actionTypes.CREATE_OBJECT_TYPE),
+      await getOptions(data, account, actionTypes.CREATE_OBJECT_TYPE),
       account.postingKey,
     );
 
@@ -53,7 +53,7 @@ const createObjectOp = async (body) => {
     console.info(`INFO[CreateObject] Try create | bot: ${account.name} | request body: ${JSON.stringify(body)}`);
     const { error: e, result: transactionStatus } = await dsteemModel.postWithOptions(
       getPostData(body, account, actionTypes.CREATE_OBJECT),
-      getOptions(body, account),
+      await getOptions(body, account),
       account.postingKey,
     );
     if (transactionStatus) {
@@ -85,7 +85,7 @@ const AppendObjectOp = async (body) => {
     console.info(`INFO[AppendObject] Try append | bot: ${account.name} | request body: ${JSON.stringify(body)}`);
     const { error: e, result: transactionStatus } = await dsteemModel.postWithOptions(
       getPostData(body, account, actionTypes.APPEND_OBJECT),
-      getOptions(body, account),
+      await getOptions(body, account),
       account.postingKey,
     );
     if (transactionStatus) {

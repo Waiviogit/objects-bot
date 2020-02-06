@@ -1,7 +1,8 @@
 const { orderBy, uniqWith } = require('lodash');
 const { actionTypes, appData } = require('constants/index');
+const { getUser } = require('utilities/helpers/requestHelper');
 
-const getOptions = (reqData, accData, type) => {
+const getOptions = async (reqData, accData, type) => {
   const optionsData = {};
   let beneficiaries = [];
 
@@ -16,11 +17,12 @@ const getOptions = (reqData, accData, type) => {
     case actionTypes.CREATE_OBJECT:
     case actionTypes.APPEND_OBJECT:
     default:
+      const { user: checkForGuest } = await getUser(reqData.author);
       beneficiaries = orderBy(
         uniqWith([
           { weight: 1500, account: accData.name },
           { weight: 1500, account: appData.appAccName },
-          { weight: 7000, account: reqData.author },
+          { weight: 7000, account: checkForGuest.auth ? accData.name : reqData.author },
         ], (a, b) => a.account === b.account),
         ['account'],
         ['asc'],
