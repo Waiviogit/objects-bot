@@ -17,7 +17,7 @@ const proxyPosting = async (req, res, next) => { // add data to queue
     const {
       result: timeToPublication,
       error: postingError,
-    } = await queueOperations.queueSwitcher(req.body);
+    } = await queueOperations.queueSwitcher(comment);
 
     if (postingError) return next(postingError);
 

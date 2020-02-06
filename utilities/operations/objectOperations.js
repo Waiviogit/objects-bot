@@ -44,6 +44,7 @@ const createObjectTypeOp = async (body) => {
 };
 
 const createObjectOp = async (body) => {
+  body.permlink = body.permlink.replace('_', '-');
   config.objects.account === accountsData.basicAccounts.length - 1
     ? config.objects.account = 0
     : config.objects.account += 1;
@@ -76,6 +77,7 @@ const createObjectOp = async (body) => {
 };
 
 const AppendObjectOp = async (body) => {
+  body.permlink = body.permlink.replace('_', '-');
   config.objects.account === accountsData.basicAccounts.length - 1
     ? config.objects.account = 0
     : config.objects.account += 1;

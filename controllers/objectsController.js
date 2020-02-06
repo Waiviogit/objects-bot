@@ -15,7 +15,6 @@ const processCreateObjectType = async (req, res, next) => {
 
 const processCreateObject = async (req, res, next) => {
   const value = validators.validate(req.body, validators.object.createSchema, next);
-
   if (!value) return;
   const { error, result } = await objectOperations.createObjectOp(value);
 
