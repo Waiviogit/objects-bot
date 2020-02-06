@@ -7,6 +7,7 @@ const { basicAccounts } = require('constants/accountsData');
 const { getOptions, getPostData } = require('utilities/helpers/postingData');
 const { APPEND_OBJECT, CREATE_OBJECT } = require('constants/actionTypes');
 const app = require('app');
+const requestHelper = require('utilities/helpers/requestHelper');
 
 
 describe('On object controller', async () => {
@@ -86,6 +87,10 @@ describe('On object controller', async () => {
 
     beforeEach(async () => {
       mock = objectMock();
+      sinon.stub(requestHelper, 'getUser').returns(Promise.resolve({ user: getRandomString() }));
+    });
+    afterEach(async () => {
+      sinon.restore();
     });
     describe('On success', async () => {
       let result;
@@ -103,7 +108,7 @@ describe('On object controller', async () => {
       it('should called post method with valid params', async () => {
         expect(dsteemModel.postWithOptions)
           .to.calledWith(getPostData(mock, basicAccounts[1], CREATE_OBJECT),
-            getOptions(mock, basicAccounts[1]), basicAccounts[1].postingKey);
+            await getOptions(mock, basicAccounts[1]), basicAccounts[1].postingKey);
       });
     });
     describe('On errors', async () => {
@@ -155,6 +160,7 @@ describe('On object controller', async () => {
 
     beforeEach(async () => {
       mock = objectMock();
+      sinon.stub(requestHelper, 'getUser').returns(Promise.resolve({ user: { name: 'RPCError', message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL RC' } }));
     });
     describe('On success', async () => {
       let result;
@@ -162,6 +168,9 @@ describe('On object controller', async () => {
       beforeEach(async () => {
         sinon.stub(dsteemModel, 'postWithOptions').returns(Promise.resolve({ result: 'OK' }));
         result = await chai.request(app).post('/append-object').send(mock);
+      });
+      afterEach(async () => {
+        sinon.restore();
       });
       it('should return status 200', async () => {
         expect(result).to.have.status(200);
@@ -172,7 +181,7 @@ describe('On object controller', async () => {
       it('should called post method with valid params', async () => {
         expect(dsteemModel.postWithOptions)
           .to.be.calledWith(getPostData(mock, basicAccounts[1], APPEND_OBJECT),
-            getOptions(mock, basicAccounts[1]), basicAccounts[1].postingKey);
+            await getOptions(mock, basicAccounts[1]), basicAccounts[1].postingKey);
       });
     });
     describe('On errors', async () => {
@@ -192,7 +201,6 @@ describe('On object controller', async () => {
       });
       describe('On another errors', async () => {
         let result;
-
         beforeEach(async () => {
           sinon.stub(dsteemModel, 'postWithOptions').returns(Promise.resolve({ error: { name: 'some error' } }));
           result = await chai.request(app).post('/append-object').send(mock);
