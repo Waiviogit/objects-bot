@@ -33,8 +33,8 @@ const switcher = async (message, account) => {
   const post = parsedData.comment;
   console.info(`Try to create comment by | ${account.name}`);
   const app = new RegExp(/waivio/).test(parsedMetadata.app) ? 'waivio' : 'investarena';
-  post.body = `${post.body}\n This message was written by guest ${post.author}, and is 
-    [available at www.${app}.com](https://www.${app}.com/@${account.name}/${post.permlink})`;
+  post.body = `${post.body}\n This message was written by guest ${post.author}, and is`
+  + ` [available at www.${app}.com](https://www.${app}.com/@${account.name}/${post.permlink})`;
   post.author = account.name;
   if (post.post_root_author) post.parent_author = post.post_root_author;
   if (!_.has(parsedData, 'options')) return dsteemModel.post(post, account.postingKey);
