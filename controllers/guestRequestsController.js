@@ -30,7 +30,7 @@ const proxyCustomJson = async (req, res, next) => {
   const result = await customJsonOperations.switcher(req.body, next);
 
   if (!result) return;
-  res.result = { status: 200, json: result };
+  res.result = { status: 200, json: { json: result } };
   next();
 };
 
