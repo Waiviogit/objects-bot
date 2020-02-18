@@ -2,17 +2,19 @@ const permlinkGenerator = require('utilities/helpers/permlinkGenerator');
 const handleError = require('utilities/helpers/handleError');
 const { dsteemModel } = require('models');
 const { getPostData, getOptions, getAppendRequestBody } = require('utilities/helpers/postingData');
-const { actionTypes, accountsData } = require('constants/index');
+const { actionTypes } = require('constants/index');
+const addBotsToEnv = require('utilities/operations/addBotsToEnv');
 const config = require('config');
 
 const createObjectTypeOp = async (body) => {
-  config.objects.account === accountsData.basicAccounts.length - 1
+  const accounts = await addBotsToEnv.setEnvData();
+  config.objects.account === accounts.serviceBots.length - 1
     ? config.objects.account = 0
     : config.objects.account += 1;
   const data = { ...body, permlink: permlinkGenerator(body.objectType) };
   let error;
-  for (let counter = 0; counter < accountsData.basicAccounts.length; counter++) {
-    const account = accountsData.basicAccounts[config.objects.account];
+  for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
+    const account = accounts.serviceBots[config.objects.account];
     console.info(`INFO[CreateObjectType] Try to create object type | bot: ${account.name} | request body: ${JSON.stringify(body)}`);
     const { error: e, result: transactionStatus } = await dsteemModel.postWithOptions(
       getPostData(data, account, actionTypes.CREATE_OBJECT_TYPE),
@@ -29,7 +31,7 @@ const createObjectTypeOp = async (body) => {
       console.info(`INFO[CreateObjectType] Object type successfully created | response body: ${JSON.stringify(payload)}`);
       return { result: { status: 200, json: payload } };
     } if (e && e.name === 'RPCError') {
-      config.objects.account === accountsData.basicAccounts.length - 1
+      config.objects.account === accounts.serviceBots.length - 1
         ? config.objects.account = 0
         : config.objects.account += 1;
       error = e.message;
@@ -44,13 +46,14 @@ const createObjectTypeOp = async (body) => {
 };
 
 const createObjectOp = async (body) => {
+  const accounts = await addBotsToEnv.setEnvData();
   body.permlink = body.permlink.replace('_', '-');
-  config.objects.account === accountsData.basicAccounts.length - 1
+  config.objects.account === accounts.serviceBots.length - 1
     ? config.objects.account = 0
     : config.objects.account += 1;
   let error;
-  for (let counter = 0; counter < accountsData.basicAccounts.length; counter++) {
-    const account = accountsData.basicAccounts[config.objects.account];
+  for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
+    const account = accounts.serviceBots[config.objects.account];
     console.info(`INFO[CreateObject] Try create | bot: ${account.name} | request body: ${JSON.stringify(body)}`);
     const { error: e, result: transactionStatus } = await dsteemModel.postWithOptions(
       getPostData(body, account, actionTypes.CREATE_OBJECT),
@@ -62,7 +65,7 @@ const createObjectOp = async (body) => {
       console.info('INFO[CreateObject] Recall Append object');
       return AppendObjectOp(getAppendRequestBody(body, account));
     } if (e && e.name === 'RPCError') {
-      config.objects.account === accountsData.basicAccounts.length - 1
+      config.objects.account === accounts.serviceBots.length - 1
         ? config.objects.account = 0
         : config.objects.account += 1;
       error = e.message;
@@ -77,13 +80,14 @@ const createObjectOp = async (body) => {
 };
 
 const AppendObjectOp = async (body) => {
+  const accounts = await addBotsToEnv.setEnvData();
   body.permlink = body.permlink.replace('_', '-');
-  config.objects.account === accountsData.basicAccounts.length - 1
+  config.objects.account === accounts.serviceBots.length - 1
     ? config.objects.account = 0
     : config.objects.account += 1;
   let error;
-  for (let counter = 0; counter < accountsData.basicAccounts.length; counter++) {
-    const account = accountsData.basicAccounts[config.objects.account];
+  for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
+    const account = accounts.serviceBots[config.objects.account];
     console.info(`INFO[AppendObject] Try append | bot: ${account.name} | request body: ${JSON.stringify(body)}`);
     const { error: e, result: transactionStatus } = await dsteemModel.postWithOptions(
       getPostData(body, account, actionTypes.APPEND_OBJECT),
@@ -101,7 +105,7 @@ const AppendObjectOp = async (body) => {
       console.info(`INFO[CreateObjectType] Object type successfully created | response body: ${JSON.stringify(payload)}`);
       return { result: { status: 200, json: payload } };
     } if (e && e.name === 'RPCError') {
-      config.objects.account === accountsData.basicAccounts.length - 1
+      config.objects.account === accounts.serviceBots.length - 1
         ? config.objects.account = 0
         : config.objects.account += 1;
       console.warn(`ERR[AppendObject] RPCError: ${e.message}`);

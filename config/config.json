@@ -28,7 +28,8 @@
     },
     "objects": {
       "account": 0
-    }
+    },
+    "app": "waivio"
   },
   "staging": {
     "db": {
@@ -59,7 +60,8 @@
     },
     "objects": {
       "account": 0
-    }
+    },
+    "app": "waiviodev"
   },
   "development": {
     "db": {
@@ -90,7 +92,8 @@
     },
     "objects": {
       "account": 0
-    }
+    },
+    "app": "waiviodev"
   },
   "test": {
     "db": {
@@ -121,6 +124,7 @@
     },
     "objects": {
       "account": 0
-    }
+    },
+    "app": "waiviodev"
   }
 }

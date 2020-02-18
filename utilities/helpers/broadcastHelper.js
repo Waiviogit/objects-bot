@@ -1,7 +1,8 @@
 const _ = require('lodash');
 const { postModel, dsteemModel } = require('models');
 const { redisGetter } = require('utilities/redis');
-const { accountsData, regExp } = require('constants/index');
+const { regExp } = require('constants/index');
+const addBotsToEnv = require('utilities/operations/addBotsToEnv');
 
 const commentFinder = async (author, permlink) => {
   const { post } = await postModel.findOne({ author, permlink });
@@ -48,7 +49,8 @@ const switcher = async (message, account) => {
 };
 
 const updateHelper = async (author, comment) => {
-  const rootAcc = _.find(accountsData.guestOperationAccounts, (acc) => acc.name === author);
+  const accounts = await addBotsToEnv.setEnvData();
+  const rootAcc = _.find(accounts.proxyBots, (acc) => acc.name === author);
   comment.author = rootAcc.name;
   if (comment.post_root_author) comment.parent_author = comment.post_root_author;
   const {

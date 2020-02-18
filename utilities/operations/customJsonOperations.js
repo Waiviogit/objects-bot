@@ -1,9 +1,10 @@
 const _ = require('lodash');
-const { actionTypes, accountsData, regExp } = require('constants/index');
+const { actionTypes, regExp } = require('constants/index');
 const validators = require('controllers/validators');
 const { parseMetadata } = require('utilities/helpers/updateMetadata');
 const config = require('config');
 const { dsteemModel } = require('models');
+const addBotsToEnv = require('utilities/operations/addBotsToEnv');
 const authoriseUser = require('utilities/authorazation/authoriseUser');
 
 const switcher = async (data, next) => {
@@ -155,20 +156,18 @@ const guestUpdateAccountJSON = async (data, next) => {
 };
 
 const accountsSwitcher = async (data) => {
-  config.forecasts.account === accountsData.basicAccounts.length - 1
-    ? config.forecasts.account = 0
-    : config.forecasts.account += 1;
   let err;
-  for (let counter = 0; counter < accountsData.guestOperationAccounts.length; counter++) {
-    const account = accountsData.guestOperationAccounts[config.custom_json.account];
+  const accounts = await addBotsToEnv.setEnvData();
+  for (let counter = 0; counter < accounts.proxyBots.length; counter++) {
+    const account = accounts.proxyBots[config.custom_json.account];
     const { result, error } = await dsteemModel.customJSON(data, account);
     if (result) {
-      config.custom_json.account === accountsData.guestOperationAccounts.length - 1
+      config.custom_json.account === accounts.proxyBots.length - 1
         ? config.custom_json.account = 0
         : config.custom_json.account += 1;
       return { result };
     } if (error && regExp.steemErrRegExp.test(error.message)) {
-      config.custom_json.account === accountsData.guestOperationAccounts.length - 1
+      config.custom_json.account === accounts.proxyBots.length - 1
         ? config.custom_json.account = 0
         : config.custom_json.account += 1;
       err = error;

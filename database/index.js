@@ -17,5 +17,6 @@ module.exports = {
   Mongoose: mongoose,
   models: {
     Post: require('./schemas/PostSchema'),
+    App: require('./schemas/AppSchema'),
   },
 };

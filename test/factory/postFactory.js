@@ -24,7 +24,7 @@ const Create = async ({
     language: language || 'en-US',
     app: app || 'waiviotest',
     created: Date.now(),
-    root_author: botMock[0].name,
+    root_author: botMock.proxyBots[0].name,
   };
 
   if (onlyData) { // return only post data, but not create into database

@@ -1,14 +1,14 @@
 const {
-  expect, chai, sinon, dsteemModel, redis,
+  expect, chai, sinon, dsteemModel, redis, addBotsToEnv,
 } = require('test/testHelper');
-const { forecastMock } = require('test/mocks');
-const { basicAccounts } = require('constants/accountsData');
+const { forecastMock, botMock } = require('test/mocks');
 const app = require('app');
 
 describe('On forecast controller', async () => {
   let mock;
 
   beforeEach(async () => {
+    sinon.stub(addBotsToEnv, 'setEnvData').returns(Promise.resolve(botMock));
     await redis.actionsDataClient.flushdbAsync();
     mock = forecastMock();
   });
@@ -28,7 +28,7 @@ describe('On forecast controller', async () => {
         expect(result).to.have.status(200);
       });
       it('should return correct json in response', async () => {
-        expect(result.body).to.be.deep.eq({ permlink: `exp-${mock.expForecast.expiredAt}`, author: basicAccounts[0].name });
+        expect(result.body).to.be.deep.eq({ permlink: `exp-${mock.expForecast.expiredAt}`, author: botMock.serviceBots[0].name });
       });
     });
     describe('On errors', async () => {
@@ -46,7 +46,7 @@ describe('On forecast controller', async () => {
           expect(result).to.have.status(503);
         });
         it('should try to send comment to chain by all bots', async () => {
-          expect(dsteemModel.postWithOptions.callCount).to.be.eq(basicAccounts.length);
+          expect(dsteemModel.postWithOptions.callCount).to.be.eq(botMock.serviceBots.length);
         });
       });
       describe('On another errors', async () => {

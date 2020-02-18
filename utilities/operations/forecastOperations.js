@@ -1,11 +1,13 @@
 const handleError = require('utilities/helpers/handleError');
 const { getPostData, getOptions } = require('utilities/helpers/postingData');
 const { dsteemModel } = require('models');
-const { actionTypes, accountsData } = require('constants/index');
+const { actionTypes } = require('constants/index');
+const addBotsToEnv = require('utilities/operations/addBotsToEnv');
 const config = require('config');
 
 const markExpiredForecastOp = async (body) => {
-  config.forecasts.account === accountsData.basicAccounts.length - 1
+  const accounts = await addBotsToEnv.setEnvData();
+  config.forecasts.account === accounts.serviceBots.length - 1
     ? config.forecasts.account = 0
     : config.forecasts.account += 1;
   const data = {
@@ -16,8 +18,8 @@ const markExpiredForecastOp = async (body) => {
   };
   let error;
 
-  for (let counter = 0; counter < accountsData.basicAccounts.length; counter++) {
-    const account = accountsData.basicAccounts[config.forecasts.account];
+  for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
+    const account = accounts.serviceBots[config.forecasts.account];
     const { error: e, result: transactionStatus } = await sendComment(data, account);
     if (transactionStatus) {
       console.info('INFO[ForecastExpired] Expired forecast comment successfully created ');
@@ -33,7 +35,7 @@ const markExpiredForecastOp = async (body) => {
         },
       };
     } if (e && e.name === 'RPCError') {
-      config.forecasts.account === accountsData.basicAccounts.length - 1
+      config.forecasts.account === accounts.serviceBots.length - 1
         ? config.forecasts.account = 0
         : config.forecasts.account += 1;
       console.warn(`ERR[ForecastExpired] RPCError: ${e.message}`);
@@ -50,7 +52,8 @@ const markExpiredForecastOp = async (body) => {
 const sendComment = async (data, account) => {
   console.info(`INFO[ForecastExpired] Try to write comment| bot: ${account.name}`);
   return dsteemModel.postWithOptions(
-    getPostData(data, account, actionTypes.FORECAST_EXPIRED), await getOptions(data, account, actionTypes.FORECAST_EXPIRED),
+    getPostData(data, account, actionTypes.FORECAST_EXPIRED),
+    await getOptions(data, account, actionTypes.FORECAST_EXPIRED),
     account.postingKey,
   );
 };

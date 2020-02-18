@@ -10,9 +10,9 @@ const { expect } = chai;
 const config = require('config');
 const { Mongoose } = require('database');
 const { mockRequest, mockResponse } = require('mock-req-res');
-const { guestOperationAccounts } = require('constants/accountsData');
 const authorise = require('utilities/authorazation/waivioAuth/autorise');
 const validationHelper = require('controllers/validators/validationHelper');
+const addBotsToEnv = require('utilities/operations/addBotsToEnv');
 
 faker.random.string = (length = 5) => faker.internet.password(length, false, /[a-z]/);
 const getRandomString = (length = 5) => faker.internet.password(length, false, /[a-z]/);
@@ -26,6 +26,7 @@ const dropDatabase = async () => {
 
 module.exports = {
   sinon,
+  addBotsToEnv,
   chai,
   expect,
   mockRequest,
@@ -36,7 +37,6 @@ module.exports = {
   faker,
   getRandomString,
   authorise,
-  guestOperationAccounts,
   ...require('utilities'),
   config,
   validationHelper,

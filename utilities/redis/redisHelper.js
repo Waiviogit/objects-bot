@@ -2,7 +2,7 @@ const { uuid } = require('uuidv4');
 const redisGetter = require('utilities/redis/redisGetter');
 const redisSetter = require('utilities/redis/redisSetter');
 const { actionsRsmqClient, redisQueue } = require('utilities/redis/rsmq');
-const accountsData = require('constants/accountsData');
+const addBotsToEnv = require('utilities/operations/addBotsToEnv');
 const updateMetadata = require('utilities/helpers/updateMetadata');
 
 // Create queue if it not exist, and add "data" to this queue
@@ -39,13 +39,14 @@ const addToQueue = async (data, actionData) => {
 // get all items in queue, get count and return time for posting all items
 const timeToPosting = async (actionData) => {
   const { result: allQueueItems } = await redisGetter.getHashKeysAll(`${actionData.operation}:*`);
+  const accounts = await addBotsToEnv.setEnvData();
 
   if (actionData.operation === 'proxy-post') {
     // eslint-disable-next-line max-len
-    return ((Math.ceil(((allQueueItems.length * actionData.rechargeTime) / accountsData.guestOperationAccounts.length) / 5) * 5) - 5);
+    return ((Math.ceil(((allQueueItems.length * actionData.rechargeTime) / accounts.proxyBots.length) / 5) * 5) - 5);
   }
   // eslint-disable-next-line max-len
-  return Math.round((allQueueItems.length * actionData.rechargeTime) / accountsData.guestOperationAccounts.length);
+  return Math.round((allQueueItems.length * actionData.rechargeTime) / accounts.proxyBots.length);
 };
 
 module.exports = { addToQueue };

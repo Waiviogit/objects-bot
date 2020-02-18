@@ -1,13 +1,13 @@
+const axios = require('axios');
+const _ = require('lodash');
 const {
   expect, chai, sinon, faker, getRandomString,
-  redisQueue, redisSetter, updateMetadata, dsteemModel, redis, authoriseUser,
+  redisQueue, redisSetter, updateMetadata, dsteemModel, redis, authoriseUser, addBotsToEnv,
 } = require('test/testHelper');
 const {
   postMock, userMock, botMock, customJsonMock,
 } = require('test/mocks');
-const axios = require('axios');
-const { accountsData, actionTypes } = require('constants/index');
-const _ = require('lodash');
+const { actionTypes } = require('constants/index');
 const app = require('app');
 
 describe('On guestRequestsController', async () => {
@@ -15,7 +15,7 @@ describe('On guestRequestsController', async () => {
     beforeEach(async () => {
       await redis.actionsDataClient.flushdbAsync();
       sinon.stub(updateMetadata, 'metadataModify').returns('test metadata');
-      sinon.stub(accountsData, 'guestOperationAccounts').value(botMock);
+      sinon.stub(addBotsToEnv, 'setEnvData').returns(Promise.resolve(botMock));
     });
     afterEach(async () => {
       await redis.actionsDataClient.flushdbAsync();
@@ -204,7 +204,7 @@ describe('On guestRequestsController', async () => {
       await redis.actionsDataClient.flushdbAsync();
       author = faker.name.firstName();
       bot = botMock;
-      sinon.stub(accountsData, 'guestOperationAccounts').value(bot);
+      sinon.stub(addBotsToEnv, 'setEnvData').returns(Promise.resolve(botMock));
     });
     describe('On success', async () => {
       beforeEach(async () => {
@@ -231,7 +231,7 @@ describe('On guestRequestsController', async () => {
           expect(dsteemModel.customJSON).to.be.calledWith({
             id: actionTypes.GUEST_VOTE,
             json: JSON.stringify(mock.data.operations[0][1]),
-          }, bot[1]);
+          }, bot.proxyBots[1]);
         });
       });
       describe('On reblog', async () => {
@@ -251,7 +251,7 @@ describe('On guestRequestsController', async () => {
           expect(dsteemModel.customJSON).to.be.calledWith({
             id: actionTypes.GUEST_REBLOG,
             json: mock.data.operations[0][1].json,
-          }, bot[1]);
+          }, bot.proxyBots[1]);
         });
       });
       describe('On update account', async () => {
@@ -271,7 +271,7 @@ describe('On guestRequestsController', async () => {
           expect(dsteemModel.customJSON).to.be.calledWith({
             id: actionTypes.GUEST_UPDATE_ACCOUNT,
             json: mock.data.operations[0][1].json,
-          }, bot[1]);
+          }, bot.proxyBots[1]);
         });
       });
       describe('On follow wobject', async () => {
@@ -291,7 +291,7 @@ describe('On guestRequestsController', async () => {
           expect(dsteemModel.customJSON).to.be.calledWith({
             id: actionTypes.GUEST_FOLLOW_WOBJECT,
             json: mock.data.operations[0][1].json,
-          }, bot[1]);
+          }, bot.proxyBots[1]);
         });
       });
       describe('On follow user', async () => {
@@ -311,7 +311,7 @@ describe('On guestRequestsController', async () => {
           expect(dsteemModel.customJSON).to.be.calledWith({
             id: actionTypes.GUEST_FOLLOW,
             json: mock.data.operations[0][1].json,
-          }, bot[1]);
+          }, bot.proxyBots[1]);
         });
       });
       describe('On create user', async () => {
@@ -328,7 +328,9 @@ describe('On guestRequestsController', async () => {
           expect(result).to.have.status(200);
         });
         it('should call dsteem method with valid params', async () => {
-          expect(dsteemModel.customJSON).to.be.calledWith({ id: mock.id, json: JSON.stringify(mock.json) }, bot[1]);
+          expect(dsteemModel.customJSON).to.be.calledWith(
+            { id: mock.id, json: JSON.stringify(mock.json) }, bot.proxyBots[1],
+          );
         });
       });
     });
@@ -384,7 +386,7 @@ describe('On guestRequestsController', async () => {
               .send(mock);
           });
           it('should try to send custom json by account length times', async () => {
-            expect(dsteemModel.customJSON).to.be.callCount(botMock.length);
+            expect(dsteemModel.customJSON).to.be.callCount(botMock.proxyBots.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -438,7 +440,7 @@ describe('On guestRequestsController', async () => {
               .send(mock);
           });
           it('should try to send custom json by account length times', async () => {
-            expect(dsteemModel.customJSON).to.be.callCount(botMock.length);
+            expect(dsteemModel.customJSON).to.be.callCount(botMock.proxyBots.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -508,7 +510,7 @@ describe('On guestRequestsController', async () => {
               .send(mock);
           });
           it('should try to send custom json by account length times', async () => {
-            expect(dsteemModel.customJSON).to.be.callCount(botMock.length);
+            expect(dsteemModel.customJSON).to.be.callCount(botMock.proxyBots.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -578,7 +580,7 @@ describe('On guestRequestsController', async () => {
               .send(mock);
           });
           it('should try to send custom json by account length times', async () => {
-            expect(dsteemModel.customJSON).to.be.callCount(botMock.length);
+            expect(dsteemModel.customJSON).to.be.callCount(botMock.proxyBots.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -647,7 +649,7 @@ describe('On guestRequestsController', async () => {
               .send(mock);
           });
           it('should try to send custom json by account length times', async () => {
-            expect(dsteemModel.customJSON).to.be.callCount(botMock.length);
+            expect(dsteemModel.customJSON).to.be.callCount(botMock.proxyBots.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -732,7 +734,7 @@ describe('On guestRequestsController', async () => {
               .send(mock);
           });
           it('should try to send custom json by account length times', async () => {
-            expect(dsteemModel.customJSON).to.be.callCount(botMock.length);
+            expect(dsteemModel.customJSON).to.be.callCount(botMock.proxyBots.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
