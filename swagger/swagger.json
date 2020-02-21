@@ -1,0 +1,234 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "Service for Waivio\n[UI template for Waivio](http://waiviodev.com)\n",
+    "version" : "1.0.0",
+    "title" : "Object Bot Service",
+    "termsOfService" : "https://steemit.com/@waivio",
+    "contact" : {
+      "email" : "maxim@wizardsdev.com"
+    }
+  },
+  "host" : "waiviodev.com",
+  "tags" : [ {
+    "name" : "object",
+    "description" : "Objects manage controls"
+  } ],
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/objects-bot/create-object-type" : {
+      "post" : {
+        "tags" : [ "object" ],
+        "summary" : "Create post with 'create object type'",
+        "description" : "Create post with specials identities wich create new **object type** in database\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**objectType** - name of new Object Type to create\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200"
+            }
+          }
+        }
+      }
+    },
+    "/objects-bot/create-object" : {
+      "post" : {
+        "tags" : [ "object" ],
+        "summary" : "Create comment with 'create object', parent comment must be post with create object type",
+        "description" : "Create comment with specials identities wich create new **object** in database\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**author** - creator of new *Object*,\n**title** - title on comment with *createObject*,\n**body** - body on comment with *createObject*,\n**permlink** - permlink of comment and **author_permlink** of new created *object*,\n**objectName** - *default_name* of *object* and name of first append field of *object*,\n**locale** - locale of first append field on *object*,\n**isExtendingOpen** - flag on *object* which allow *extend object*,\n**isPostingOpen** - flag on *object* which allow add *object* to your own post,\n**parentAuthor** - author of post with **Create Object Type**,\n**parentPermlink** - permlink of post with **Create Object Type**\n---------------**RESPONSE**-----------------\n**transactionId** - id of transaction with append after creating object\n**author** - author of comment with append which added after creating object\n**permlink** - permlink of comment with append which added after creating object\n**parentAuthor** - author of comment with *create object*\n**parentPermlink** - permlink of comment with *create object*\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_1"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_1"
+            }
+          }
+        }
+      }
+    },
+    "/objects-bot/append-object" : {
+      "post" : {
+        "tags" : [ "object" ],
+        "summary" : "Append field to 'object'",
+        "description" : "Create comment with specials identities wich create new **field** on object in database. Parent comment must be comment with *create Object*\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**author** - Creator of new field\n**body** -  body on comment with *appendObject*\n**title** - title on comment with *appendObject*\n**permlink** - permlink of new creatig comment with *appendObject*\n**parentAuthor** - author of comment with *createObject*\n**parentPermlink** - permlink of comment with *createObject*\n**field** - info about append\n*   field.name* - name of field(name,title,avatar,addres,link etc.)\n*   field.body* - value of field(for ex. if name - bitcoin, if title - descr. for bitcoin etc.)\n*   field.locale* - locale of field(en-US, ru-RU etc.)\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_2"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "**SUCCESSFUL OPERATION**\n**transactionId** - id of transaction with comment which include append object\n**author** - author of recently created comment with append object\n**permlink** - permlink of recently created comment with append object\n**parentAuthor** - author of comment with create object which append related on\n**parentPermlink** - permlink of comment with create object which append related on\n",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_2"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "inline_response_200_1" : {
+      "type" : "object",
+      "properties" : {
+        "permlink" : {
+          "type" : "string"
+        },
+        "author" : {
+          "type" : "string"
+        },
+        "parent_author" : {
+          "type" : "string"
+        },
+        "parent_permlink" : {
+          "type" : "string"
+        },
+        "transaction_id" : {
+          "type" : "string"
+        }
+      }
+    },
+    "inline_response_200" : {
+      "type" : "object",
+      "properties" : {
+        "permlink" : {
+          "type" : "string"
+        },
+        "author" : {
+          "type" : "string"
+        },
+        "transactionId" : {
+          "type" : "string"
+        }
+      }
+    },
+    "inline_response_200_2" : {
+      "type" : "object",
+      "properties" : {
+        "permlink" : {
+          "type" : "string"
+        },
+        "author" : {
+          "type" : "string"
+        },
+        "transaction_id" : {
+          "type" : "string"
+        },
+        "parentPermlink" : {
+          "type" : "string"
+        },
+        "parentAuthor" : {
+          "type" : "string"
+        }
+      }
+    },
+    "params_1" : {
+      "type" : "object",
+      "properties" : {
+        "author" : {
+          "type" : "string"
+        },
+        "permlink" : {
+          "type" : "string"
+        },
+        "title" : {
+          "type" : "string"
+        },
+        "body" : {
+          "type" : "string"
+        },
+        "objectName" : {
+          "type" : "string"
+        },
+        "locale" : {
+          "type" : "string"
+        },
+        "isExtendingOpen" : {
+          "type" : "boolean"
+        },
+        "isPostingOpen" : {
+          "type" : "boolean"
+        },
+        "parentAuthor" : {
+          "type" : "string"
+        },
+        "parentPermlink" : {
+          "type" : "string"
+        }
+      }
+    },
+    "objectsbotappendobject_field" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "body" : {
+          "type" : "string"
+        },
+        "locale" : {
+          "type" : "string"
+        }
+      }
+    },
+    "params_2" : {
+      "type" : "object",
+      "properties" : {
+        "permlink" : {
+          "type" : "string"
+        },
+        "author" : {
+          "type" : "string"
+        },
+        "parentAuthor" : {
+          "type" : "string"
+        },
+        "parentPermlink" : {
+          "type" : "string"
+        },
+        "body" : {
+          "type" : "string"
+        },
+        "title" : {
+          "type" : "string"
+        },
+        "field" : {
+          "$ref" : "#/definitions/objectsbotappendobject_field"
+        }
+      }
+    },
+    "params" : {
+      "type" : "object",
+      "properties" : {
+        "objectType" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}
