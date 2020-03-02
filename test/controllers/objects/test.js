@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const {
-  expect, chai, sinon, getRandomString, dsteemModel, redis, addBotsToEnv,
+  expect, chai, sinon, getRandomString, dsteemModel, redis, addBotsToEnv, appModel, faker,
 } = require('test/testHelper');
 const { objectMock, botMock } = require('test/mocks');
 const { getOptions, getPostData } = require('utilities/helpers/postingData');
@@ -10,10 +10,12 @@ const requestHelper = require('utilities/helpers/requestHelper');
 
 
 describe('On object controller', async () => {
-  let bots;
+  let bots, blackList;
   beforeEach(async () => {
     bots = botMock;
+    blackList = faker.random.string(10);
     sinon.stub(addBotsToEnv, 'setEnvData').returns(Promise.resolve(bots));
+    sinon.stub(appModel, 'findOne').returns(Promise.resolve({ app: { black_list_users: [blackList] } }));
     await redis.actionsDataClient.flushdbAsync();
   });
   afterEach(async () => {
@@ -124,6 +126,16 @@ describe('On object controller', async () => {
         it('should return status 503 with RPError', async () => {
           expect(result).to.have.status(503);
         });
+        it('should return 422 error if author in blackList', async () => {
+          mock.author = blackList;
+          result = await chai.request(app).post('/create-object').send(mock);
+          expect(result).to.have.status(422);
+        });
+        it('should return error if author in blackList', async () => {
+          mock.author = blackList;
+          result = await chai.request(app).post('/create-object').send(mock);
+          expect(result.body.message).to.be.eq('Author in blackList!');
+        });
         it('should try to send comment to chain by all bots', async () => {
           expect(dsteemModel.postWithOptions).to.be.callCount(bots.serviceBots.length);
         });
@@ -196,6 +208,16 @@ describe('On object controller', async () => {
         });
         it('should return status 503 with RPError', async () => {
           expect(result).to.have.status(503);
+        });
+        it('should return 422 error if author in blackList', async () => {
+          mock.author = blackList;
+          result = await chai.request(app).post('/append-object').send(mock);
+          expect(result).to.have.status(422);
+        });
+        it('should return error if author in blackList', async () => {
+          mock.author = blackList;
+          result = await chai.request(app).post('/append-object').send(mock);
+          expect(result.body.message).to.be.eq('Author in blackList!');
         });
         it('should try to send comment to chain by all bots', async () => {
           expect(dsteemModel.postWithOptions).to.be.callCount(bots.serviceBots.length);

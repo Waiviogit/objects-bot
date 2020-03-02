@@ -24,14 +24,6 @@ const AppSchema = new Schema({
     required_fields: { type: [String], default: [] },
 
   }],
-  blacklists: {
-    wobjects: [],
-    posts: [{
-      author: { type: String, required: true },
-      permlink: { type: String, required: true },
-    }],
-    users: [],
-  },
   supported_objects: { type: [String], index: true, default: [] },
   daily_chosen_post: {
     author: { type: String },

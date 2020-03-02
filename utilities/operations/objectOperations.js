@@ -2,6 +2,7 @@ const permlinkGenerator = require('utilities/helpers/permlinkGenerator');
 const handleError = require('utilities/helpers/handleError');
 const { dsteemModel } = require('models');
 const { getPostData, getOptions, getAppendRequestBody } = require('utilities/helpers/postingData');
+const { checkForBlackList } = require('utilities/helpers/checkUsersForBlackList');
 const { actionTypes } = require('constants/index');
 const addBotsToEnv = require('utilities/operations/addBotsToEnv');
 const config = require('config');
@@ -46,6 +47,7 @@ const createObjectTypeOp = async (body) => {
 };
 
 const createObjectOp = async (body) => {
+  if (await checkForBlackList(body.author)) return handleError('Author in blackList!');
   const accounts = await addBotsToEnv.setEnvData();
   body.permlink = body.permlink.replace('_', '-');
   config.objects.account === accounts.serviceBots.length - 1
@@ -80,6 +82,7 @@ const createObjectOp = async (body) => {
 };
 
 const AppendObjectOp = async (body) => {
+  if (await checkForBlackList(body.author)) return handleError('Author in blackList!');
   const accounts = await addBotsToEnv.setEnvData();
   body.permlink = body.permlink.replace('_', '-');
   config.objects.account === accounts.serviceBots.length - 1
