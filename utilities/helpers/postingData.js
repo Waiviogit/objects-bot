@@ -23,7 +23,6 @@ const getOptions = async (reqData, accData, type) => {
           { weight: 1500, account: accData.name },
           { weight: 1500, account: appData.appAccName },
           { weight: 7000, account: checkForGuest && checkForGuest.auth ? accData.name : reqData.author },
-          { weight: 7000, account: reqData.author },
         ], (a, b) => a.account === b.account),
         ['account'],
         ['asc'],
