@@ -17,12 +17,13 @@ const getOptions = async (reqData, accData, type) => {
     case actionTypes.CREATE_OBJECT:
     case actionTypes.APPEND_OBJECT:
     default:
-      const { user: checkForGuest } = await requestHelper.getUser(reqData.author);
+      // const { user: checkForGuest } = await requestHelper.getUser(reqData.author);
       beneficiaries = orderBy(
         uniqWith([
           { weight: 1500, account: accData.name },
           { weight: 1500, account: appData.appAccName },
-          { weight: 7000, account: checkForGuest && checkForGuest.auth ? accData.name : reqData.author },
+          // { weight: 7000, account: checkForGuest && checkForGuest.auth ? accData.name : reqData.author },
+          { weight: 7000, account: reqData.author },
         ], (a, b) => a.account === b.account),
         ['account'],
         ['asc'],
