@@ -12,9 +12,3 @@ const getUser = async (name) => {
 };
 
 module.exports = { getUser };
-
-
-( async () => {
-    const {user,error} = await getUser('waivio_oleg-cigulyov')
-    console.log()
-} )()
