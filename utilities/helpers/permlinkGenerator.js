@@ -17,6 +17,7 @@ module.exports = (string) => {
   const permlink = `${genRandomString(3)}-${string}`
     .toLowerCase()
     .replace(/[ _]/g, '-')
+    .replace(/[.]/g, '')
     .replace(/[^a-z0-9-]+/g, '');
 
   return permlink.length > PERMLINK_MAX_LEN ? permlink.substring(0, PERMLINK_MAX_LEN) : permlink;
