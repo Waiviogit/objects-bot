@@ -86,9 +86,9 @@ const getPostData = (reqData, accData, type) => {
     case actionTypes.FORECAST_EXPIRED:
       appendObjPostData.parent_author = reqData.parentAuthor;
       appendObjPostData.parent_permlink = reqData.parentPermlink;
-      metadata.app = 'wia/1.0';
+      metadata.app = `${reqData.marker ? reqData.marker : 'wia'}/1.0`;
       metadata.tags = 'expired_forecast';
-      metadata.wia = {
+      metadata[reqData.marker ? reqData.marker : 'wia'] = {
         action: type,
         exp_forecast: reqData.expForecast,
       };
