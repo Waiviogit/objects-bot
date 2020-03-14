@@ -1,6 +1,7 @@
 const dsteem = require('dsteem');
 
 const client = new dsteem.Client('https://api.steemit.com');
+const rcApi = new dsteem.RCAPI(client);
 
 const post = async (data, key) => {
   try {
@@ -48,6 +49,12 @@ const getComment = async (author, permlink) => {
   return { error: { message: 'Comment not found!', status: 404 } };
 };
 
+const getAccountRC = async (accountName) => {
+  const RCAccount = await rcApi.findRCAccounts([accountName]);
+  const result = await rcApi.calculateRCMana(RCAccount[0]);
+  return result.current_mana;
+};
+
 module.exports = {
-  post, postWithOptions, customJSON, getComment,
+  post, postWithOptions, customJSON, getComment, getAccountRC,
 };

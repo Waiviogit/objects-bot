@@ -56,6 +56,13 @@ const createObjectOp = async (body) => {
   let error;
   for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
     const account = accounts.serviceBots[config.objects.account];
+    if (await dsteemModel.getAccountRC(account.name) < 2100000000) {
+      config.objects.account === accounts.serviceBots.length - 1
+        ? config.objects.account = 0
+        : config.objects.account += 1;
+      console.error(`Bot ${account.name} has few RS`);
+      continue;
+    }
     console.info(`INFO[CreateObject] Try create | bot: ${account.name} | request body: ${JSON.stringify(body)}`);
     const { error: e, result: transactionStatus } = await dsteemModel.postWithOptions(
       getPostData(body, account, actionTypes.CREATE_OBJECT),
@@ -91,6 +98,13 @@ const AppendObjectOp = async (body) => {
   let error;
   for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
     const account = accounts.serviceBots[config.objects.account];
+    if (await dsteemModel.getAccountRC(account.name) < 2100000000) {
+      config.objects.account === accounts.serviceBots.length - 1
+        ? config.objects.account = 0
+        : config.objects.account += 1;
+      console.error(`Bot ${account.name} has few RS`);
+      continue;
+    }
     console.info(`INFO[AppendObject] Try append | bot: ${account.name} | request body: ${JSON.stringify(body)}`);
     const { error: e, result: transactionStatus } = await dsteemModel.postWithOptions(
       getPostData(body, account, actionTypes.APPEND_OBJECT),
