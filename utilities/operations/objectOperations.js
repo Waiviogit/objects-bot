@@ -47,24 +47,19 @@ const createObjectTypeOp = async (body) => {
 };
 
 const createObjectOp = async (body) => {
-  if (await checkForBlackList(body.author)) return handleError('Author in blackList!');
-  const accounts = await addBotsToEnv.setEnvData();
-  body.permlink = body.permlink.replace('_', '-');
-  body.permlink = body.permlink.replace('.', '');
-  config.objects.account === accounts.serviceBots.length - 1
-    ? config.objects.account = 0
-    : config.objects.account += 1;
+  const { body: updBody, error: publishError, accounts } = await publishHelper({ ...body });
+  if (publishError === 'Author in blackList!') return handleError(publishError);
   let error;
   for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
     const account = accounts.serviceBots[config.objects.account];
     const { e, transactionStatus } = await dataPublisher({
-      accounts, account, body, opType: actionTypes.CREATE_OBJECT,
+      accounts, account, body: updBody, opType: actionTypes.CREATE_OBJECT,
     });
     if (e === 'Not enough mana') continue;
     if (transactionStatus) {
       console.info('INFO[CreateObject] Successfully created');
       console.info('INFO[CreateObject] Recall Append object');
-      return AppendObjectOp(getAppendRequestBody(body, account));
+      return AppendObjectOp(getAppendRequestBody(updBody, account));
     } if (e && e.name === 'RPCError') {
       config.objects.account === accounts.serviceBots.length - 1
         ? config.objects.account = 0
@@ -81,26 +76,21 @@ const createObjectOp = async (body) => {
 };
 
 const AppendObjectOp = async (body) => {
-  if (await checkForBlackList(body.author)) return handleError('Author in blackList!');
-  const accounts = await addBotsToEnv.setEnvData();
-  body.permlink = body.permlink.replace('_', '-');
-  body.permlink = body.permlink.replace('.', '');
-  config.objects.account === accounts.serviceBots.length - 1
-    ? config.objects.account = 0
-    : config.objects.account += 1;
+  const { body: updBody, error: publishError, accounts } = await publishHelper({ ...body });
+  if (publishError === 'Author in blackList!') return handleError(publishError);
   let error;
   for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
     const account = accounts.serviceBots[config.objects.account];
     const { e, transactionStatus } = await dataPublisher({
-      accounts, account, body, opType: actionTypes.APPEND_OBJECT,
+      accounts, account, body: updBody, opType: actionTypes.APPEND_OBJECT,
     });
     if (e === 'Not enough mana') continue;
     if (transactionStatus) {
       const payload = {
         author: account.name,
-        permlink: body.permlink,
-        parentAuthor: body.parentAuthor,
-        parentPermlink: body.parentPermlink,
+        permlink: updBody.permlink,
+        parentAuthor: updBody.parentAuthor,
+        parentPermlink: updBody.parentPermlink,
         transactionId: transactionStatus.id,
       };
       console.info(`INFO[CreateObjectType] Object type successfully created | response body: ${JSON.stringify(payload)}`);
@@ -120,16 +110,16 @@ const AppendObjectOp = async (body) => {
   return handleError(error);
 };
 
-// const publishHelper = async (body) => {
-//   if (await checkForBlackList(body.author)) return { error: 'Author in blackList!' };
-//   const accounts = await addBotsToEnv.setEnvData();
-//   body.permlink = body.permlink.replace('_', '-');
-//   body.permlink = body.permlink.replace('.', '');
-//   config.objects.account === accounts.serviceBots.length - 1
-//       ? config.objects.account = 0
-//       : config.objects.account += 1;
-//   return { body, accounts };
-// };
+const publishHelper = async (body) => {
+  if (await checkForBlackList(body.author)) return { error: 'Author in blackList!' };
+  const accounts = await addBotsToEnv.setEnvData();
+  body.permlink = body.permlink.replace('_', '-');
+  body.permlink = body.permlink.replace('.', '');
+  config.objects.account === accounts.serviceBots.length - 1
+    ? config.objects.account = 0
+    : config.objects.account += 1;
+  return { body, accounts };
+};
 
 const dataPublisher = async ({
   account, body, opType, accounts,

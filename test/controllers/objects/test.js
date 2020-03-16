@@ -14,6 +14,7 @@ describe('On object controller', async () => {
   beforeEach(async () => {
     bots = botMock;
     blackList = faker.random.string(10);
+    sinon.stub(dsteemModel, 'getAccountRC').returns(Promise.resolve(2000000000000));
     sinon.stub(addBotsToEnv, 'setEnvData').returns(Promise.resolve(bots));
     sinon.stub(appModel, 'findOne').returns(Promise.resolve({ app: { black_list_users: [blackList] } }));
     await redis.actionsDataClient.flushdbAsync();
