@@ -1,5 +1,5 @@
 const {
-  expect, chai, sinon, dsteemModel, redis, addBotsToEnv,
+  expect, chai, sinon, dsteemModel, redis, serviceBotsHelper,
 } = require('test/testHelper');
 const { forecastMock, botMock } = require('test/mocks');
 const app = require('app');
@@ -8,7 +8,7 @@ describe('On forecast controller', async () => {
   let mock;
 
   beforeEach(async () => {
-    sinon.stub(addBotsToEnv, 'setEnvData').returns(Promise.resolve(botMock));
+    sinon.stub(serviceBotsHelper, 'setEnvData').returns(Promise.resolve(botMock));
     await redis.actionsDataClient.flushdbAsync();
     mock = forecastMock();
   });

@@ -8,25 +8,17 @@ chai.use(chaiHttp);
 chai.use(sinonChai);
 const { expect } = chai;
 const config = require('config');
-const { Mongoose } = require('database');
 const { mockRequest, mockResponse } = require('mock-req-res');
 const authorise = require('utilities/authorazation/waivioAuth/autorise');
 const validationHelper = require('controllers/validators/validationHelper');
-const addBotsToEnv = require('utilities/operations/addBotsToEnv');
+const serviceBotsHelper = require('utilities/helpers/serviceBotsHelper');
 
 faker.random.string = (length = 5) => faker.internet.password(length, false, /[a-z]/);
 const getRandomString = (length = 5) => faker.internet.password(length, false, /[a-z]/);
 
-const dropDatabase = async () => {
-  const { models } = require('../database');
-  for (const model in models) {
-    await models[model].deleteMany();
-  }
-};
-
 module.exports = {
   sinon,
-  addBotsToEnv,
+  serviceBotsHelper,
   chai,
   expect,
   mockRequest,
@@ -40,6 +32,4 @@ module.exports = {
   ...require('utilities'),
   config,
   validationHelper,
-  dropDatabase,
-  Mongoose,
 };

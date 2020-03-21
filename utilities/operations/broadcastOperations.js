@@ -2,7 +2,7 @@ const { redisQueue, actionsRsmqClient } = require('utilities/redis/rsmq');
 const { redisSetter } = require('utilities/redis');
 const { regExp, guestRequestsData } = require('constants/index');
 const config = require('config');
-const addBotsToEnv = require('utilities/operations/addBotsToEnv');
+const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const broadcastHelper = require('utilities/helpers/broadcastHelper');
 
 const commentBroadcaster = async ({

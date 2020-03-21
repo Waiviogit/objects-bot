@@ -1,13 +1,13 @@
 const _ = require('lodash');
 const {
-  expect, chai, sinon, getRandomString, dsteemModel, redis, addBotsToEnv, appModel, faker,
+  expect, chai, sinon, getRandomString, dsteemModel, redis, serviceBotsHelper, faker,
 } = require('test/testHelper');
 const { objectMock, botMock } = require('test/mocks');
 const { getOptions, getPostData } = require('utilities/helpers/postingData');
 const { APPEND_OBJECT, CREATE_OBJECT } = require('constants/actionTypes');
 const app = require('app');
 const requestHelper = require('utilities/helpers/requestHelper');
-
+const checkUsersForBlackList = require('utilities/helpers/checkUsersForBlackList');
 
 describe('On object controller', async () => {
   let bots, blackList;
@@ -15,8 +15,8 @@ describe('On object controller', async () => {
     bots = botMock;
     blackList = faker.random.string(10);
     sinon.stub(dsteemModel, 'getAccountRC').returns(Promise.resolve(2000000000000));
-    sinon.stub(addBotsToEnv, 'setEnvData').returns(Promise.resolve(bots));
-    sinon.stub(appModel, 'findOne').returns(Promise.resolve({ app: { black_list_users: [blackList] } }));
+    sinon.stub(serviceBotsHelper, 'setEnvData').returns(Promise.resolve(bots));
+    sinon.stub(checkUsersForBlackList, 'checkForBlackList').returns(false);
     await redis.actionsDataClient.flushdbAsync();
   });
   afterEach(async () => {
@@ -89,17 +89,12 @@ describe('On object controller', async () => {
   });
   describe('On processCreateObject', async () => {
     let mock;
-
     beforeEach(async () => {
       mock = objectMock();
-      sinon.stub(requestHelper, 'getUser').returns(Promise.resolve({ user: getRandomString() }));
     });
-    afterEach(async () => {
-      sinon.restore();
-    });
+
     describe('On success', async () => {
       let result;
-
       beforeEach(async () => {
         sinon.stub(dsteemModel, 'postWithOptions').returns(Promise.resolve({ result: 'OK' }));
         result = await chai.request(app).post('/create-object').send(mock);
@@ -119,7 +114,6 @@ describe('On object controller', async () => {
     describe('On errors', async () => {
       describe('On RPCError', async () => {
         let result;
-
         beforeEach(async () => {
           sinon.stub(dsteemModel, 'postWithOptions').returns(Promise.resolve({ error: { name: 'RPCError', message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL RC' } }));
           result = await chai.request(app).post('/create-object').send(mock);
@@ -128,11 +122,15 @@ describe('On object controller', async () => {
           expect(result).to.have.status(503);
         });
         it('should return 422 error if author in blackList', async () => {
+          sinon.restore();
+          sinon.stub(checkUsersForBlackList, 'checkForBlackList').returns(true);
           mock.author = blackList;
           result = await chai.request(app).post('/create-object').send(mock);
           expect(result).to.have.status(422);
         });
         it('should return error if author in blackList', async () => {
+          sinon.restore();
+          sinon.stub(checkUsersForBlackList, 'checkForBlackList').returns(true);
           mock.author = blackList;
           result = await chai.request(app).post('/create-object').send(mock);
           expect(result.body.message).to.be.eq('Author in blackList!');
@@ -211,11 +209,15 @@ describe('On object controller', async () => {
           expect(result).to.have.status(503);
         });
         it('should return 422 error if author in blackList', async () => {
+          sinon.restore();
+          sinon.stub(checkUsersForBlackList, 'checkForBlackList').returns(true);
           mock.author = blackList;
           result = await chai.request(app).post('/append-object').send(mock);
           expect(result).to.have.status(422);
         });
         it('should return error if author in blackList', async () => {
+          sinon.restore();
+          sinon.stub(checkUsersForBlackList, 'checkForBlackList').returns(true);
           mock.author = blackList;
           result = await chai.request(app).post('/append-object').send(mock);
           expect(result.body.message).to.be.eq('Author in blackList!');

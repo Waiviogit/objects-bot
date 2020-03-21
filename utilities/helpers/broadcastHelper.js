@@ -1,11 +1,12 @@
 const _ = require('lodash');
-const { postModel, dsteemModel } = require('models');
+const { dsteemModel } = require('models');
 const { redisGetter } = require('utilities/redis');
 const { regExp } = require('constants/index');
-const addBotsToEnv = require('utilities/operations/addBotsToEnv');
+const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
+const apiRequests = require('utilities/waivioApi/apiRequests');
 
 const commentFinder = async (author, permlink) => {
-  const { post } = await postModel.findOne({ author, permlink });
+  const { post } = await apiRequests.getPost({ author, permlink });
   if (post) {
     return { author: post.root_author };
   }

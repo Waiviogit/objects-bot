@@ -2,7 +2,7 @@ const axios = require('axios');
 const _ = require('lodash');
 const {
   expect, chai, sinon, faker, getRandomString,
-  redisQueue, redisSetter, updateMetadata, dsteemModel, redis, authoriseUser, addBotsToEnv,
+  redisQueue, redisSetter, updateMetadata, dsteemModel, redis, authoriseUser, serviceBotsHelper,
 } = require('test/testHelper');
 const {
   postMock, userMock, botMock, customJsonMock,
@@ -15,7 +15,7 @@ describe('On guestRequestsController', async () => {
     beforeEach(async () => {
       await redis.actionsDataClient.flushdbAsync();
       sinon.stub(updateMetadata, 'metadataModify').returns('test metadata');
-      sinon.stub(addBotsToEnv, 'setEnvData').returns(Promise.resolve(botMock));
+      sinon.stub(serviceBotsHelper, 'setEnvData').returns(Promise.resolve(botMock));
     });
     afterEach(async () => {
       await redis.actionsDataClient.flushdbAsync();
@@ -204,7 +204,7 @@ describe('On guestRequestsController', async () => {
       await redis.actionsDataClient.flushdbAsync();
       author = faker.name.firstName();
       bot = botMock;
-      sinon.stub(addBotsToEnv, 'setEnvData').returns(Promise.resolve(botMock));
+      sinon.stub(serviceBotsHelper, 'setEnvData').returns(Promise.resolve(botMock));
     });
     describe('On success', async () => {
       beforeEach(async () => {

@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const {
-  getRandomString, redisGetter, sinon, redisQueue, dsteemModel, addBotsToEnv,
+  getRandomString, redisGetter, sinon, redisQueue, dsteemModel, serviceBotsHelper,
   actionsRsmqClient, redisSetter, broadcastOperations,
   expect, validationHelper, redis,
 } = require('test/testHelper');
@@ -10,7 +10,7 @@ const { commentAction } = require('constants/guestRequestsData');
 describe('On broadcastOperations', async () => {
   beforeEach(async () => {
     await redis.actionsDataClient.flushdbAsync();
-    sinon.stub(addBotsToEnv, 'setEnvData').returns(Promise.resolve(botMock));
+    sinon.stub(serviceBotsHelper, 'setEnvData').returns(Promise.resolve(botMock));
   });
   afterEach(async () => {
     sinon.restore();

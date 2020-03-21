@@ -1,10 +1,9 @@
 const _ = require('lodash');
-const { appModel } = require('models');
 const config = require('config');
-
+const apiRequests = require('utilities/waivioApi/apiRequests');
 
 const checkForBlackList = async (creator) => {
-  const { app, error } = await appModel.findOne({ name: config.app });
+  const { app, error } = apiRequests.getAppData({ name: config.app });
   if (error) return true;
   return _.includes(app.black_list_users, creator);
 };

@@ -2,7 +2,7 @@ const { uuid } = require('uuidv4');
 const redisGetter = require('utilities/redis/redisGetter');
 const redisSetter = require('utilities/redis/redisSetter');
 const { actionsRsmqClient, redisQueue } = require('utilities/redis/rsmq');
-const addBotsToEnv = require('utilities/operations/addBotsToEnv');
+const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const updateMetadata = require('utilities/helpers/updateMetadata');
 
 // Create queue if it not exist, and add "data" to this queue

@@ -2,7 +2,7 @@ const handleError = require('utilities/helpers/handleError');
 const { getPostData, getOptions } = require('utilities/helpers/postingData');
 const { dsteemModel } = require('models');
 const { actionTypes } = require('constants/index');
-const addBotsToEnv = require('utilities/operations/addBotsToEnv');
+const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const config = require('config');
 
 const markExpiredForecastOp = async (body) => {

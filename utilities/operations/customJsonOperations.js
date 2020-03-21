@@ -4,7 +4,7 @@ const validators = require('controllers/validators');
 const { parseMetadata } = require('utilities/helpers/updateMetadata');
 const config = require('config');
 const { dsteemModel } = require('models');
-const addBotsToEnv = require('utilities/operations/addBotsToEnv');
+const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const authoriseUser = require('utilities/authorazation/authoriseUser');
 
 const switcher = async (data, next) => {

@@ -1,10 +1,10 @@
 const _ = require('lodash');
-const { appModel } = require('models');
 const config = require('config');
+const apiRequests = require('utilities/waivioApi/apiRequests');
 
 
 exports.setEnvData = async () => {
-  const { app } = await appModel.findOne({ name: config.app });
+  const { app } = await apiRequests.getAppData({ name: config.app });
   const serviceBots = _.filter(app.service_bots, (bot) => {
     if (_.includes(bot.roles, 'serviceBot')) return bot;
   });
