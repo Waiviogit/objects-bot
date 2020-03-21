@@ -1,6 +1,6 @@
 const dsteem = require('dsteem');
 
-const client = new dsteem.Client('https://api.steemit.com');
+const client = new dsteem.Client('https://anyx.io');
 const rcApi = new dsteem.RCAPI(client);
 
 const post = async (data, key) => {

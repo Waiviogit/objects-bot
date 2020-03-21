@@ -16,9 +16,11 @@
     },
     "guest_comment": {
       "account": 0,
-      "accountForComm": 0,
-      "attempts": 0,
-      "attemptsComm": 0
+      "attempts": 0
+    },
+    "guest_post": {
+      "account": 0,
+      "attempts": 0
     },
     "custom_json": {
       "account": 0
@@ -48,9 +50,11 @@
     },
     "guest_comment": {
       "account": 0,
-      "attempts": 0,
-      "accountForComm": 0,
-      "attemptsComm": 0
+      "attempts": 0
+    },
+    "guest_post": {
+      "account": 0,
+      "attempts": 0
     },
     "custom_json": {
       "account": 0
@@ -80,9 +84,11 @@
     },
     "guest_comment": {
       "account": 0,
-      "attempts": 0,
-      "accountForComm": 0,
-      "attemptsComm": 0
+      "attempts": 0
+    },
+    "guest_post": {
+      "account": 0,
+      "attempts": 0
     },
     "custom_json": {
       "account": 0
@@ -112,9 +118,11 @@
     },
     "guest_comment": {
       "account": 0,
-      "attempts": 0,
-      "accountForComm": 0,
-      "attemptsComm": 0
+      "attempts": 0
+    },
+    "guest_post": {
+      "account": 0,
+      "attempts": 0
     },
     "custom_json": {
       "account": 0

@@ -40,8 +40,10 @@ app.use((err, req, res, next) => {
   // render the error page
   res.status(err.status || 500).json({ message: err.message });
 });
+if (process.env.NODE_ENV !== 'test') {
+  job.runPosts();
+  job.runComments();
+}
 
-job.runPosts();
-job.runComments();
 
 module.exports = app;

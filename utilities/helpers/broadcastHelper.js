@@ -22,8 +22,10 @@ const switcher = async (message, account) => {
       const checkInBase = await commentFinder(
         parsedData.comment.author, parsedData.comment.permlink,
       );
+      // if author exists - we need to update post
       if (_.has(checkInBase, 'author')) return await updateHelper(checkInBase.author, parsedData.comment);
     }
+    // if in post data from redis exists special flag - it is comment for update
     if (parsedData.comment.parent_author && parsedData.comment.guest_root_author) {
       return await updateHelper(parsedData.comment.guest_root_author, _.omit(parsedData.comment, ['guest_root_author']));
     }
@@ -34,11 +36,16 @@ const switcher = async (message, account) => {
   const post = parsedData.comment;
   console.info(`Try to create comment by | ${account.name}`);
   const app = new RegExp(/waivio/).test(parsedMetadata.app) ? 'waivio' : 'investarena';
+  // Prepare comment body
   post.body = `${post.body}\n This message was written by guest ${post.author}, and is`
-  + ` [available at www.${app}.com](https://www.${app}.com/@${account.name}/${post.permlink})`;
+        + ` [available at www.${app}.com](https://www.${app}.com/@${account.name}/${post.permlink})`;
+  // Change comment author for bot name
   post.author = account.name;
+
   if (post.post_root_author) post.parent_author = post.post_root_author;
+  // If data has no field options - return result of simply post method of dsteem
   if (!_.has(parsedData, 'options')) return dsteemModel.post(post, account.postingKey);
+  // else return result of post method with options(beneficiaries)
   const { options } = parsedData;
   options.author = account.name;
   const { result, error } = await dsteemModel.postWithOptions(
@@ -58,6 +65,7 @@ const updateHelper = async (author, comment) => {
     error: updateError,
   } = await dsteemModel.post(comment, rootAcc.postingKey);
   if (updateResult) return { result: updateResult };
+  // if dsteem method returns special error - message neednt to be deleted
   if (regExp.steemErrRegExp.test(updateError.message)) return { error: { message: 'update error' } };
   return { error: updateError };
 };
