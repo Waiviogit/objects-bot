@@ -93,7 +93,7 @@ const AppendObjectOp = async (body) => {
         parentPermlink: updBody.parentPermlink,
         transactionId: transactionStatus.id,
       };
-      console.info(`INFO[CreateObjectType] Object type successfully created | response body: ${JSON.stringify(payload)}`);
+      console.info(`INFO[AppendObject] Successfully appended | response body: ${JSON.stringify(payload)}`);
       return { result: { status: 200, json: payload } };
     } if (e && e.name === 'RPCError') {
       config.objects.account === accounts.serviceBots.length - 1
