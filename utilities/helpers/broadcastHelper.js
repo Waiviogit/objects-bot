@@ -49,8 +49,8 @@ const switcher = async (message, account) => {
   // else return result of post method with options(beneficiaries)
   const { options } = parsedData;
   options.author = account.name;
-  const { result, error } = await dsteemModel.postWithOptions(
-    post, parsedData.options, account.postingKey,
+  const { result, error } = await dsteemModel.post(
+    post, account.postingKey,
   );
   if (error && error.message.match('beneficiaries')) return dsteemModel.post(post, account.postingKey);
   return { result, error };
