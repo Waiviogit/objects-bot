@@ -15,7 +15,7 @@ const commentFinder = async (author, permlink) => {
 const switcher = async (message, account) => {
   const { result: postingData } = await redisGetter.getAllHashData(message);
   let parsedData, parsedMetadata;
-
+  if (!postingData) return { error: { message: 'No data from redis' } };
   try {
     parsedData = JSON.parse(postingData);
     // check post to exists in base, if exist -> it is update
