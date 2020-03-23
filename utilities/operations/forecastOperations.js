@@ -51,9 +51,9 @@ const markExpiredForecastOp = async (body) => {
 
 const sendComment = async (data, account) => {
   console.info(`INFO[ForecastExpired] Try to write comment| bot: ${account.name}`);
-  return dsteemModel.postWithOptions(
+  return dsteemModel.post(
     getPostData(data, account, actionTypes.FORECAST_EXPIRED),
-    await getOptions(data, account, actionTypes.FORECAST_EXPIRED),
+    // await getOptions(data, account, actionTypes.FORECAST_EXPIRED),
     account.postingKey,
   );
 };
