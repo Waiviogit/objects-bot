@@ -1,6 +1,6 @@
 const { redisQueue, actionsRsmqClient } = require('utilities/redis/rsmq');
 const { redisSetter } = require('utilities/redis');
-const { regExp, guestRequestsData } = require('constants/index');
+const { regExp } = require('constants/index');
 const config = require('config');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const broadcastHelper = require('utilities/helpers/broadcastHelper');
@@ -19,17 +19,17 @@ const commentBroadcaster = async ({
     }
   }
   if (message) {
-    const result = await broadcastStatusParse(message.message, path, postingErrorWait);
+    const result = await broadcastStatusParse(message.message, path, postingErrorWait, qname);
     if (!result) {
       await redisQueue.deleteMessage(
-        { client: actionsRsmqClient, qname: guestRequestsData.commentAction.qname, id: message.id },
+        { client: actionsRsmqClient, qname, id: message.id },
       );
       await redisSetter.delActionsData(message.message);
     }
   }
 };
 
-const broadcastStatusParse = async (message, path, postingErrorWait) => {
+const broadcastStatusParse = async (message, path, postingErrorWait, qname) => {
   const accounts = await addBotsToEnv.setEnvData();
 
   const account = accounts.proxyBots[config[path].account];
@@ -58,7 +58,7 @@ const broadcastStatusParse = async (message, path, postingErrorWait) => {
     await redisQueue.sendMessage(
       {
         client: actionsRsmqClient,
-        qname: guestRequestsData.postAction.qname,
+        qname,
         message,
       },
     );
