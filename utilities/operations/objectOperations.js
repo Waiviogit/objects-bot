@@ -9,6 +9,7 @@ const config = require('config');
 
 const createObjectTypeOp = async (body) => {
   const accounts = await addBotsToEnv.setEnvData();
+  if (accounts.error) return handleError(accounts.error.message);
   config.objects.account === accounts.serviceBots.length - 1
     ? config.objects.account = 0
     : config.objects.account += 1;
@@ -48,7 +49,7 @@ const createObjectTypeOp = async (body) => {
 
 const createObjectOp = async (body) => {
   const { body: updBody, error: publishError, accounts } = await publishHelper({ ...body });
-  if (publishError === 'Author in blackList!') return handleError(publishError);
+  if (publishError) return handleError(publishError);
   let error;
   for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
     const account = accounts.serviceBots[config.objects.account];
@@ -77,7 +78,7 @@ const createObjectOp = async (body) => {
 
 const AppendObjectOp = async (body) => {
   const { body: updBody, error: publishError, accounts } = await publishHelper({ ...body });
-  if (publishError === 'Author in blackList!') return handleError(publishError);
+  if (publishError) return handleError(publishError);
   let error;
   for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
     const account = accounts.serviceBots[config.objects.account];
@@ -113,6 +114,7 @@ const AppendObjectOp = async (body) => {
 const publishHelper = async (body) => {
   if (await checkUsersForBlackList.checkForBlackList(body.author)) return { error: 'Author in blackList!' };
   const accounts = await addBotsToEnv.setEnvData();
+  if (accounts.error) return { error: accounts.error.message };
   body.permlink = body.permlink.replace('_', '-');
   body.permlink = body.permlink.replace('.', '');
   config.objects.account === accounts.serviceBots.length - 1

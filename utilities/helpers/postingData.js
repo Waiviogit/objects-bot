@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { orderBy, uniqWith } = require('lodash');
 const { actionTypes, appData } = require('constants/index');
 const requestHelper = require('utilities/helpers/requestHelper');
@@ -90,7 +91,7 @@ const getPostData = (reqData, accData, type) => {
       metadata.tags = 'expired_forecast';
       metadata[reqData.marker ? reqData.marker : 'wia'] = {
         action: type,
-        exp_forecast: reqData.expForecast,
+        exp_forecast: _.omit(reqData.expForecast, ['bars']),
       };
       break;
     default:

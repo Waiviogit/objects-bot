@@ -158,6 +158,7 @@ const guestUpdateAccountJSON = async (data, next) => {
 const accountsSwitcher = async (data) => {
   let err;
   const accounts = await addBotsToEnv.setEnvData();
+  if (accounts.error) return { error: accounts.error };
   for (let counter = 0; counter < accounts.proxyBots.length; counter++) {
     const account = accounts.proxyBots[config.custom_json.account];
     const { result, error } = await dsteemModel.customJSON(data, account);

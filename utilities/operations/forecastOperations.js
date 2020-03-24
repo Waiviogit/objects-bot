@@ -7,6 +7,7 @@ const config = require('config');
 
 const markExpiredForecastOp = async (body) => {
   const accounts = await addBotsToEnv.setEnvData();
+  if (accounts.error) return handleError(accounts.error.message);
   config.forecasts.account === accounts.serviceBots.length - 1
     ? config.forecasts.account = 0
     : config.forecasts.account += 1;

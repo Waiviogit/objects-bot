@@ -21,7 +21,7 @@ describe('On forecast controller', async () => {
       let result;
 
       beforeEach(async () => {
-        sinon.stub(dsteemModel, 'postWithOptions').returns(Promise.resolve({ result: 'OK' }));
+        sinon.stub(dsteemModel, 'post').returns(Promise.resolve({ result: 'OK' }));
         result = await chai.request(app).post('/set-expired').send(mock);
       });
       it('should return status 200', async () => {
@@ -36,7 +36,7 @@ describe('On forecast controller', async () => {
         let result;
 
         beforeEach(async () => {
-          sinon.stub(dsteemModel, 'postWithOptions').returns(Promise.resolve({ error: { name: 'RPCError', message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL RC' } }));
+          sinon.stub(dsteemModel, 'post').returns(Promise.resolve({ error: { name: 'RPCError', message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL RC' } }));
           result = await chai.request(app).post('/set-expired').send(mock);
         });
         afterEach(async () => {
@@ -46,14 +46,14 @@ describe('On forecast controller', async () => {
           expect(result).to.have.status(503);
         });
         it('should try to send comment to chain by all bots', async () => {
-          expect(dsteemModel.postWithOptions.callCount).to.be.eq(botMock.serviceBots.length);
+          expect(dsteemModel.post.callCount).to.be.eq(botMock.serviceBots.length);
         });
       });
       describe('On another errors', async () => {
         let result;
 
         beforeEach(async () => {
-          sinon.stub(dsteemModel, 'postWithOptions').returns(Promise.resolve({ error: { name: 'some error' } }));
+          sinon.stub(dsteemModel, 'post').returns(Promise.resolve({ error: { name: 'some error' } }));
           result = await chai.request(app).post('/set-expired').send(mock);
         });
         afterEach(async () => {
@@ -63,7 +63,7 @@ describe('On forecast controller', async () => {
           expect(result).to.have.status(422);
         });
         it('should not try to send comment to chain by all bots with not RPCError', async () => {
-          expect(dsteemModel.postWithOptions).to.be.calledOnce;
+          expect(dsteemModel.post).to.be.calledOnce;
         });
       });
     });

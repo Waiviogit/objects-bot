@@ -58,6 +58,7 @@ const switcher = async (message, account) => {
 
 const updateHelper = async (author, comment) => {
   const accounts = await addBotsToEnv.setEnvData();
+  if (accounts.error) return { error: accounts.error };
   const rootAcc = _.find(accounts.proxyBots, (acc) => acc.name === author);
   comment.author = rootAcc.name;
   if (comment.post_root_author) comment.parent_author = comment.post_root_author;

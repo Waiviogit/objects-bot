@@ -38,7 +38,7 @@ describe('On broadcastOperations', async () => {
           path: 'guest_comment',
           qname: commentAction.qname,
         });
-        expect(dsteemModel.postWithOptions).to.be.calledOnce;
+        expect(dsteemModel.post).to.be.calledOnce;
       });
       it('should successfully send comment with valid data to chain', async () => {
         await redisQueue.sendMessage(
