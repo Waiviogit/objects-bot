@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@hapi/joi": "^16.1.8",
+    "@hivechain/dsteem": "^0.12.14",
     "axios": "^0.19.0",
     "bluebird": "^3.7.2",
     "body-parser": "^1.15.2",

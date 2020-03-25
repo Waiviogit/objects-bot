@@ -1,4 +1,4 @@
-const dsteem = require('dsteem');
+const dsteem = require('@hivechain/dsteem');
 
 const client = new dsteem.Client('https://anyx.io');
 const rcApi = new dsteem.RCAPI(client);
