@@ -3,7 +3,7 @@ const config = require('config');
 
 exports.getAppData = async ({ name }) => {
   try {
-    const result = await axios.get(`https://${config.waivio_auth.host}/api/app/${name}`);
+    const result = await axios.get(`https://${config.waivio_auth.host}/api/app/${name}`, { headers: { 'api-key': process.env.API_KEY } });
     return { app: result.data };
   } catch (error) {
     return { error };
