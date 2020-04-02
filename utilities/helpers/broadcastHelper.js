@@ -36,7 +36,7 @@ const switcher = async (message, account) => {
   }
   const post = parsedData.comment;
   console.info(`Try to create comment by | ${account.name}`);
-  const app = new RegExp(/waivio/).test(parsedMetadata.app) ? 'waivio' : 'investarena';
+  const app = chooseApp(parsedMetadata.app);
   // Prepare comment body
   post.body = `${post.body}\n This message was written by guest ${post.author}, and is`
         + ` [available at www.${app}.com](https://www.${app}.com/@${account.name}/${post.permlink})`;
@@ -70,6 +70,17 @@ const updateHelper = async (author, comment) => {
   // if dsteem method returns special error - message neednt to be deleted
   if (regExp.steemErrRegExp.test(updateError.message)) return { error: { message: 'update error' } };
   return { error: updateError };
+};
+
+const chooseApp = (app) => {
+  if (new RegExp(/waivio/).test(app)) {
+    return 'waivio';
+  } if (new RegExp(/investarena/).test(app)) {
+    return 'investarena';
+  } if (new RegExp(/beaxy/).test(app)) {
+    return 'beaxy';
+  }
+  return 'waivio';
 };
 
 module.exports = { switcher };

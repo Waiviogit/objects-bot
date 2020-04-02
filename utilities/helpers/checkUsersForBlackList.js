@@ -4,7 +4,7 @@ const apiRequests = require('utilities/waivioApi/apiRequests');
 
 const checkForBlackList = async (creator) => {
   const { app, error } = await apiRequests.getAppData({ name: config.app });
-  if (error) return true;
+  if (error) return false;
   return _.includes(app.black_list_users, creator);
 };
 
