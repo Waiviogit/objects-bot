@@ -39,7 +39,7 @@ const switcher = async (message, account) => {
   const app = chooseApp(parsedMetadata.app);
   // Prepare comment body
   post.body = `${post.body}\n This message was written by guest ${post.author}, and is`
-        + ` [available at www.${app}.com](https://www.${app}.com/@${account.name}/${post.permlink})`;
+        + ` [available at ${app}](https://${app}/@${account.name}/${post.permlink})`;
   // Change comment author for bot name
   post.author = account.name;
 
@@ -74,11 +74,11 @@ const updateHelper = async (author, comment) => {
 
 const chooseApp = (app) => {
   if (new RegExp(/waivio/).test(app)) {
-    return 'waivio';
+    return 'www.waivio.com';
   } if (new RegExp(/investarena/).test(app)) {
-    return 'investarena';
+    return 'www.investarena.com';
   } if (new RegExp(/beaxy/).test(app)) {
-    return 'beaxy';
+    return 'crypto.investarena.com';
   }
   return 'waivio';
 };
