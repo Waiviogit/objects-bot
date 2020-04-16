@@ -12,7 +12,7 @@ const metadataModify = (jsonMetadata) => {
   }
   metadata.comment = {
     userId: authorisedUser.name,
-    social: authorisedUser.auth.provider,
+    social: authorisedUser.provider,
   };
   return JSON.stringify(metadata);
 };
