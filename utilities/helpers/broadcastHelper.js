@@ -39,7 +39,7 @@ const switcher = async (message, account) => {
   const app = chooseApp(parsedMetadata.app);
   // Prepare comment body
   post.body = `${post.body}\n This message was written by guest ${post.author}, and is`
-        + ` [available at ${app}](https://${app}/@${account.name}/${post.permlink})`;
+        + ` [available at ${app}](https://${app}/${permlinkGenerator(post, account)})`;
   // Change comment author for bot name
   post.author = account.name;
 
@@ -71,6 +71,10 @@ const updateHelper = async (author, comment) => {
   if (regExp.steemErrRegExp.test(updateError.message)) return { error: { message: 'update error' } };
   return { error: updateError };
 };
+
+const permlinkGenerator = (post, account) => (post.parent_author
+  ? `@${post.parent_author}/${post.parent_permlink}#@${account.name}/${post.permlink}`
+  : `@${account.name}/${post.permlink}`);
 
 const chooseApp = (app) => {
   if (new RegExp(/waivio/).test(app)) {
