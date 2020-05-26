@@ -6,7 +6,7 @@ const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const broadcastHelper = require('utilities/helpers/broadcastHelper');
 
 const commentBroadcaster = async ({
-  noMessageWait = 10000, postingErrorWait = 10000, qname, path,
+  noMessageWait = 1000, postingErrorWait = 10000, qname, path,
 }) => {
   const { error: redisError, result: message } = await redisQueue.receiveMessage({
     client: actionsRsmqClient, qname,

@@ -6,7 +6,7 @@ const runPosts = async () => {
     await commentBroadcaster({
       path: 'guest_post',
       qname: guestRequestsData.postAction.qname,
-      noMessageWait: 6000,
+      noMessageWait: 1000,
       postingErrorWait: 60000,
     });
   }
@@ -17,7 +17,7 @@ const runComments = async () => {
     await commentBroadcaster({
       path: 'guest_comment',
       qname: guestRequestsData.commentAction.qname,
-      noMessageWait: 10000,
+      noMessageWait: 1000,
       postingErrorWait: 10000,
     });
   }
