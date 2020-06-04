@@ -38,8 +38,7 @@ const switcher = async (message, account) => {
   console.info(`Try to create comment by | ${account.name}`);
   const app = chooseApp(parsedMetadata.app);
   // Prepare comment body
-  post.body = `${post.body}\n This message was written by guest ${post.author}, and is`
-        + ` [available at ${app}](https://${app}/${permlinkGenerator(post, account)})`;
+  post.body = `${post.body}\n <hr/>\n <center>[Posted](https://${app}/${permlinkGenerator(post, account)}) by Waivio guest: [@${post.author}](https://${app}/@${post.author})</center>`;
   // Change comment author for bot name
   post.author = account.name;
 
