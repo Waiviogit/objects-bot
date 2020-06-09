@@ -43,6 +43,7 @@ app.use((err, req, res, next) => {
 if (process.env.NODE_ENV !== 'test') {
   job.runPosts();
   job.runComments();
+  job.runReviews();
 }
 
 

@@ -8,6 +8,7 @@ const runPosts = async () => {
       qname: guestRequestsData.postAction.qname,
       noMessageWait: 1000,
       postingErrorWait: 60000,
+      botType: 'proxyBots',
     });
   }
 };
@@ -19,8 +20,21 @@ const runComments = async () => {
       qname: guestRequestsData.commentAction.qname,
       noMessageWait: 1000,
       postingErrorWait: 10000,
+      botType: 'proxyBots',
     });
   }
 };
 
-module.exports = { runPosts, runComments };
+const runReviews = async () => {
+  while (true) {
+    await commentBroadcaster({
+      path: 'guest_review',
+      qname: guestRequestsData.reviewAction.qname,
+      noMessageWait: 1000,
+      postingErrorWait: 60000,
+      botType: 'reviewBots',
+    });
+  }
+};
+
+module.exports = { runPosts, runComments, runReviews };

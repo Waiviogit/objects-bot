@@ -13,5 +13,8 @@ exports.setEnvData = async () => {
   const proxyBots = _.filter(app.service_bots, (bot) => {
     if (_.includes(bot.roles, 'proxyBot')) return bot;
   });
-  return { serviceBots, proxyBots };
+  const reviewBots = _.filter(app.service_bots, (bot) => {
+    if (_.includes(bot.roles, 'reviewBot')) return bot;
+  });
+  return { serviceBots, proxyBots, reviewBots };
 };

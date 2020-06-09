@@ -1,7 +1,7 @@
 const validators = require('controllers/validators');
 
 exports.postingValidator = (reqBody, next) => {
-  let options;
+  let options, isReview = false;
   const error = { status: 422, message: 'Invalid options in request' };
   // if request not has comment data return error
   if (!reqBody.data.operations[0][1]) return next(error);
@@ -15,5 +15,6 @@ exports.postingValidator = (reqBody, next) => {
     );
     if (!options) return next(error);
   }
-  return { comment, options };
+  if (reqBody.guestReview) isReview = true;
+  return { comment, options, isReview };
 };
