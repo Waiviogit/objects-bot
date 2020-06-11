@@ -60,6 +60,10 @@
       "account": 0,
       "attempts": 0
     },
+    "guest_review": {
+      "account": 0,
+      "attempts": 0
+    },
     "custom_json": {
       "account": 0
     },
@@ -91,6 +95,10 @@
       "attempts": 0
     },
     "guest_post": {
+      "account": 0,
+      "attempts": 0
+    },
+    "guest_review": {
       "account": 0,
       "attempts": 0
     },
