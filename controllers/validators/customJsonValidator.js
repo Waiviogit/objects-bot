@@ -48,4 +48,5 @@ exports.reblogSchema = Joi.array().ordered(
 exports.updateSchema = Joi.object().keys({
   account: Joi.string().required(),
   json_metadata: Joi.string().allow('').required(),
+  posting_json_metadata: Joi.string().allow('').required(),
 }).options({ allowUnknown: true, stripUnknown: true });
