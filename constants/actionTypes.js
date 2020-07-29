@@ -10,5 +10,5 @@ module.exports = {
   GUEST_CREATE: 'waivio_guest_create',
   GUEST_REBLOG: 'waivio_guest_reblog',
   GUEST_UPDATE_ACCOUNT: 'waivio_guest_account_update',
-  GUEST_SUBSCRIBE_NOTIFICATIONS: 'waivio_guest_subscribe_notifications',
+  GUEST_SUBSCRIBE_NOTIFICATIONS: 'waivio_guest_bell',
 };
