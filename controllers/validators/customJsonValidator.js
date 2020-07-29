@@ -50,3 +50,12 @@ exports.updateSchema = Joi.object().keys({
   json_metadata: Joi.string().allow('').required(),
   posting_json_metadata: Joi.string().allow('').required(),
 }).options({ allowUnknown: true, stripUnknown: true });
+
+exports.subscribeNotificationsSchema = Joi.array().ordered(
+  Joi.string().valid('subscribe_notifications').required(),
+  Joi.object().keys({
+    follower: Joi.string().required(),
+    following: Joi.string().required(),
+    subscribe: Joi.boolean().required(),
+  }),
+).options({ allowUnknown: true, stripUnknown: true });
