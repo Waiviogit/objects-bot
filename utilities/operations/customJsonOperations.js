@@ -37,6 +37,11 @@ const switcher = async (data, next) => {
         return guestFollowJSON(data.data.operations[0][1].json, next);
       }
       return errorGenerator(next);
+    case actionTypes.GUEST_SUBSCRIBE_NOTIFICATIONS:
+      if (_.has(data, 'data.operations[0][1].json')) {
+        return guestSubscribeNotificationsJSON(data.data.operations[0][1].json, next);
+      }
+      return errorGenerator(next);
     default:
       return errorGenerator(next);
   }
@@ -185,6 +190,25 @@ const errorGenerator = (next) => {
   const error = { status: 422, message: 'Invalid request data' };
 
   return next(error);
+};
+
+const guestSubscribeNotificationsJSON = async (data, next) => {
+  const value = validators.validate(
+    data, validators.customJson.subscribeNotificationsSchema, next,
+  );
+  if (!value) return;
+
+  const { error, isValid } = await authoriseUser.authorise(value[1].follower);
+  // if (error) return next(error);
+
+  // if (isValid) {
+  const { result, error: broadcastError } = await accountsSwitcher(
+    { id: actionTypes.GUEST_SUBSCRIBE_NOTIFICATIONS, json: JSON.stringify(value[1]) },
+  );
+
+  if (broadcastError) return next(broadcastError);
+  return result;
+  // }
 };
 
 module.exports = { switcher };
