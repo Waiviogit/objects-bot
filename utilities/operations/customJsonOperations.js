@@ -199,16 +199,16 @@ const guestSubscribeNotificationsJSON = async (data, next) => {
   if (!value) return;
 
   const { error, isValid } = await authoriseUser.authorise(value[1].follower);
-  // if (error) return next(error);
+  if (error) return next(error);
 
-  // if (isValid) {
-  const { result, error: broadcastError } = await accountsSwitcher(
-    { id: actionTypes.GUEST_SUBSCRIBE_NOTIFICATIONS, json: JSON.stringify(value[1]) },
-  );
+  if (isValid) {
+    const { result, error: broadcastError } = await accountsSwitcher(
+      { id: actionTypes.GUEST_SUBSCRIBE_NOTIFICATIONS, json: JSON.stringify(value[1]) },
+    );
 
-  if (broadcastError) return next(broadcastError);
-  return result;
-  // }
+    if (broadcastError) return next(broadcastError);
+    return result;
+  }
 };
 
 module.exports = { switcher };
