@@ -160,6 +160,25 @@ const guestUpdateAccountJSON = async (data, next) => {
   }
 };
 
+const guestSubscribeNotificationsJSON = async (data, next) => {
+  const value = validators.validate(
+    data, validators.customJson.subscribeNotificationsSchema, next,
+  );
+  if (!value) return;
+
+  const { error, isValid } = await authoriseUser.authorise(value[1].follower);
+  if (error) return next(error);
+
+  if (isValid) {
+    const { result, error: broadcastError } = await accountsSwitcher(
+      { id: actionTypes.GUEST_SUBSCRIBE_NOTIFICATIONS, json: JSON.stringify(value) },
+    );
+
+    if (broadcastError) return next(broadcastError);
+    return result;
+  }
+};
+
 const accountsSwitcher = async (data) => {
   let err;
   const accounts = await addBotsToEnv.setEnvData();
@@ -190,25 +209,6 @@ const errorGenerator = (next) => {
   const error = { status: 422, message: 'Invalid request data' };
 
   return next(error);
-};
-
-const guestSubscribeNotificationsJSON = async (data, next) => {
-  const value = validators.validate(
-    data, validators.customJson.subscribeNotificationsSchema, next,
-  );
-  if (!value) return;
-
-  const { error, isValid } = await authoriseUser.authorise(value[1].follower);
-  if (error) return next(error);
-
-  if (isValid) {
-    const { result, error: broadcastError } = await accountsSwitcher(
-      { id: actionTypes.GUEST_SUBSCRIBE_NOTIFICATIONS, json: JSON.stringify(value[1]) },
-    );
-
-    if (broadcastError) return next(broadcastError);
-    return result;
-  }
 };
 
 module.exports = { switcher };
