@@ -162,7 +162,7 @@ const guestUpdateAccountJSON = async (data, next) => {
 
 const guestSubscribeNotificationsJSON = async (data, next) => {
   const value = validators.validate(
-    data, validators.customJson.subscribeNotificationsSchema, next,
+    parseMetadata(data, next), validators.customJson.subscribeNotificationsSchema, next,
   );
   if (!value) return;
 
