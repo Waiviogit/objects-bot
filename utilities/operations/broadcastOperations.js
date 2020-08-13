@@ -4,6 +4,7 @@ const { regExp } = require('constants/index');
 const config = require('config');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const broadcastHelper = require('utilities/helpers/broadcastHelper');
+const { LAST_BLOCK_NUM } = require('constants/redisBlockNames');
 
 const commentBroadcaster = async ({
   noMessageWait = 1000, postingErrorWait = 10000, qname, path, botType,
@@ -32,12 +33,13 @@ const commentBroadcaster = async ({
 const broadcastStatusParse = async (message, path, postingErrorWait, qname, botType) => {
   const accounts = await addBotsToEnv.setEnvData();
   const account = accounts[botType][config[path].account];
-  const { error, result } = await broadcastHelper.switcher(message, account);
+  const { error, result, guestAuthor } = await broadcastHelper.switcher(message, account);
   if (result) {
     config[path].account === accounts[botType].length - 1
       ? config[path].account = 0
       : config[path].account += 1;
     config[path].attempts = 0;
+    await redisSetter.setSubscribe(`${LAST_BLOCK_NUM}:${result.block_num}`, guestAuthor);
     console.info(`INFO[commentBroadcasting] Comment successfully send | transaction id ${result.id}`);
     return false;
   } if (error && regExp.steemErrRegExp.test(error.message)) {

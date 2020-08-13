@@ -6,11 +6,15 @@ const config = require('config');
 const { dsteemModel } = require('models');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const authoriseUser = require('utilities/authorazation/authoriseUser');
+const redisSetter = require('utilities/redis/redisSetter');
+const { LAST_BLOCK_NUM, LAST_VOTE_BLOCK_NUM } = require('constants/redisBlockNames');
+
 
 const switcher = async (data, next) => {
   switch (data.id) {
     case actionTypes.GUEST_UPDATE_ACCOUNT:
-      if (_.has(data, 'data.operations[0][1].json') && data.data.operations[0][1].id === 'account_update') {
+      if (_.has(data, 'data.operations[0][1].json')
+          && _.includes(['account_update', 'account_update_2'], data.data.operations[0][1].id)) {
         return guestUpdateAccountJSON(data.data.operations[0][1].json, next);
       }
       return errorGenerator(next);
@@ -58,7 +62,7 @@ const guestVoteJSON = async (data, next) => {
     const { result, error: broadcastError } = await accountsSwitcher({
       id: actionTypes.GUEST_VOTE,
       json: JSON.stringify(value),
-    });
+    }, value.voter);
 
     if (broadcastError) return next(broadcastError);
     return result;
@@ -76,7 +80,7 @@ const guestCreateJSON = async (data, next) => {
     const { result, error: broadcastError } = await accountsSwitcher({
       id: actionTypes.GUEST_CREATE,
       json: JSON.stringify(value),
-    });
+    }, value.userId);
 
     if (broadcastError) return next(broadcastError);
     return result;
@@ -96,7 +100,7 @@ const guestFollowWobjectJSON = async (data, next) => {
     const { result, error: broadcastError } = await accountsSwitcher({
       id: actionTypes.GUEST_FOLLOW_WOBJECT,
       json: JSON.stringify(value),
-    });
+    }, value[1].user);
 
     if (broadcastError) return next(broadcastError);
     return result;
@@ -113,9 +117,10 @@ const guestFollowJSON = async (data, next) => {
 
   if (error) return next(error);
   if (isValid) {
-    const { result, error: broadcastError } = await accountsSwitcher(
-      { id: actionTypes.GUEST_FOLLOW, json: JSON.stringify(value) },
-    );
+    const { result, error: broadcastError } = await accountsSwitcher({
+      id: actionTypes.GUEST_FOLLOW,
+      json: JSON.stringify(value),
+    }, value[1].follower);
 
     if (broadcastError) return next(broadcastError);
     return result;
@@ -132,9 +137,11 @@ const guestReblogJSON = async (data, next) => {
 
   if (error) return next(error);
   if (isValid) {
-    const { result, error: broadcastError } = await accountsSwitcher(
-      { id: actionTypes.GUEST_REBLOG, json: JSON.stringify(value) },
-    );
+    const { result, error: broadcastError } = await accountsSwitcher({
+      id: actionTypes.GUEST_REBLOG,
+      json: JSON.stringify(value),
+    }, value[1].account);
+
 
     if (broadcastError) return next(broadcastError);
     return result;
@@ -152,7 +159,7 @@ const guestUpdateAccountJSON = async (data, next) => {
   if (error) return next(error);
   if (isValid) {
     const { result, error: broadcastError } = await accountsSwitcher(
-      { id: actionTypes.GUEST_UPDATE_ACCOUNT, json: JSON.stringify(value) },
+      { id: actionTypes.GUEST_UPDATE_ACCOUNT, json: JSON.stringify(value) }, value.account,
     );
 
     if (broadcastError) return next(broadcastError);
@@ -170,16 +177,17 @@ const guestSubscribeNotificationsJSON = async (data, next) => {
   if (error) return next(error);
 
   if (isValid) {
-    const { result, error: broadcastError } = await accountsSwitcher(
-      { id: actionTypes.GUEST_SUBSCRIBE_NOTIFICATIONS, json: JSON.stringify(value) },
-    );
+    const { result, error: broadcastError } = await accountsSwitcher({
+      id: actionTypes.GUEST_SUBSCRIBE_NOTIFICATIONS,
+      json: JSON.stringify(value),
+    }, value[1].follower);
 
     if (broadcastError) return next(broadcastError);
     return result;
   }
 };
 
-const accountsSwitcher = async (data) => {
+const accountsSwitcher = async (data, guestAuthor) => {
   let err;
   const accounts = await addBotsToEnv.setEnvData();
   if (accounts.error) return { error: accounts.error };
@@ -190,6 +198,10 @@ const accountsSwitcher = async (data) => {
       config.custom_json.account === accounts.proxyBots.length - 1
         ? config.custom_json.account = 0
         : config.custom_json.account += 1;
+      await redisSetter.setSubscribe(
+        `${data.id === actionTypes.GUEST_VOTE ? LAST_VOTE_BLOCK_NUM : LAST_BLOCK_NUM}:${result.block_num}`, guestAuthor,
+      );
+
       return { result };
     } if (error && regExp.steemErrRegExp.test(error.message)) {
       config.custom_json.account === accounts.proxyBots.length - 1

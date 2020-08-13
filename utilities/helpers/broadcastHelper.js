@@ -37,6 +37,7 @@ const switcher = async (message, account) => {
   const post = parsedData.comment;
   console.info(`Try to create comment by | ${account.name}`);
   const app = chooseApp(parsedMetadata.app);
+  const guestAuthor = _.cloneDeep(post.author);
   // Prepare comment body
   post.body = `${post.body}\n <hr/>\n\n <center>[Posted](https://${app}/${permlinkGenerator(post, account)}) by Waivio guest: [@${post.author}](https://${app}/@${post.author})</center>`;
   // Change comment author for bot name
@@ -44,15 +45,20 @@ const switcher = async (message, account) => {
 
   if (post.post_root_author) post.parent_author = post.post_root_author;
   // If data has no field options - return result of simply post method of dsteem
-  if (!_.has(parsedData, 'options')) return dsteemModel.post(post, account.postingKey);
+  if (!_.has(parsedData, 'options')) return simplyPostHelper(post, account.postingKey, guestAuthor);
   // else return result of post method with options(beneficiaries)
   const { options } = parsedData;
   options.author = account.name;
   const { result, error } = await dsteemModel.postWithOptions(
     post, parsedData.options, account.postingKey,
   );
-  if (error && error.message.match('beneficiaries')) return dsteemModel.post(post, account.postingKey);
-  return { result, error };
+  if (error && error.message.match('beneficiaries')) return simplyPostHelper(post, account.postingKey, guestAuthor);
+  return { result, error, guestAuthor };
+};
+
+const simplyPostHelper = async (post, key, guestAuthor) => {
+  const { result, error } = await dsteemModel.post(post, key);
+  return { result, error, guestAuthor };
 };
 
 const updateHelper = async (author, comment) => {
