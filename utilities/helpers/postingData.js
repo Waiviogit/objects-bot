@@ -32,8 +32,12 @@ const getOptions = async (reqData, accData, type) => {
   }
   optionsData.author = accData.name;
   optionsData.extensions = [[0, { beneficiaries }]];
-  optionsData.max_accepted_payout = '100000.000 SBD';
-  optionsData.percent_steem_dollars = 0;
+  optionsData.max_accepted_payout = {
+    amount: '1000000',
+    precision: 3,
+    nai: '@@000000013',
+  };
+  optionsData.percent_hive_dollars = 0;
   optionsData.allow_votes = true;
   optionsData.allow_curation_rewards = true;
   optionsData.permlink = reqData.permlink;
