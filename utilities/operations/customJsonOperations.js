@@ -198,9 +198,9 @@ const accountsSwitcher = async (data, guestAuthor) => {
       config.custom_json.account === accounts.proxyBots.length - 1
         ? config.custom_json.account = 0
         : config.custom_json.account += 1;
-      await redisSetter.setSubscribe(
-        `${data.id === actionTypes.GUEST_VOTE ? LAST_VOTE_BLOCK_NUM : LAST_BLOCK_NUM}:${result.block_num}`, guestAuthor,
-      );
+      // await redisSetter.setSubscribe(
+      //   `${data.id === actionTypes.GUEST_VOTE ? LAST_VOTE_BLOCK_NUM : LAST_BLOCK_NUM}:${result.block_num}`, guestAuthor,
+      // );
 
       return { result };
     } if (error && regExp.steemErrRegExp.test(error.message)) {
