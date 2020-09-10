@@ -78,16 +78,29 @@ const updateHelper = async (author, comment) => {
   return { error: updateError };
 };
 
-const permlinkGenerator = (post, account, guest) => (post.parent_author
-  ? `@${post.parent_author}/${post.parent_permlink}#@${guest}/${post.permlink}`
-  : `@${guest}/${post.permlink}`);
+const permlinkGenerator = async (post, account, guest) => {
+  let metadata;
+  if (post.parent_author) {
+    const steemPost = await dsteemModel.getComment(post.parent_author, post.parent_permlink);
+    try {
+      metadata = JSON.parse(steemPost.json_metadata);
+    } catch (e) {
+
+    }
+  }
+  return post.parent_author
+    ? `@${_.get(metadata, 'comment.userId', post.parent_author)}/${post.parent_permlink}#@${guest}/${post.permlink}`
+    : `@${guest}/${post.permlink}`;
+};
 
 const chooseApp = (app) => {
   if (new RegExp(/waivio/).test(app)) {
     return 'www.waivio.com';
-  } if (new RegExp(/investarena/).test(app)) {
+  }
+  if (new RegExp(/investarena/).test(app)) {
     return 'www.investarena.com';
-  } if (new RegExp(/beaxy/).test(app)) {
+  }
+  if (new RegExp(/beaxy/).test(app)) {
     return 'crypto.investarena.com';
   }
   return 'waivio';
