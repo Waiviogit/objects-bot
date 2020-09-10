@@ -39,7 +39,7 @@ const switcher = async (message, account) => {
   const app = chooseApp(parsedMetadata.app);
   const guestAuthor = _.cloneDeep(post.author);
   // Prepare comment body
-  post.body = `${post.body}\n <hr/>\n\n <center>[Posted](https://${app}/${await permlinkGenerator(post, account, guestAuthor)}) by Waivio guest: [@${post.author}](https://${app}/@${post.author})</center>`;
+  post.body = `${post.body}\n <hr/>\n\n <center>[Posted](https://${app}/${permlinkGenerator(post, account, guestAuthor)}) by Waivio guest: [@${post.author}](https://${app}/@${post.author})</center>`;
   // Change comment author for bot name
   post.author = account.name;
 
@@ -78,18 +78,24 @@ const updateHelper = async (author, comment) => {
   return { error: updateError };
 };
 
-const permlinkGenerator = async (post, account, guest) => {
-  let metadata;
-  if (post.parent_author) {
-    const steemPost = await dsteemModel.getComment(post.parent_author, post.parent_permlink);
-    try {
-      metadata = JSON.parse(steemPost.json_metadata);
-    } catch (e) {}
-  }
-  return post.parent_author
-    ? `@${_.get(metadata, 'comment.userId', post.parent_author)}/${post.parent_permlink}#@${guest}/${post.permlink}`
-    : `@${guest}/${post.permlink}`;
-};
+
+const permlinkGenerator = (post, account, guest) => (post.parent_author
+    ? `@${post.parent_author}/${post.parent_permlink}#@${guest}/${post.permlink}`
+    : `@${guest}/${post.permlink}`);
+
+/**I start fix it at 10.09.2020*/
+// const permlinkGenerator = async (post, account, guest) => {
+//   let metadata;
+//   if (post.parent_author) {
+//     const steemPost = await dsteemModel.getComment(post.parent_author, post.parent_permlink);
+//     try {
+//       metadata = JSON.parse(steemPost.json_metadata);
+//     } catch (e) {}
+//   }
+//   return post.parent_author
+//     ? `@${_.get(metadata, 'comment.userId', post.parent_author)}/${post.parent_permlink}#@${guest}/${post.permlink}`
+//     : `@${guest}/${post.permlink}`;
+// };
 
 const chooseApp = (app) => {
   if (new RegExp(/waivio/).test(app)) {
