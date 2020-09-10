@@ -79,9 +79,9 @@ const updateHelper = async (author, comment) => {
 };
 
 
-const permlinkGenerator = (post, account, guest) => (post.parent_author
-    ? `@${post.parent_author}/${post.parent_permlink}#@${guest}/${post.permlink}`
-    : `@${guest}/${post.permlink}`);
+const permlinkGenerator = (post, account) => (post.parent_author
+    ? `@${post.parent_author}/${post.parent_permlink}#@${account.name}/${post.permlink}`
+    : `@${account.name}/${post.permlink}`);
 
 /**I start fix it at 10.09.2020*/
 // const permlinkGenerator = async (post, account, guest) => {
