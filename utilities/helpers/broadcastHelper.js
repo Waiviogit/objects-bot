@@ -39,7 +39,7 @@ const switcher = async (message, account) => {
   const app = chooseApp(parsedMetadata.app);
   const guestAuthor = _.cloneDeep(post.author);
   // Prepare comment body
-  post.body = `${post.body}\n <hr/>\n\n <center>[Posted](https://${app}/${permlinkGenerator(post, account)}) by Waivio guest: [@${post.author}](https://${app}/@${post.author})</center>`;
+  post.body = `${post.body}\n <hr/>\n\n <center>[Posted](https://${app}/${permlinkGenerator(post, account, guestAuthor)}) by Waivio guest: [@${post.author}](https://${app}/@${post.author})</center>`;
   // Change comment author for bot name
   post.author = account.name;
 
@@ -78,9 +78,9 @@ const updateHelper = async (author, comment) => {
   return { error: updateError };
 };
 
-const permlinkGenerator = (post, account) => (post.parent_author
-  ? `@${post.parent_author}/${post.parent_permlink}#@${account.name}/${post.permlink}`
-  : `@${account.name}/${post.permlink}`);
+const permlinkGenerator = (post, account, guest) => (post.parent_author
+  ? `@${post.parent_author}/${post.parent_permlink}#@${guest}/${post.permlink}`
+  : `@${guest}/${post.permlink}`);
 
 const chooseApp = (app) => {
   if (new RegExp(/waivio/).test(app)) {
