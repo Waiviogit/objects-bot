@@ -52,7 +52,7 @@ exports.updateSchema = Joi.object().keys({
 }).options({ allowUnknown: true, stripUnknown: true });
 
 exports.subscribeNotificationsSchema = Joi.array().ordered(
-  Joi.string().valid('bell_notifications').required(),
+  Joi.string().valid('bell_notifications', 'bell_wobject').required(),
   Joi.object().keys({
     follower: Joi.string().required(),
     following: Joi.string().required(),
