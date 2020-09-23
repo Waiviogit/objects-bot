@@ -39,6 +39,12 @@ app.use((req, res, next) => {
 });
 app.use(Sentry.Handlers.requestHandler({ request: true, user: true }));
 
+app.use((req, res, next) => {
+  session.set('access-token', req.headers['access-token']);
+  session.set('waivio-auth', Boolean(req.headers['waivio-auth']));
+  next();
+});
+
 app.use('/', routes);
 app.use('/objects-bot/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
@@ -52,12 +58,6 @@ app.use(Sentry.Handlers.errorHandler({
     return false;
   },
 }));
-
-app.use((req, res, next) => {
-  session.set('access-token', req.headers['access-token']);
-  session.set('waivio-auth', Boolean(req.headers['waivio-auth']));
-  next();
-});
 
 app.use((req, res, next) => {
   res.status(res.result.status || 200).json(res.result.json);
