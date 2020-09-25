@@ -5,6 +5,7 @@ const config = require('config');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const broadcastHelper = require('utilities/helpers/broadcastHelper');
 const { LAST_BLOCK_NUM } = require('constants/redisBlockNames');
+const _ = require('lodash');
 
 const commentBroadcaster = async ({
   noMessageWait = 1000, postingErrorWait = 10000, qname, path, botType,
@@ -32,7 +33,7 @@ const commentBroadcaster = async ({
 
 const broadcastStatusParse = async (message, path, postingErrorWait, qname, botType) => {
   const accounts = await addBotsToEnv.setEnvData();
-  const account = accounts[botType][config[path].account];
+  const account = _.get(accounts, `${botType}[${config[path].account}]`);
   const { error, result, guestAuthor } = await broadcastHelper.switcher(message, account);
   if (result) {
     config[path].account === accounts[botType].length - 1
