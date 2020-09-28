@@ -38,7 +38,7 @@ const addToQueue = async (data, actionData) => {
 
 // get all items in queue, get count and return time for posting all items
 const timeToPosting = async (actionData) => {
-  const { result: allQueueItems } = await redisGetter.getHashKeysAll(`${actionData.operation}:*`);
+  const { result: allQueueItems = [] } = await redisGetter.getHashKeysAll(`${actionData.operation}:*`);
   const accounts = await addBotsToEnv.setEnvData();
 
   if (actionData.operation === 'proxy-post') {
