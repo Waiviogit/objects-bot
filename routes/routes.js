@@ -1,6 +1,7 @@
 const express = require('express');
-const { guestRequests, forecast, object } = require('controllers');
-
+const {
+  guestRequests, forecast, object, sitesController,
+} = require('controllers');
 
 const routes = express.Router();
 
@@ -12,5 +13,6 @@ routes.route('/append-object').post(object.processAppendObject);
 routes.route('/set-expired').post(forecast.markForecastAsExpired);
 routes.route('/guest-create-comment').post(guestRequests.proxyPosting);
 routes.route('/guest-custom-json').post(guestRequests.proxyCustomJson);
+routes.route('/create-site').post(sitesController.sendCreateSite);
 
 module.exports = routes;

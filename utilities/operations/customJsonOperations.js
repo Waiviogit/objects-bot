@@ -9,7 +9,6 @@ const authoriseUser = require('utilities/authorazation/authoriseUser');
 const redisSetter = require('utilities/redis/redisSetter');
 const { LAST_BLOCK_NUM, LAST_VOTE_BLOCK_NUM } = require('constants/redisBlockNames');
 
-
 const switcher = async (data, next) => {
   switch (data.id) {
     case actionTypes.GUEST_UPDATE_ACCOUNT:
@@ -142,7 +141,6 @@ const guestReblogJSON = async (data, next) => {
       json: JSON.stringify(value),
     }, value[1].account);
 
-
     if (broadcastError) return next(broadcastError);
     return result;
   }
@@ -198,10 +196,6 @@ const accountsSwitcher = async (data, guestAuthor) => {
       config.custom_json.account === accounts.proxyBots.length - 1
         ? config.custom_json.account = 0
         : config.custom_json.account += 1;
-      // await redisSetter.setSubscribe(
-      //   `${data.id === actionTypes.GUEST_VOTE ? LAST_VOTE_BLOCK_NUM : LAST_BLOCK_NUM}:${result.block_num}`, guestAuthor,
-      // );
-
       return { result };
     } if (error && regExp.steemErrRegExp.test(error.message)) {
       config.custom_json.account === accounts.proxyBots.length - 1
@@ -223,4 +217,4 @@ const errorGenerator = (next) => {
   return next(error);
 };
 
-module.exports = { switcher };
+module.exports = { switcher, accountsSwitcher };
