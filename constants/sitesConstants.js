@@ -1,1 +1,1 @@
-exports.CREATE_WEBSITE = 'createCustomWebsite';
+exports.CREATE_WEBSITE = 'create_custom_website';
