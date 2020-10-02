@@ -185,20 +185,20 @@ const guestSubscribeNotificationsJSON = async (data, next) => {
   }
 };
 
-const accountsSwitcher = async (data, guestAuthor) => {
+const accountsSwitcher = async (data, botType = 'proxyBots') => {
   let err;
   const accounts = await addBotsToEnv.setEnvData();
   if (accounts.error) return { error: accounts.error };
-  for (let counter = 0; counter < accounts.proxyBots.length; counter++) {
-    const account = accounts.proxyBots[config.custom_json.account];
+  for (let counter = 0; counter < accounts[botType].length; counter++) {
+    const account = accounts[botType][config.custom_json.account];
     const { result, error } = await dsteemModel.customJSON(data, account);
     if (result) {
-      config.custom_json.account === accounts.proxyBots.length - 1
+      config.custom_json.account === accounts[botType].length - 1
         ? config.custom_json.account = 0
         : config.custom_json.account += 1;
       return { result };
     } if (error && regExp.steemErrRegExp.test(error.message)) {
-      config.custom_json.account === accounts.proxyBots.length - 1
+      config.custom_json.account === accounts[botType].length - 1
         ? config.custom_json.account = 0
         : config.custom_json.account += 1;
       err = error;

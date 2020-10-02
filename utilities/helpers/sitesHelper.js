@@ -6,5 +6,5 @@ exports.sendCreateWebsite = async (params) => {
     id: CREATE_WEBSITE,
     json: JSON.stringify(params),
   };
-  return jsonOperations.accountsSwitcher(data);
+  return jsonOperations.accountsSwitcher(data, 'serviceBots');
 };
