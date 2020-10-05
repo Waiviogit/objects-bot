@@ -61,7 +61,7 @@ const guestVoteJSON = async (data, next) => {
     const { result, error: broadcastError } = await accountsSwitcher({
       id: actionTypes.GUEST_VOTE,
       json: JSON.stringify(value),
-    }, value.voter);
+    });
 
     if (broadcastError) return next(broadcastError);
     return result;
@@ -79,7 +79,7 @@ const guestCreateJSON = async (data, next) => {
     const { result, error: broadcastError } = await accountsSwitcher({
       id: actionTypes.GUEST_CREATE,
       json: JSON.stringify(value),
-    }, value.userId);
+    });
 
     if (broadcastError) return next(broadcastError);
     return result;
@@ -99,7 +99,7 @@ const guestFollowWobjectJSON = async (data, next) => {
     const { result, error: broadcastError } = await accountsSwitcher({
       id: actionTypes.GUEST_FOLLOW_WOBJECT,
       json: JSON.stringify(value),
-    }, value[1].user);
+    });
 
     if (broadcastError) return next(broadcastError);
     return result;
@@ -119,7 +119,7 @@ const guestFollowJSON = async (data, next) => {
     const { result, error: broadcastError } = await accountsSwitcher({
       id: actionTypes.GUEST_FOLLOW,
       json: JSON.stringify(value),
-    }, value[1].follower);
+    });
 
     if (broadcastError) return next(broadcastError);
     return result;
@@ -139,7 +139,7 @@ const guestReblogJSON = async (data, next) => {
     const { result, error: broadcastError } = await accountsSwitcher({
       id: actionTypes.GUEST_REBLOG,
       json: JSON.stringify(value),
-    }, value[1].account);
+    });
 
     if (broadcastError) return next(broadcastError);
     return result;
@@ -157,7 +157,7 @@ const guestUpdateAccountJSON = async (data, next) => {
   if (error) return next(error);
   if (isValid) {
     const { result, error: broadcastError } = await accountsSwitcher(
-      { id: actionTypes.GUEST_UPDATE_ACCOUNT, json: JSON.stringify(value) }, value.account,
+      { id: actionTypes.GUEST_UPDATE_ACCOUNT, json: JSON.stringify(value) }
     );
 
     if (broadcastError) return next(broadcastError);
@@ -178,7 +178,7 @@ const guestSubscribeNotificationsJSON = async (data, next) => {
     const { result, error: broadcastError } = await accountsSwitcher({
       id: actionTypes.GUEST_SUBSCRIBE_NOTIFICATIONS,
       json: JSON.stringify(value),
-    }, value[1].follower);
+    });
 
     if (broadcastError) return next(broadcastError);
     return result;
