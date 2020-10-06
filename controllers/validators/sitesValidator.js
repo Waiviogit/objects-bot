@@ -8,6 +8,6 @@ exports.createWebsite = Joi.object().keys({
 }).options({ allowUnknown: true, stripUnknown: true });
 
 exports.deleteWebsite = Joi.object().keys({
-  owner: Joi.string().required(),
+  userName: Joi.string().required(),
   host: Joi.string().required(),
 }).options({ allowUnknown: true, stripUnknown: true });
