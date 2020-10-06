@@ -5,5 +5,5 @@ exports.websiteActions = async (params, id) => {
     id,
     json: JSON.stringify(params),
   };
-  return jsonOperations.accountsSwitcher(data, 'serviceBots');
+  return jsonOperations.accountsSwitcher(data, 'serviceBots', 'custom_service_json');
 };

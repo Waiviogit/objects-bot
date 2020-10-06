@@ -30,6 +30,9 @@
     "custom_json": {
       "account": 0
     },
+    "custom_service_json": {
+      "account": 0
+    },
     "forecasts": {
       "account": 0
     },
@@ -67,6 +70,9 @@
       "attempts": 0
     },
     "custom_json": {
+      "account": 0
+    },
+    "custom_service_json": {
       "account": 0
     },
     "forecasts": {
@@ -108,6 +114,9 @@
     "custom_json": {
       "account": 0
     },
+    "custom_service_json": {
+      "account": 0
+    },
     "forecasts": {
       "account": 0
     },
@@ -141,6 +150,9 @@
       "attempts": 0
     },
     "custom_json": {
+      "account": 0
+    },
+    "custom_service_json": {
       "account": 0
     },
     "forecasts": {

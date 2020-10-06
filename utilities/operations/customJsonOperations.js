@@ -185,22 +185,22 @@ const guestSubscribeNotificationsJSON = async (data, next) => {
   }
 };
 
-const accountsSwitcher = async (data, botType = 'proxyBots') => {
+const accountsSwitcher = async (data, botType = 'proxyBots', customJsonFlag = 'custom_json') => {
   let err;
   const accounts = await addBotsToEnv.setEnvData();
   if (accounts.error) return { error: accounts.error };
   for (let counter = 0; counter < accounts[botType].length; counter++) {
-    const account = accounts[botType][config.custom_json.account];
+    const account = accounts[botType][config[customJsonFlag].account];
     const { result, error } = await dsteemModel.customJSON(data, account);
     if (result) {
-      config.custom_json.account === accounts[botType].length - 1
-        ? config.custom_json.account = 0
-        : config.custom_json.account += 1;
+      config[customJsonFlag].account === accounts[botType].length - 1
+        ? config[customJsonFlag].account = 0
+        : config[customJsonFlag].account += 1;
       return { result };
     } if (error && regExp.steemErrRegExp.test(error.message)) {
-      config.custom_json.account === accounts[botType].length - 1
-        ? config.custom_json.account = 0
-        : config.custom_json.account += 1;
+      config[customJsonFlag].account === accounts[botType].length - 1
+        ? config[customJsonFlag].account = 0
+        : config[customJsonFlag].account += 1;
       err = error;
       console.warn(`ERR[Custom_Json] RPCError: ${error.message}`);
       continue;
