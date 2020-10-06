@@ -1,9 +1,8 @@
 const jsonOperations = require('utilities/operations/customJsonOperations');
-const { CREATE_WEBSITE } = require('constants/sitesConstants');
 
-exports.sendCreateWebsite = async (params) => {
+exports.websiteActions = async (params, id) => {
   const data = {
-    id: CREATE_WEBSITE,
+    id,
     json: JSON.stringify(params),
   };
   return jsonOperations.accountsSwitcher(data, 'serviceBots');
