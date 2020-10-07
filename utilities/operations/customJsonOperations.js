@@ -6,8 +6,6 @@ const config = require('config');
 const { dsteemModel } = require('models');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const authoriseUser = require('utilities/authorazation/authoriseUser');
-const redisSetter = require('utilities/redis/redisSetter');
-const { LAST_BLOCK_NUM, LAST_VOTE_BLOCK_NUM } = require('constants/redisBlockNames');
 
 const switcher = async (data, next) => {
   switch (data.id) {
@@ -45,9 +43,35 @@ const switcher = async (data, next) => {
         return guestSubscribeNotificationsJSON(data.data.operations[0][1].json, next);
       }
       return errorGenerator(next);
+    case actionTypes.GUEST_ACCEPT_REFERRAL_LICENCE:
+    case actionTypes.GUEST_REJECT_REFERRAL_LICENCE:
+    case actionTypes.GUEST_ADD_REFERRAL_AGENT:
+      if (_.has(data, 'data.operations[0][1].json')) {
+        return guestReferralCustomJson(
+          { data: data.data.operations[0][1].json, id: data.id, next },
+        );
+      }
+      return errorGenerator(next);
     default:
       return errorGenerator(next);
   }
+};
+
+const guestReferralCustomJson = async ({ data, id, next }) => {
+  const value = validators.validate(data, validators.customJson.referralSchema, next);
+
+  if (!value) return;
+  const { error } = await authoriseUser.authorise(value.guestName || value.agent);
+
+  if (error) return next(error);
+
+  const { result, error: broadcastError } = await accountsSwitcher({
+    id,
+    json: JSON.stringify(value),
+  });
+
+  if (broadcastError) return next(broadcastError);
+  return result;
 };
 
 const guestVoteJSON = async (data, next) => {
@@ -157,7 +181,7 @@ const guestUpdateAccountJSON = async (data, next) => {
   if (error) return next(error);
   if (isValid) {
     const { result, error: broadcastError } = await accountsSwitcher(
-      { id: actionTypes.GUEST_UPDATE_ACCOUNT, json: JSON.stringify(value) }
+      { id: actionTypes.GUEST_UPDATE_ACCOUNT, json: JSON.stringify(value) },
     );
 
     if (broadcastError) return next(broadcastError);

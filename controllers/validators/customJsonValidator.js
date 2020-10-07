@@ -7,6 +7,12 @@ exports.voteSchema = Joi.object().keys({
   weight: Joi.number().required(),
 }).options({ allowUnknown: true, stripUnknown: true });
 
+exports.referralSchema = Joi.object().keys({
+  agent: Joi.string().required(),
+  type: Joi.string(),
+  isGuest: Joi.boolean(),
+  guestName: Joi.string(),
+}).options({ allowUnknown: true, stripUnknown: true });
 
 exports.createSchema = Joi.object().keys({
   userId: Joi.string().required(),
