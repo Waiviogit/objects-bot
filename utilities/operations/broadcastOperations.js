@@ -33,6 +33,7 @@ const commentBroadcaster = async ({
 
 const broadcastStatusParse = async (message, path, postingErrorWait, qname, botType) => {
   const accounts = await addBotsToEnv.setEnvData();
+  if (_.get(accounts, 'error')) return true;
   const account = _.get(accounts, `${botType}[${config[path].account}]`);
   const { error, result, guestAuthor } = await broadcastHelper.switcher(message, account);
   if (result) {
