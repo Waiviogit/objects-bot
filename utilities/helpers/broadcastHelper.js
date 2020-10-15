@@ -49,6 +49,7 @@ const switcher = async (message, account) => {
   // else return result of post method with options(beneficiaries)
   const { options } = parsedData;
   options.author = account.name;
+  if (!options.percent_hbd) options.percent_hbd = 0;
   const { result, error } = await dsteemModel.postWithOptions(
     post, parsedData.options, account.postingKey,
   );
