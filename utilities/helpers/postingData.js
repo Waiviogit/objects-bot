@@ -32,7 +32,8 @@ const getOptions = async (reqData, accData, type) => {
   }
   optionsData.author = accData.name;
   optionsData.extensions = [[0, { beneficiaries }]];
-  optionsData.max_accepted_payout = '100000.000 SBD';
+  optionsData.max_accepted_payout = '100000.000 HBD';
+  optionsData.percent_hbd = 0;
   optionsData.percent_steem_dollars = 0;
   optionsData.allow_votes = true;
   optionsData.allow_curation_rewards = true;
