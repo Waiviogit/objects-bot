@@ -1,7 +1,10 @@
-const dsteem = require('@hivechain/dsteem');
 const dhive = require('@hiveio/dhive');
 
-const client = new dhive.Client('https://anyx.io');
+const client = new dhive.Client(['https://anyx.io'], {
+  timeout: 8 * 1000,
+  failoverThreshold: 4,
+  rebrandedApi: true,
+});
 const rcApi = new dhive.RCAPI(client);
 
 const post = async (data, key) => {
@@ -14,7 +17,6 @@ const post = async (data, key) => {
 
 const postWithOptions = async (comment, options, key) => {
   try {
-    options.percent_steem_dollars = 0;
     return {
       result: await client.broadcast.commentWithOptions(
         comment, options, dhive.PrivateKey.fromString(key),
