@@ -14,6 +14,7 @@ const post = async (data, key) => {
 
 const postWithOptions = async (comment, options, key) => {
   try {
+    options.percent_steem_dollars = 0;
     return {
       result: await client.broadcast.commentWithOptions(
         comment, options, dhive.PrivateKey.fromString(key),
@@ -33,7 +34,7 @@ const customJSON = async (data, account) => {
         required_auths: [],
         required_posting_auths: [account.name],
       },
-        dhive.PrivateKey.fromString(account.postingKey)),
+      dhive.PrivateKey.fromString(account.postingKey)),
     };
   } catch (error) {
     console.error(error.message);
