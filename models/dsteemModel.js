@@ -24,7 +24,7 @@ const postWithOptions = async (comment, options, key) => {
     };
   } catch (error) {
     if (error.message === 'Invalid parameters') {
-      return { error: { message: 'Invalid parameters', status: 404 } };
+      return { error: { message: 'Invalid parameters', status: 422 } };
     }
     return { error };
   }
