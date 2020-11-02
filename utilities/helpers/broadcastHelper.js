@@ -87,8 +87,9 @@ const updateHelper = async (author, comment) => {
 const permlinkGenerator = async (post, account, guest) => {
   let metadata;
   if (post.parent_author) {
-    const { userComment: steemPost } = await dsteemModel.getComment(post.parent_author, post.parent_permlink);
     try {
+      const { userComment: steemPost } = await dsteemModel
+        .getComment(post.parent_author, post.parent_permlink);
       metadata = JSON.parse(steemPost.json_metadata);
     } catch (e) {}
   }
