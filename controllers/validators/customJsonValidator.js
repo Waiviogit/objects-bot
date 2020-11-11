@@ -7,13 +7,11 @@ exports.voteSchema = Joi.object().keys({
   weight: Joi.number().required(),
 }).options({ allowUnknown: true, stripUnknown: true });
 
-
 exports.createSchema = Joi.object().keys({
   userId: Joi.string().required(),
   displayName: Joi.string().allow('').default(''),
   json_metadata: Joi.string().allow('').required(),
 }).options({ allowUnknown: true });
-
 
 exports.followWobjSchema = Joi.array().ordered(
   Joi.string().valid('follow').required(),
@@ -24,7 +22,6 @@ exports.followWobjSchema = Joi.array().ordered(
   }),
 ).options({ allowUnknown: true, stripUnknown: true });
 
-
 exports.followSchema = Joi.array().ordered(
   Joi.string().valid('follow').required(),
   Joi.object().keys({
@@ -33,7 +30,6 @@ exports.followSchema = Joi.array().ordered(
     what: Joi.array().default([]).required(),
   }),
 ).options({ allowUnknown: true, stripUnknown: true });
-
 
 exports.reblogSchema = Joi.array().ordered(
   Joi.string().valid('reblog').required(),
@@ -44,8 +40,15 @@ exports.reblogSchema = Joi.array().ordered(
   }),
 ).options({ allowUnknown: true, stripUnknown: true });
 
-
 exports.updateSchema = Joi.object().keys({
   account: Joi.string().required(),
   json_metadata: Joi.string().allow('').required(),
+}).options({ allowUnknown: true, stripUnknown: true });
+
+exports.guestRatingSchema = Joi.object().keys({
+  author: Joi.string().required(),
+  permlink: Joi.string().required(),
+  author_permlink: Joi.string().required(),
+  rate: Joi.number().min(0).max(10).required(),
+  guestName: Joi.string().required(),
 }).options({ allowUnknown: true, stripUnknown: true });

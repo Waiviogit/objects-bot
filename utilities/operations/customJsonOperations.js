@@ -1,10 +1,10 @@
 const _ = require('lodash');
-const { actionTypes, regExp } = require('constants/index');
-const validators = require('controllers/validators');
-const { parseMetadata } = require('utilities/helpers/updateMetadata');
 const config = require('config');
 const { dsteemModel } = require('models');
+const validators = require('controllers/validators');
+const { actionTypes, regExp } = require('constants/index');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
+const { parseMetadata } = require('utilities/helpers/updateMetadata');
 const authoriseUser = require('utilities/authorazation/authoriseUser');
 
 const switcher = async (data, next) => {
@@ -35,6 +35,11 @@ const switcher = async (data, next) => {
     case actionTypes.GUEST_FOLLOW:
       if (_.has(data, 'data.operations[0][1].json')) {
         return guestFollowJSON(data.data.operations[0][1].json, next);
+      }
+      return errorGenerator(next);
+    case actionTypes.GUEST_WOBJ_RATING:
+      if (_.has(data, 'data.operations[0][1].json')) {
+        return guestRatingWobj(data.data.operations[0][1].json, next);
       }
       return errorGenerator(next);
     default:
@@ -148,6 +153,25 @@ const guestUpdateAccountJSON = async (data, next) => {
   if (isValid) {
     const { result, error: broadcastError } = await accountsSwitcher(
       { id: actionTypes.GUEST_UPDATE_ACCOUNT, json: JSON.stringify(value) },
+    );
+
+    if (broadcastError) return next(broadcastError);
+    return result;
+  }
+};
+
+const guestRatingWobj = async (data, next) => {
+  const value = validators.validate(
+    parseMetadata(data, next),
+    validators.customJson.guestRatingSchema, next,
+  );
+  if (!value) return;
+  const { error, isValid } = await authoriseUser.authorise(value.guestName);
+
+  if (error) return next(error);
+  if (isValid) {
+    const { result, error: broadcastError } = await accountsSwitcher(
+      { id: actionTypes.GUEST_WOBJ_RATING, json: JSON.stringify(value) },
     );
 
     if (broadcastError) return next(broadcastError);

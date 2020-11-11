@@ -10,4 +10,5 @@ module.exports = {
   GUEST_CREATE: 'waivio_guest_create',
   GUEST_REBLOG: 'waivio_guest_reblog',
   GUEST_UPDATE_ACCOUNT: 'waivio_guest_account_update',
+  GUEST_WOBJ_RATING: 'waivio_guest_wobj_rating',
 };
