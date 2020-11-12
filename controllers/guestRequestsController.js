@@ -34,7 +34,6 @@ const proxyCustomJson = async (req, res, next) => {
   next();
 };
 
-
 module.exports = {
   proxyPosting,
   proxyCustomJson,

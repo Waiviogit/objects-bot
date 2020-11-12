@@ -116,11 +116,12 @@ exports.update = ({ account } = {}) => ({
       [
         faker.random.string(),
         {
-          id: 'account_update',
+          id: 'account_update_2',
           json: JSON.stringify(
             {
               account: account || faker.name.firstName(),
               json_metadata: faker.random.string(),
+              posting_json_metadata: faker.random.string(),
             },
           ),
         },

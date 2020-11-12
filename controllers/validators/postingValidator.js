@@ -22,7 +22,8 @@ exports.optionsSchema = Joi.object().keys({
   allow_votes: Joi.boolean().required(),
   allow_curation_rewards: Joi.boolean().required(),
   max_accepted_payout: Joi.string().required(),
-  percent_steem_dollars: Joi.number().allow(0).required(),
+  percent_steem_dollars: Joi.number().allow(0),
+  percent_hive_dollars: Joi.number().allow(0),
   extensions: Joi.array().items(
     Joi.array().ordered(
       Joi.number().allow(0).required(),

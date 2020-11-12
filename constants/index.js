@@ -3,4 +3,5 @@ module.exports = {
   appData: require('./appData'),
   guestRequestsData: require('./guestRequestsData'),
   regExp: require('./regExp'),
+  redisBlockNames: require('./redisBlockNames'),
 };

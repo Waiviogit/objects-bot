@@ -4,9 +4,11 @@ const { regExp } = require('constants/index');
 const config = require('config');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const broadcastHelper = require('utilities/helpers/broadcastHelper');
+const { LAST_BLOCK_NUM } = require('constants/redisBlockNames');
+const _ = require('lodash');
 
 const commentBroadcaster = async ({
-  noMessageWait = 10000, postingErrorWait = 10000, qname, path,
+  noMessageWait = 1000, postingErrorWait = 10000, qname, path, botType,
 }) => {
   const { error: redisError, result: message } = await redisQueue.receiveMessage({
     client: actionsRsmqClient, qname,
@@ -19,7 +21,7 @@ const commentBroadcaster = async ({
     }
   }
   if (message) {
-    const result = await broadcastStatusParse(message.message, path, postingErrorWait, qname);
+    const result = await broadcastStatusParse(message.message, path, postingErrorWait, qname, botType);
     if (!result) {
       await redisQueue.deleteMessage(
         { client: actionsRsmqClient, qname, id: message.id },
@@ -29,20 +31,21 @@ const commentBroadcaster = async ({
   }
 };
 
-const broadcastStatusParse = async (message, path, postingErrorWait, qname) => {
+const broadcastStatusParse = async (message, path, postingErrorWait, qname, botType) => {
   const accounts = await addBotsToEnv.setEnvData();
-
-  const account = accounts.proxyBots[config[path].account];
-  const { error, result } = await broadcastHelper.switcher(message, account);
+  if (_.get(accounts, 'error')) return true;
+  const account = _.get(accounts, `${botType}[${config[path].account}]`);
+  const { error, result, guestAuthor } = await broadcastHelper.switcher(message, account);
   if (result) {
-    config[path].account === accounts.proxyBots.length - 1
+    config[path].account === accounts[botType].length - 1
       ? config[path].account = 0
       : config[path].account += 1;
     config[path].attempts = 0;
+    await redisSetter.setSubscribe(`${LAST_BLOCK_NUM}:${result.block_num}`, guestAuthor);
     console.info(`INFO[commentBroadcasting] Comment successfully send | transaction id ${result.id}`);
     return false;
   } if (error && regExp.steemErrRegExp.test(error.message)) {
-    if (config[path].attempts === (accounts.proxyBots.length - 1)) {
+    if (config[path].attempts === (accounts[botType].length - 1)) {
       console.error(`ERR[commentBroadcasting] RPCError: ${error.message}`);
       await new Promise((resolve) => setTimeout(resolve, postingErrorWait));
       config[path].attempts = 0;
@@ -50,18 +53,16 @@ const broadcastStatusParse = async (message, path, postingErrorWait, qname) => {
     }
     console.warn(`ERR[commentBroadcasting] RPCError: ${error.message}`);
     config[path].attempts += 1;
-    config[path].account === accounts.proxyBots.length - 1
+    config[path].account === accounts[botType].length - 1
       ? config[path].account = 0
       : config[path].account += 1;
     return true;
   } if (path === 'guest_post' && error && error.message === 'update error') {
-    await redisQueue.sendMessage(
-      {
-        client: actionsRsmqClient,
-        qname,
-        message,
-      },
-    );
+    await redisQueue.sendMessage({
+      client: actionsRsmqClient,
+      qname,
+      message,
+    });
   }
   return false;
 };

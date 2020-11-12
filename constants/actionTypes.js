@@ -10,5 +10,9 @@ module.exports = {
   GUEST_CREATE: 'waivio_guest_create',
   GUEST_REBLOG: 'waivio_guest_reblog',
   GUEST_UPDATE_ACCOUNT: 'waivio_guest_account_update',
+  GUEST_SUBSCRIBE_NOTIFICATIONS: 'waivio_guest_bell',
+  GUEST_ACCEPT_REFERRAL_LICENCE: 'confirm_referral_license',
+  GUEST_REJECT_REFERRAL_LICENCE: 'reject_referral_license',
+  GUEST_ADD_REFERRAL_AGENT: 'add_referral_agent',
   GUEST_WOBJ_RATING: 'waivio_guest_wobj_rating',
 };

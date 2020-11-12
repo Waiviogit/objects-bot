@@ -2,7 +2,6 @@ const _ = require('lodash');
 const config = require('config');
 const apiRequests = require('utilities/waivioApi/apiRequests');
 
-
 exports.setEnvData = async () => {
   const { app, error } = await apiRequests.getAppData({ name: config.app });
   if (error) return { error };
@@ -13,5 +12,8 @@ exports.setEnvData = async () => {
   const proxyBots = _.filter(app.service_bots, (bot) => {
     if (_.includes(bot.roles, 'proxyBot')) return bot;
   });
-  return { serviceBots, proxyBots };
+  const reviewBots = _.filter(app.service_bots, (bot) => {
+    if (_.includes(bot.roles, 'reviewBot')) return bot;
+  });
+  return { serviceBots, proxyBots, reviewBots };
 };

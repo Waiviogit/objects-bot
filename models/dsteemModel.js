@@ -1,11 +1,15 @@
-const dsteem = require('@hivechain/dsteem');
+const dhive = require('@hiveio/dhive');
 
-const client = new dsteem.Client('https://anyx.io');
-const rcApi = new dsteem.RCAPI(client);
+const client = new dhive.Client(['https://anyx.io'], {
+  timeout: 8 * 1000,
+  failoverThreshold: 4,
+  rebrandedApi: true,
+});
+const rcApi = new dhive.RCAPI(client);
 
 const post = async (data, key) => {
   try {
-    return { result: await client.broadcast.comment(data, dsteem.PrivateKey.fromString(key)) };
+    return { result: await client.broadcast.comment(data, dhive.PrivateKey.fromString(key)) };
   } catch (error) {
     return { error };
   }
@@ -15,10 +19,13 @@ const postWithOptions = async (comment, options, key) => {
   try {
     return {
       result: await client.broadcast.commentWithOptions(
-        comment, options, dsteem.PrivateKey.fromString(key),
+        comment, options, dhive.PrivateKey.fromString(key),
       ),
     };
   } catch (error) {
+    if (error.message === 'Invalid parameters') {
+      return { error: { message: 'Invalid parameters', status: 422 } };
+    }
     return { error };
   }
 };
@@ -32,7 +39,7 @@ const customJSON = async (data, account) => {
         required_auths: [],
         required_posting_auths: [account.name],
       },
-      dsteem.PrivateKey.fromString(account.postingKey)),
+      dhive.PrivateKey.fromString(account.postingKey)),
     };
   } catch (error) {
     console.error(error.message);

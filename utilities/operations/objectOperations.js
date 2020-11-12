@@ -93,6 +93,7 @@ const AppendObjectOp = async (body) => {
         parentAuthor: updBody.parentAuthor,
         parentPermlink: updBody.parentPermlink,
         transactionId: transactionStatus.id,
+        block_num: transactionStatus.block_num,
       };
       console.info(`INFO[AppendObject] Successfully appended | response body: ${JSON.stringify(payload)}`);
       return { result: { status: 200, json: payload } };

@@ -7,7 +7,8 @@
     },
     "redis": {
       "actionsQueue": 3,
-      "actionsData": 5
+      "actionsData": 5,
+      "notifications": 0
     },
     "waivio_auth": {
       "host": "www.waivio.com",
@@ -22,7 +23,14 @@
       "account": 0,
       "attempts": 0
     },
+    "guest_review": {
+      "account": 0,
+      "attempts": 0
+    },
     "custom_json": {
+      "account": 0
+    },
+    "custom_service_json": {
       "account": 0
     },
     "forecasts": {
@@ -41,7 +49,8 @@
     },
     "redis": {
       "actionsQueue": 3,
-      "actionsData": 5
+      "actionsData": 5,
+      "notifications": 0
     },
     "waivio_auth": {
       "host": "waiviodev.com",
@@ -56,7 +65,14 @@
       "account": 0,
       "attempts": 0
     },
+    "guest_review": {
+      "account": 0,
+      "attempts": 0
+    },
     "custom_json": {
+      "account": 0
+    },
+    "custom_service_json": {
       "account": 0
     },
     "forecasts": {
@@ -75,7 +91,8 @@
     },
     "redis": {
       "actionsQueue": 3,
-      "actionsData": 5
+      "actionsData": 5,
+      "notifications": 0
     },
     "waivio_auth": {
       "host": "waiviodev.com",
@@ -90,7 +107,14 @@
       "account": 0,
       "attempts": 0
     },
+    "guest_review": {
+      "account": 0,
+      "attempts": 0
+    },
     "custom_json": {
+      "account": 0
+    },
+    "custom_service_json": {
       "account": 0
     },
     "forecasts": {
@@ -109,7 +133,8 @@
     },
     "redis": {
       "actionsQueue": 7,
-      "actionsData": 7
+      "actionsData": 7,
+      "notifications": 7
     },
     "waivio_auth": {
       "host": "waiviodev.com",
@@ -125,6 +150,9 @@
       "attempts": 0
     },
     "custom_json": {
+      "account": 0
+    },
+    "custom_service_json": {
       "account": 0
     },
     "forecasts": {

@@ -7,6 +7,13 @@ exports.voteSchema = Joi.object().keys({
   weight: Joi.number().required(),
 }).options({ allowUnknown: true, stripUnknown: true });
 
+exports.referralSchema = Joi.object().keys({
+  agent: Joi.string().required(),
+  type: Joi.string(),
+  isGuest: Joi.boolean(),
+  guestName: Joi.string(),
+}).options({ allowUnknown: true, stripUnknown: true });
+
 exports.createSchema = Joi.object().keys({
   userId: Joi.string().required(),
   displayName: Joi.string().allow('').default(''),
@@ -43,7 +50,17 @@ exports.reblogSchema = Joi.array().ordered(
 exports.updateSchema = Joi.object().keys({
   account: Joi.string().required(),
   json_metadata: Joi.string().allow('').required(),
+  posting_json_metadata: Joi.string().allow('').required(),
 }).options({ allowUnknown: true, stripUnknown: true });
+
+exports.subscribeNotificationsSchema = Joi.array().ordered(
+  Joi.string().valid('bell_notifications', 'bell_wobject').required(),
+  Joi.object().keys({
+    follower: Joi.string().required(),
+    following: Joi.string().required(),
+    subscribe: Joi.boolean().required(),
+  }),
+).options({ allowUnknown: true, stripUnknown: true });
 
 exports.guestRatingSchema = Joi.object().keys({
   author: Joi.string().required(),

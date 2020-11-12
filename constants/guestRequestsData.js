@@ -5,4 +5,8 @@ const postAction = {
   qname: 'action_post', operation: 'proxy-post', rechargeTime: 5, limit: 3,
 };
 
-module.exports = { commentAction, postAction };
+const reviewAction = {
+  qname: 'review_post', operation: 'proxy-post-review', rechargeTime: 5, limit: 10,
+};
+
+module.exports = { commentAction, postAction, reviewAction };

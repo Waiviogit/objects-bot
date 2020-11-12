@@ -37,6 +37,7 @@ describe('On broadcastOperations', async () => {
           noMessageWait: 10,
           path: 'guest_comment',
           qname: commentAction.qname,
+          botType: 'proxyBots',
         });
         expect(dsteemModel.postWithOptions).to.be.calledOnce;
       });
@@ -49,6 +50,7 @@ describe('On broadcastOperations', async () => {
           noMessageWait: 10,
           path: 'guest_comment',
           qname: commentAction.qname,
+          botType: 'proxyBots',
         });
         expect(dsteemModel.post).to.be.calledOnce;
       });
@@ -57,6 +59,7 @@ describe('On broadcastOperations', async () => {
           noMessageWait: 10,
           path: 'guest_comment',
           qname: commentAction.qname,
+          botType: 'proxyBots',
         });
         const { error } = await redisQueue.receiveMessage({
           client: actionsRsmqClient,
@@ -69,6 +72,7 @@ describe('On broadcastOperations', async () => {
           noMessageWait: 10,
           path: 'guest_comment',
           qname: commentAction.qname,
+          botType: 'proxyBots',
         });
         const { result } = await redisGetter.getAllHashData(message);
         expect(result).to.be.null;
@@ -109,6 +113,7 @@ describe('On broadcastOperations', async () => {
             path: 'guest_comment',
             qname: commentAction.qname,
             postingErrorWait: 10,
+            botType: 'proxyBots',
           });
         });
         it('should not delete message from queue if it not posted', async () => {
@@ -142,6 +147,7 @@ describe('On broadcastOperations', async () => {
           path: 'guest_comment',
           qname: commentAction.qname,
           postingErrorWait: 10,
+          botType: 'proxyBots',
         });
       });
       it('should delete data if excepted unknown error', async () => {

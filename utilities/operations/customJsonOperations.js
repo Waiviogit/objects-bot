@@ -10,7 +10,8 @@ const authoriseUser = require('utilities/authorazation/authoriseUser');
 const switcher = async (data, next) => {
   switch (data.id) {
     case actionTypes.GUEST_UPDATE_ACCOUNT:
-      if (_.has(data, 'data.operations[0][1].json') && data.data.operations[0][1].id === 'account_update') {
+      if (_.has(data, 'data.operations[0][1].json')
+          && _.includes(['account_update', 'account_update_2'], data.data.operations[0][1].id)) {
         return guestUpdateAccountJSON(data.data.operations[0][1].json, next);
       }
       return errorGenerator(next);
@@ -37,6 +38,20 @@ const switcher = async (data, next) => {
         return guestFollowJSON(data.data.operations[0][1].json, next);
       }
       return errorGenerator(next);
+    case actionTypes.GUEST_SUBSCRIBE_NOTIFICATIONS:
+      if (_.has(data, 'data.operations[0][1].json')) {
+        return guestSubscribeNotificationsJSON(data.data.operations[0][1].json, next);
+      }
+      return errorGenerator(next);
+    case actionTypes.GUEST_ACCEPT_REFERRAL_LICENCE:
+    case actionTypes.GUEST_REJECT_REFERRAL_LICENCE:
+    case actionTypes.GUEST_ADD_REFERRAL_AGENT:
+      if (_.has(data, 'data.operations[0][1].json')) {
+        return guestReferralCustomJson(
+          { data: data.data.operations[0][1].json, id: data.id, next },
+        );
+      }
+      return errorGenerator(next);
     case actionTypes.GUEST_WOBJ_RATING:
       if (_.has(data, 'data.operations[0][1].json')) {
         return guestRatingWobj(data.data.operations[0][1].json, next);
@@ -45,6 +60,23 @@ const switcher = async (data, next) => {
     default:
       return errorGenerator(next);
   }
+};
+
+const guestReferralCustomJson = async ({ data, id, next }) => {
+  const value = validators.validate(data, validators.customJson.referralSchema, next);
+
+  if (!value) return;
+  const { error } = await authoriseUser.authorise(value.guestName || value.agent);
+
+  if (error) return next(error);
+
+  const { result, error: broadcastError } = await accountsSwitcher({
+    id,
+    json: JSON.stringify(value),
+  });
+
+  if (broadcastError) return next(broadcastError);
+  return result;
 };
 
 const guestVoteJSON = async (data, next) => {
@@ -113,9 +145,10 @@ const guestFollowJSON = async (data, next) => {
 
   if (error) return next(error);
   if (isValid) {
-    const { result, error: broadcastError } = await accountsSwitcher(
-      { id: actionTypes.GUEST_FOLLOW, json: JSON.stringify(value) },
-    );
+    const { result, error: broadcastError } = await accountsSwitcher({
+      id: actionTypes.GUEST_FOLLOW,
+      json: JSON.stringify(value),
+    });
 
     if (broadcastError) return next(broadcastError);
     return result;
@@ -132,9 +165,10 @@ const guestReblogJSON = async (data, next) => {
 
   if (error) return next(error);
   if (isValid) {
-    const { result, error: broadcastError } = await accountsSwitcher(
-      { id: actionTypes.GUEST_REBLOG, json: JSON.stringify(value) },
-    );
+    const { result, error: broadcastError } = await accountsSwitcher({
+      id: actionTypes.GUEST_REBLOG,
+      json: JSON.stringify(value),
+    });
 
     if (broadcastError) return next(broadcastError);
     return result;
@@ -179,22 +213,42 @@ const guestRatingWobj = async (data, next) => {
   }
 };
 
-const accountsSwitcher = async (data) => {
+const guestSubscribeNotificationsJSON = async (data, next) => {
+  const value = validators.validate(
+    parseMetadata(data, next), validators.customJson.subscribeNotificationsSchema, next,
+  );
+  if (!value) return;
+
+  const { error, isValid } = await authoriseUser.authorise(value[1].follower);
+  if (error) return next(error);
+
+  if (isValid) {
+    const { result, error: broadcastError } = await accountsSwitcher({
+      id: actionTypes.GUEST_SUBSCRIBE_NOTIFICATIONS,
+      json: JSON.stringify(value),
+    });
+
+    if (broadcastError) return next(broadcastError);
+    return result;
+  }
+};
+
+const accountsSwitcher = async (data, botType = 'proxyBots', customJsonFlag = 'custom_json') => {
   let err;
   const accounts = await addBotsToEnv.setEnvData();
   if (accounts.error) return { error: accounts.error };
-  for (let counter = 0; counter < accounts.proxyBots.length; counter++) {
-    const account = accounts.proxyBots[config.custom_json.account];
+  for (let counter = 0; counter < accounts[botType].length; counter++) {
+    const account = accounts[botType][config[customJsonFlag].account];
     const { result, error } = await dsteemModel.customJSON(data, account);
     if (result) {
-      config.custom_json.account === accounts.proxyBots.length - 1
-        ? config.custom_json.account = 0
-        : config.custom_json.account += 1;
+      config[customJsonFlag].account === accounts[botType].length - 1
+        ? config[customJsonFlag].account = 0
+        : config[customJsonFlag].account += 1;
       return { result };
     } if (error && regExp.steemErrRegExp.test(error.message)) {
-      config.custom_json.account === accounts.proxyBots.length - 1
-        ? config.custom_json.account = 0
-        : config.custom_json.account += 1;
+      config[customJsonFlag].account === accounts[botType].length - 1
+        ? config[customJsonFlag].account = 0
+        : config[customJsonFlag].account += 1;
       err = error;
       console.warn(`ERR[Custom_Json] RPCError: ${error.message}`);
       continue;
@@ -211,4 +265,4 @@ const errorGenerator = (next) => {
   return next(error);
 };
 
-module.exports = { switcher };
+module.exports = { switcher, accountsSwitcher };
