@@ -1,4 +1,5 @@
 const Joi = require('@hapi/joi');
+const { FIELDS_NAMES } = require('constants/wobjectsData');
 
 exports.createSchema = Joi.object().keys({
   author: Joi.string().required(),
@@ -27,7 +28,7 @@ exports.appendSchema = Joi.object().keys({
       .allow('')
       .default('')
       .when('name', {
-        is: 'galleryAlbum',
+        is: FIELDS_NAMES.GALLERY_ALBUM,
         then: Joi.string().insensitive().invalid('related'),
       })
       .required(),
