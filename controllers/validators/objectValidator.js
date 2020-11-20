@@ -22,7 +22,14 @@ exports.appendSchema = Joi.object().keys({
   title: Joi.string().allow('').default('').required(),
   field: Joi.object().keys({
     name: Joi.string().required(),
-    body: Joi.string().allow('').default('').required(),
     locale: Joi.string().required(),
+    body: Joi.string()
+      .allow('')
+      .default('')
+      .when('name', {
+        is: 'galleryAlbum',
+        then: Joi.string().insensitive().invalid('related'),
+      })
+      .required(),
   }).required(),
 }).options({ allowUnknown: true });
