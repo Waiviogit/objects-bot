@@ -24,13 +24,10 @@ exports.appendSchema = Joi.object().keys({
   field: Joi.object().keys({
     name: Joi.string().required(),
     locale: Joi.string().required(),
-    body: Joi.string()
-      .allow('')
-      .default('')
-      .when('name', {
-        is: FIELDS_NAMES.GALLERY_ALBUM,
-        then: Joi.string().insensitive().invalid('related'),
-      })
-      .required(),
+    body: Joi.when('name', {
+      is: FIELDS_NAMES.GALLERY_ALBUM,
+      then: Joi.string().insensitive().invalid('related').allow(''),
+      otherwise: Joi.string().allow(''),
+    }).required(),
   }).required(),
 }).options({ allowUnknown: true });
