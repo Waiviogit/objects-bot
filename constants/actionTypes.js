@@ -15,4 +15,5 @@ module.exports = {
   GUEST_REJECT_REFERRAL_LICENCE: 'reject_referral_license',
   GUEST_ADD_REFERRAL_AGENT: 'add_referral_agent',
   GUEST_WOBJ_RATING: 'waivio_guest_wobj_rating',
+  GUEST_HIDE_POST: 'waivio_guest_hide_post',
 };

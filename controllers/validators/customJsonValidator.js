@@ -69,3 +69,10 @@ exports.guestRatingSchema = Joi.object().keys({
   rate: Joi.number().min(0).max(10).required(),
   guestName: Joi.string().required(),
 }).options({ allowUnknown: true, stripUnknown: true });
+
+exports.guestHidePostSchema = Joi.object().keys({
+  author: Joi.string().required(),
+  permlink: Joi.string().required(),
+  action: Joi.string().required(),
+  guestName: Joi.string().required(),
+}).options({ allowUnknown: true, stripUnknown: true });

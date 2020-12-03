@@ -57,6 +57,11 @@ const switcher = async (data, next) => {
         return guestRatingWobj(data.data.operations[0][1].json, next);
       }
       return errorGenerator(next);
+    case actionTypes.GUEST_HIDE_POST:
+      if (_.has(data, 'data.operations[0][1].json')) {
+        return guestHidePost(data.data.operations[0][1].json, next);
+      }
+      return errorGenerator(next);
     default:
       return errorGenerator(next);
   }
@@ -206,6 +211,25 @@ const guestRatingWobj = async (data, next) => {
   if (isValid) {
     const { result, error: broadcastError } = await accountsSwitcher(
       { id: actionTypes.GUEST_WOBJ_RATING, json: JSON.stringify(value) },
+    );
+
+    if (broadcastError) return next(broadcastError);
+    return result;
+  }
+};
+
+const guestHidePost = async (data, next) => {
+  const value = validators.validate(
+    parseMetadata(data, next),
+    validators.customJson.guestHidePostSchema, next,
+  );
+  if (!value) return;
+  const { error, isValid } = await authoriseUser.authorise(value.guestName);
+
+  if (error) return next(error);
+  if (isValid) {
+    const { result, error: broadcastError } = await accountsSwitcher(
+      { id: actionTypes.GUEST_HIDE_POST, json: JSON.stringify(value) },
     );
 
     if (broadcastError) return next(broadcastError);
