@@ -222,7 +222,7 @@ const guestRatingWobj = async (data, next) => {
 const guestHideContent = async (data, id, next) => {
   const value = validators.validate(
     parseMetadata(data, next),
-    validators.customJson.guestHidePostSchema, next,
+    validators.customJson.guestHideContentSchema, next,
   );
   if (!value) return;
   const { error, isValid } = await authoriseUser.authorise(value.guestName);

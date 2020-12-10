@@ -70,7 +70,7 @@ exports.guestRatingSchema = Joi.object().keys({
   guestName: Joi.string().required(),
 }).options({ allowUnknown: true, stripUnknown: true });
 
-exports.guestHidePostSchema = Joi.object().keys({
+exports.guestHideContentSchema = Joi.object().keys({
   author: Joi.string().required(),
   permlink: Joi.string().required(),
   action: Joi.string().required(),
