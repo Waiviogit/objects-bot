@@ -58,8 +58,9 @@ const switcher = async (data, next) => {
       }
       return errorGenerator(next);
     case actionTypes.GUEST_HIDE_POST:
+    case actionTypes.GUEST_HIDE_COMMENT:
       if (_.has(data, 'data.operations[0][1].json')) {
-        return guestHidePost(data.data.operations[0][1].json, next);
+        return guestHideContent(data.data.operations[0][1].json, data.id, next);
       }
       return errorGenerator(next);
     default:
@@ -218,7 +219,7 @@ const guestRatingWobj = async (data, next) => {
   }
 };
 
-const guestHidePost = async (data, next) => {
+const guestHideContent = async (data, id, next) => {
   const value = validators.validate(
     parseMetadata(data, next),
     validators.customJson.guestHidePostSchema, next,
@@ -229,7 +230,7 @@ const guestHidePost = async (data, next) => {
   if (error) return next(error);
   if (isValid) {
     const { result, error: broadcastError } = await accountsSwitcher(
-      { id: actionTypes.GUEST_HIDE_POST, json: JSON.stringify(value) },
+      { id, json: JSON.stringify(value) },
     );
 
     if (broadcastError) return next(broadcastError);
