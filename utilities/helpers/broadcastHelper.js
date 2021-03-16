@@ -60,7 +60,7 @@ const switcher = async (message, account) => {
 };
 
 const simplyPostHelper = async (post, key, guestAuthor) => {
-  const { result, error } = hiveClient.execute(
+  const { result, error } = await hiveClient.execute(
     hiveOperations.post,
     { data: post, key },
   );
