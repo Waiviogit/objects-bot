@@ -23,7 +23,6 @@ module.exports = {
   expect,
   mockRequest,
   mockResponse,
-  ...require('models'),
   ...require('utilities/redis/rsmq'),
   ...require('utilities/redis'),
   faker,
