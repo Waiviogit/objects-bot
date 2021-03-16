@@ -1,13 +1,15 @@
-const axios = require('axios');
-const _ = require('lodash');
 const {
   expect, chai, sinon, faker, getRandomString,
-  redisQueue, redisSetter, updateMetadata, dsteemModel, redis, authoriseUser, serviceBotsHelper,
+  redisQueue, redisSetter, updateMetadata, redis, authoriseUser, serviceBotsHelper,
 } = require('test/testHelper');
 const {
   postMock, userMock, botMock, customJsonMock,
 } = require('test/mocks');
+const { hiveOperations, hiveClient } = require('utilities/hiveApi');
 const { actionTypes } = require('constants/index');
+const { nodeUrls } = require('constants/appData');
+const axios = require('axios');
+const _ = require('lodash');
 const app = require('app');
 
 describe('On guestRequestsController', async () => {
@@ -209,7 +211,7 @@ describe('On guestRequestsController', async () => {
     describe('On success', async () => {
       beforeEach(async () => {
         sinon.stub(axios, 'post').returns(Promise.resolve(userMock({ name: author })));
-        sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
+        sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
       });
       afterEach(async () => {
         sinon.restore();
@@ -227,11 +229,17 @@ describe('On guestRequestsController', async () => {
         it('should return status 200 with valid params in vote request', async () => {
           expect(result).to.have.status(200);
         });
-        it('should call dsteem method with valid params', async () => {
-          expect(dsteemModel.customJSON).to.be.calledWith({
-            id: actionTypes.GUEST_VOTE,
-            json: JSON.stringify(mock.data.operations[0][1]),
-          }, bot.proxyBots[1]);
+        it('should call hiveOperations method with valid params', async () => {
+          expect(hiveOperations.customJSON).to.be.calledWith(
+            hiveClient.client,
+            {
+              data: {
+                id: actionTypes.GUEST_VOTE,
+                json: JSON.stringify(mock.data.operations[0][1]),
+              },
+              account: bot.proxyBots[1],
+            },
+          );
         });
       });
       describe('On reblog', async () => {
@@ -248,10 +256,14 @@ describe('On guestRequestsController', async () => {
           expect(result).to.have.status(200);
         });
         it('should call dsteem method with valid params', async () => {
-          expect(dsteemModel.customJSON).to.be.calledWith({
-            id: actionTypes.GUEST_REBLOG,
-            json: mock.data.operations[0][1].json,
-          }, bot.proxyBots[1]);
+          expect(hiveOperations.customJSON).to.be.calledWith(hiveClient.client,
+            {
+              data: {
+                id: actionTypes.GUEST_REBLOG,
+                json: mock.data.operations[0][1].json,
+              },
+              account: bot.proxyBots[1],
+            });
         });
       });
       describe('On update account', async () => {
@@ -268,10 +280,13 @@ describe('On guestRequestsController', async () => {
           expect(result).to.have.status(200);
         });
         it('should call dsteem method with valid params', async () => {
-          expect(dsteemModel.customJSON).to.be.calledWith({
-            id: actionTypes.GUEST_UPDATE_ACCOUNT,
-            json: mock.data.operations[0][1].json,
-          }, bot.proxyBots[1]);
+          expect(hiveOperations.customJSON).to.be.calledWith(hiveClient.client, {
+            data: {
+              id: actionTypes.GUEST_UPDATE_ACCOUNT,
+              json: mock.data.operations[0][1].json,
+            },
+            account: bot.proxyBots[1],
+          });
         });
       });
       describe('On follow wobject', async () => {
@@ -288,10 +303,13 @@ describe('On guestRequestsController', async () => {
           expect(result).to.have.status(200);
         });
         it('should call dsteem method with valid params', async () => {
-          expect(dsteemModel.customJSON).to.be.calledWith({
-            id: actionTypes.GUEST_FOLLOW_WOBJECT,
-            json: mock.data.operations[0][1].json,
-          }, bot.proxyBots[1]);
+          expect(hiveOperations.customJSON).to.be.calledWith(hiveClient.client, {
+            data: {
+              id: actionTypes.GUEST_FOLLOW_WOBJECT,
+              json: mock.data.operations[0][1].json,
+            },
+            account: bot.proxyBots[1],
+          });
         });
       });
       describe('On follow user', async () => {
@@ -308,10 +326,13 @@ describe('On guestRequestsController', async () => {
           expect(result).to.have.status(200);
         });
         it('should call dsteem method with valid params', async () => {
-          expect(dsteemModel.customJSON).to.be.calledWith({
-            id: actionTypes.GUEST_FOLLOW,
-            json: mock.data.operations[0][1].json,
-          }, bot.proxyBots[1]);
+          expect(hiveOperations.customJSON).to.be.calledWith(hiveClient.client, {
+            data: {
+              id: actionTypes.GUEST_FOLLOW,
+              json: mock.data.operations[0][1].json,
+            },
+            account: bot.proxyBots[1],
+          });
         });
       });
       describe('On create user', async () => {
@@ -328,9 +349,8 @@ describe('On guestRequestsController', async () => {
           expect(result).to.have.status(200);
         });
         it('should call dsteem method with valid params', async () => {
-          expect(dsteemModel.customJSON).to.be.calledWith(
-            { id: mock.id, json: JSON.stringify(mock.json) }, bot.proxyBots[1],
-          );
+          expect(hiveOperations.customJSON).to.be.calledWith(hiveClient.client,
+            { data: { id: mock.id, json: JSON.stringify(mock.json) }, account: bot.proxyBots[1] });
         });
       });
     });
@@ -346,7 +366,7 @@ describe('On guestRequestsController', async () => {
       describe('On vote', async () => {
         describe('On validation errors', async () => {
           beforeEach(async () => {
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
             mock = customJsonMock.vote({ voter: faker.random.number() });
             result = await chai.request(app)
               .post('/guest-custom-json')
@@ -357,12 +377,12 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(422);
           });
           it('should not call dsteem model method if request data not valid', async () => {
-            expect(dsteemModel.customJSON).to.be.not.called;
+            expect(hiveOperations.customJSON).to.be.not.called;
           });
         });
         describe('On authorisation errors', async () => {
           beforeEach(async () => {
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
             mock = customJsonMock.vote();
             result = await chai.request(app)
               .post('/guest-custom-json')
@@ -373,12 +393,12 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(401);
           });
           it('should not call dsteem model method if authorisation check failed', async () => {
-            expect(dsteemModel.customJSON).to.be.not.called;
+            expect(hiveOperations.customJSON).to.be.not.called;
           });
         });
         describe('On RPC errors', async () => {
           beforeEach(async () => {
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } }));
             mock = customJsonMock.vote({ voter: author });
             result = await chai.request(app)
               .post('/guest-custom-json')
@@ -386,7 +406,8 @@ describe('On guestRequestsController', async () => {
               .send(mock);
           });
           it('should try to send custom json by account length times', async () => {
-            expect(dsteemModel.customJSON).to.be.callCount(botMock.proxyBots.length);
+            expect(hiveOperations.customJSON)
+              .to.be.callCount(botMock.proxyBots.length * nodeUrls.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -395,7 +416,7 @@ describe('On guestRequestsController', async () => {
         describe('On broadcast errors', async () => {
           beforeEach(async () => {
             mock = customJsonMock.vote({ voter: author });
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ error: { message: 'test error' } }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ error: { message: 'test error' } }));
             result = await chai.request(app)
               .post('/guest-custom-json')
               .set({ 'waivio-auth': 1 })
@@ -404,8 +425,8 @@ describe('On guestRequestsController', async () => {
           it('should return status 500 if broadcast to chain method get error', async () => {
             expect(result).to.have.status(500);
           });
-          it('should called broadcast method once', async () => {
-            expect(dsteemModel.customJSON).to.be.calledOnce;
+          it('should called broadcast method nodeUrls.length times', async () => {
+            expect(hiveOperations.customJSON).to.be.callCount(nodeUrls.length);
           });
           it('should return message from broadcast error', async () => {
             expect(result.body.message).to.be.eq('test error');
@@ -417,7 +438,7 @@ describe('On guestRequestsController', async () => {
           beforeEach(async () => {
             mock = customJsonMock.follow();
             mock.data.operations = [];
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
             result = await chai.request(app)
               .post('/guest-custom-json')
               .set({ 'waivio-auth': 1 })
@@ -427,20 +448,21 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(422);
           });
           it('should not call dsteem model method if request data not valid', async () => {
-            expect(dsteemModel.customJSON).to.be.not.called;
+            expect(hiveOperations.customJSON).to.be.not.called;
           });
         });
         describe('On RPC errors', async () => {
           beforeEach(async () => {
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } }));
             mock = customJsonMock.follow({ follower: author });
             result = await chai.request(app)
               .post('/guest-custom-json')
               .set({ 'waivio-auth': 1 })
               .send(mock);
           });
-          it('should try to send custom json by account length times', async () => {
-            expect(dsteemModel.customJSON).to.be.callCount(botMock.proxyBots.length);
+          it('should try to send custom json by account length * nodeUrls.length times', async () => {
+            expect(hiveOperations.customJSON)
+              .to.be.callCount(botMock.proxyBots.length * nodeUrls.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -448,7 +470,7 @@ describe('On guestRequestsController', async () => {
         });
         describe('On authorisation errors', async () => {
           beforeEach(async () => {
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
             mock = customJsonMock.follow();
             result = await chai.request(app)
               .post('/guest-custom-json')
@@ -459,13 +481,13 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(401);
           });
           it('should not call dsteem model method if authorisation check failed', async () => {
-            expect(dsteemModel.customJSON).to.be.not.called;
+            expect(hiveOperations.customJSON).to.be.not.called;
           });
         });
         describe('On broadcast errors', async () => {
           beforeEach(async () => {
             mock = customJsonMock.follow({ follower: author });
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ error: { message: 'test error' } }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ error: { message: 'test error' } }));
             result = await chai.request(app)
               .post('/guest-custom-json')
               .set({ 'waivio-auth': 1 })
@@ -474,8 +496,8 @@ describe('On guestRequestsController', async () => {
           it('should return status 500 if broadcast to chain method get error', async () => {
             expect(result).to.have.status(500);
           });
-          it('should called broadcast method once', async () => {
-            expect(dsteemModel.customJSON).to.be.calledOnce;
+          it('should called broadcast method nodeUrls.length times', async () => {
+            expect(hiveOperations.customJSON).to.be.callCount(nodeUrls.length);
           });
           it('should return message from broadcast error', async () => {
             expect(result.body.message).to.be.eq('test error');
@@ -487,7 +509,7 @@ describe('On guestRequestsController', async () => {
           beforeEach(async () => {
             mock = customJsonMock.reblog();
             mock.data.operations = [];
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
             result = await chai.request(app)
               .post('/guest-custom-json')
               .set({ 'waivio-auth': 1 })
@@ -497,12 +519,12 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(422);
           });
           it('should not call dsteem model method if request data not valid', async () => {
-            expect(dsteemModel.customJSON).to.be.not.called;
+            expect(hiveOperations.customJSON).to.be.not.called;
           });
         });
         describe('On RPC errors', async () => {
           beforeEach(async () => {
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } }));
             mock = customJsonMock.reblog({ account: author });
             result = await chai.request(app)
               .post('/guest-custom-json')
@@ -510,7 +532,8 @@ describe('On guestRequestsController', async () => {
               .send(mock);
           });
           it('should try to send custom json by account length times', async () => {
-            expect(dsteemModel.customJSON).to.be.callCount(botMock.proxyBots.length);
+            expect(hiveOperations.customJSON)
+              .to.be.callCount(botMock.proxyBots.length * nodeUrls.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -518,7 +541,7 @@ describe('On guestRequestsController', async () => {
         });
         describe('On authorisation errors', async () => {
           beforeEach(async () => {
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
             mock = customJsonMock.reblog();
             result = await chai.request(app)
               .post('/guest-custom-json')
@@ -529,13 +552,13 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(401);
           });
           it('should not call dsteem model method if authorisation check failed', async () => {
-            expect(dsteemModel.customJSON).to.be.not.called;
+            expect(hiveOperations.customJSON).to.be.not.called;
           });
         });
         describe('On broadcast errors', async () => {
           beforeEach(async () => {
             mock = customJsonMock.reblog({ account: author });
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ error: { message: 'test error' } }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ error: { message: 'test error' } }));
             result = await chai.request(app)
               .post('/guest-custom-json')
               .set({ 'waivio-auth': 1 })
@@ -545,7 +568,7 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(500);
           });
           it('should called broadcast method once', async () => {
-            expect(dsteemModel.customJSON).to.be.calledOnce;
+            expect(hiveOperations.customJSON).to.be.callCount(nodeUrls.length);
           });
           it('should return message from broadcast error', async () => {
             expect(result.body.message).to.be.eq('test error');
@@ -557,7 +580,7 @@ describe('On guestRequestsController', async () => {
           beforeEach(async () => {
             mock = customJsonMock.update();
             mock.data.operations = [];
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
             result = await chai.request(app)
               .post('/guest-custom-json')
               .set({ 'waivio-auth': 1 })
@@ -567,12 +590,12 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(422);
           });
           it('should not call dsteem model method if request data not valid', async () => {
-            expect(dsteemModel.customJSON).to.be.not.called;
+            expect(hiveOperations.customJSON).to.be.not.called;
           });
         });
         describe('On RPC errors', async () => {
           beforeEach(async () => {
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } }));
             mock = customJsonMock.update({ account: author });
             result = await chai.request(app)
               .post('/guest-custom-json')
@@ -580,7 +603,8 @@ describe('On guestRequestsController', async () => {
               .send(mock);
           });
           it('should try to send custom json by account length times', async () => {
-            expect(dsteemModel.customJSON).to.be.callCount(botMock.proxyBots.length);
+            expect(hiveOperations.customJSON)
+              .to.be.callCount(botMock.proxyBots.length * nodeUrls.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -588,7 +612,7 @@ describe('On guestRequestsController', async () => {
         });
         describe('On authorisation errors', async () => {
           beforeEach(async () => {
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
             mock = customJsonMock.update();
             result = await chai.request(app)
               .post('/guest-custom-json')
@@ -599,13 +623,13 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(401);
           });
           it('should not call dsteem model method if authorisation check failed', async () => {
-            expect(dsteemModel.customJSON).to.be.not.called;
+            expect(hiveOperations.customJSON).to.be.not.called;
           });
         });
         describe('On broadcast errors', async () => {
           beforeEach(async () => {
             mock = customJsonMock.update({ account: author });
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ error: { message: 'test error' } }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ error: { message: 'test error' } }));
             result = await chai.request(app)
               .post('/guest-custom-json')
               .set({ 'waivio-auth': 1 })
@@ -615,7 +639,8 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(500);
           });
           it('should called broadcast method once', async () => {
-            expect(dsteemModel.customJSON).to.be.calledOnce;
+            expect(hiveOperations.customJSON)
+              .to.be.callCount(nodeUrls.length);
           });
           it('should return message from broadcast error', async () => {
             expect(result.body.message).to.be.eq('test error');
@@ -626,7 +651,7 @@ describe('On guestRequestsController', async () => {
         describe('On validation errors', async () => {
           beforeEach(async () => {
             mock = customJsonMock.followWobj({ user: faker.random.number() });
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
             result = await chai.request(app)
               .post('/guest-custom-json')
               .set({ 'waivio-auth': 1 })
@@ -636,12 +661,12 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(422);
           });
           it('should not call dsteem model method if request data not valid', async () => {
-            expect(dsteemModel.customJSON).to.be.not.called;
+            expect(hiveOperations.customJSON).to.be.not.called;
           });
         });
         describe('On RPC errors', async () => {
           beforeEach(async () => {
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } }));
             mock = customJsonMock.followWobj({ user: author });
             result = await chai.request(app)
               .post('/guest-custom-json')
@@ -649,7 +674,8 @@ describe('On guestRequestsController', async () => {
               .send(mock);
           });
           it('should try to send custom json by account length times', async () => {
-            expect(dsteemModel.customJSON).to.be.callCount(botMock.proxyBots.length);
+            expect(hiveOperations.customJSON)
+              .to.be.callCount(botMock.proxyBots.length * nodeUrls.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -657,7 +683,7 @@ describe('On guestRequestsController', async () => {
         });
         describe('On authorisation errors', async () => {
           beforeEach(async () => {
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
             mock = customJsonMock.followWobj();
             result = await chai.request(app)
               .post('/guest-custom-json')
@@ -668,13 +694,13 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(401);
           });
           it('should not call dsteem model method if authorisation check failed', async () => {
-            expect(dsteemModel.customJSON).to.be.not.called;
+            expect(hiveOperations.customJSON).to.be.not.called;
           });
         });
         describe('On broadcast errors', async () => {
           beforeEach(async () => {
             mock = customJsonMock.followWobj({ user: author });
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ error: { message: 'test error' } }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ error: { message: 'test error' } }));
             result = await chai.request(app)
               .post('/guest-custom-json')
               .set({ 'waivio-auth': 1 })
@@ -683,8 +709,9 @@ describe('On guestRequestsController', async () => {
           it('should return status 500 if broadcast to chain method get error', async () => {
             expect(result).to.have.status(500);
           });
-          it('should called broadcast method once', async () => {
-            expect(dsteemModel.customJSON).to.be.calledOnce;
+          it('should called broadcast method nodeUrls.length times', async () => {
+            expect(hiveOperations.customJSON)
+              .to.be.callCount(nodeUrls.length);
           });
           it('should return message from broadcast error', async () => {
             expect(result.body.message).to.be.eq('test error');
@@ -695,7 +722,7 @@ describe('On guestRequestsController', async () => {
         describe('On validation errors', async () => {
           beforeEach(async () => {
             mock = customJsonMock.create();
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
             result = await chai.request(app)
               .post('/guest-custom-json')
               .set({ 'waivio-auth': 1 })
@@ -705,12 +732,12 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(422);
           });
           it('should not call dsteem model method if request data not valid', async () => {
-            expect(dsteemModel.customJSON).to.be.not.called;
+            expect(hiveOperations.customJSON).to.be.not.called;
           });
         });
         describe('On authorisation errors', async () => {
           beforeEach(async () => {
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
             mock = customJsonMock.create();
             result = await chai.request(app)
               .post('/guest-custom-json')
@@ -721,20 +748,21 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(401);
           });
           it('should not call dsteem model method if authorisation check failed', async () => {
-            expect(dsteemModel.customJSON).to.be.not.called;
+            expect(hiveOperations.customJSON).to.be.not.called;
           });
         });
         describe('On RPC errors', async () => {
           beforeEach(async () => {
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL' } }));
             mock = customJsonMock.create({ name: author });
             result = await chai.request(app)
               .post('/guest-custom-json')
               .set({ 'waivio-auth': 1 })
               .send(mock);
           });
-          it('should try to send custom json by account length times', async () => {
-            expect(dsteemModel.customJSON).to.be.callCount(botMock.proxyBots.length);
+          it('should try to send custom json by account length * nodeUrls.length times', async () => {
+            expect(hiveOperations.customJSON)
+              .to.be.callCount(botMock.proxyBots.length * nodeUrls.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -743,7 +771,7 @@ describe('On guestRequestsController', async () => {
         describe('On broadcast errors', async () => {
           beforeEach(async () => {
             mock = customJsonMock.create({ name: author });
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ error: { message: 'test error' } }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ error: { message: 'test error' } }));
             result = await chai.request(app)
               .post('/guest-custom-json')
               .set({ 'waivio-auth': 1 })
@@ -752,8 +780,9 @@ describe('On guestRequestsController', async () => {
           it('should return status 500 if broadcast method get error', async () => {
             expect(result).to.have.status(500);
           });
-          it('should called broadcast method once', async () => {
-            expect(dsteemModel.customJSON).to.be.calledOnce;
+          it('should called broadcast method nodeUrls.length times', async () => {
+            expect(hiveOperations.customJSON)
+              .to.be.callCount(nodeUrls.length);
           });
           it('should return message from broadcast error', async () => {
             expect(result.body.message).to.be.eq('test error');
@@ -762,7 +791,7 @@ describe('On guestRequestsController', async () => {
         describe('On another errors', async () => {
           beforeEach(async () => {
             mock = customJsonMock.create();
-            sinon.stub(dsteemModel, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
+            sinon.stub(hiveOperations, 'customJSON').returns(Promise.resolve({ result: 'OK' }));
           });
           it('should return status 422 if in request no json', async () => {
             result = await chai.request(app)
