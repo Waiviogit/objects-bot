@@ -1,4 +1,5 @@
 const { PrivateKey } = require('@hiveio/dhive');
+const { rcApi } = require('./hiveClient');
 
 exports.post = async (client, { data, key }) => {
   try {
@@ -53,7 +54,7 @@ exports.getComment = async (client, { author, permlink }) => {
   }
 };
 
-exports.getAccountRC = async (rcApi, accountName) => {
+exports.getAccountRC = async (accountName) => {
   try {
     const RCAccount = await rcApi.findRCAccounts([accountName]);
     const result = await rcApi.calculateRCMana(RCAccount[0]);

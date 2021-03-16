@@ -130,7 +130,7 @@ const publishHelper = async (body) => {
 const dataPublisher = async ({
   account, body, opType, accounts,
 }) => {
-  if (await hiveOperations.getAccountRC(rcApi, account.name) < 2100000000) {
+  if (await hiveOperations.getAccountRC(account.name) < 2100000000) {
     config.objects.account === accounts.serviceBots.length - 1
       ? config.objects.account = 0
       : config.objects.account += 1;
