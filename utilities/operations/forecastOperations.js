@@ -1,8 +1,8 @@
-const handleError = require('utilities/helpers/handleError');
 const { getPostData, getOptions } = require('utilities/helpers/postingData');
-const { dsteemModel } = require('models');
-const { actionTypes } = require('constants/index');
+const { hiveClient, hiveOperations } = require('utilities/hiveApi');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
+const handleError = require('utilities/helpers/handleError');
+const { actionTypes } = require('constants/index');
 const config = require('config');
 
 const markExpiredForecastOp = async (body) => {
@@ -52,10 +52,13 @@ const markExpiredForecastOp = async (body) => {
 
 const sendComment = async (data, account) => {
   console.info(`INFO[ForecastExpired] Try to write comment| bot: ${account.name}`);
-  return dsteemModel.postWithOptions(
-    getPostData(data, account, actionTypes.FORECAST_EXPIRED),
-    await getOptions(data, account, actionTypes.FORECAST_EXPIRED),
-    account.postingKey,
+  return hiveClient.execute(
+    hiveOperations.postWithOptions,
+    {
+      comment: getPostData(data, account, actionTypes.FORECAST_EXPIRED),
+      options: await getOptions(data, account, actionTypes.FORECAST_EXPIRED),
+      key: account.postingKey,
+    },
   );
 };
 

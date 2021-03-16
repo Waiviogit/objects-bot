@@ -1,10 +1,10 @@
-const permlinkGenerator = require('utilities/helpers/permlinkGenerator');
-const handleError = require('utilities/helpers/handleError');
-const { dsteemModel } = require('models');
 const { getPostData, getOptions, getAppendRequestBody } = require('utilities/helpers/postingData');
 const checkUsersForBlackList = require('utilities/helpers/checkUsersForBlackList');
-const { actionTypes } = require('constants/index');
+const { hiveClient, hiveOperations, rcApi } = require('utilities/hiveApi');
+const permlinkGenerator = require('utilities/helpers/permlinkGenerator');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
+const handleError = require('utilities/helpers/handleError');
+const { actionTypes } = require('constants/index');
 const config = require('config');
 
 const createObjectTypeOp = async (body) => {
@@ -18,10 +18,13 @@ const createObjectTypeOp = async (body) => {
   for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
     const account = accounts.serviceBots[config.objects.account];
     console.info(`INFO[CreateObjectType] Try to create object type | bot: ${account.name} | request body: ${JSON.stringify(body)}`);
-    const { error: e, result: transactionStatus } = await dsteemModel.postWithOptions(
-      getPostData(data, account, actionTypes.CREATE_OBJECT_TYPE),
-      await getOptions(data, account, actionTypes.CREATE_OBJECT_TYPE),
-      account.postingKey,
+    const { error: e, result: transactionStatus } = await hiveClient.execute(
+      hiveOperations.postWithOptions,
+      {
+        comment: getPostData(data, account, actionTypes.CREATE_OBJECT_TYPE),
+        options: await getOptions(data, account, actionTypes.CREATE_OBJECT_TYPE),
+        key: account.postingKey,
+      },
     );
 
     if (transactionStatus) {
@@ -127,7 +130,7 @@ const publishHelper = async (body) => {
 const dataPublisher = async ({
   account, body, opType, accounts,
 }) => {
-  if (await dsteemModel.getAccountRC(account.name) < 2100000000) {
+  if (await hiveOperations.getAccountRC(account.name) < 2100000000) {
     config.objects.account === accounts.serviceBots.length - 1
       ? config.objects.account = 0
       : config.objects.account += 1;
@@ -135,11 +138,15 @@ const dataPublisher = async ({
     return { e: 'Not enough mana' };
   }
   console.info(`INFO[${opType}] Try | bot: ${account.name} | request body: ${JSON.stringify(body)}`);
-  const { error: e, result: transactionStatus } = await dsteemModel.postWithOptions(
-    getPostData(body, account, opType),
-    await getOptions(body, account),
-    account.postingKey,
+  const { error: e, result: transactionStatus } = await hiveClient.execute(
+    hiveOperations.postWithOptions,
+    {
+      comment: getPostData(body, account, opType),
+      options: await getOptions(body, account),
+      key: account.postingKey,
+    },
   );
+
   return { e, transactionStatus };
 };
 

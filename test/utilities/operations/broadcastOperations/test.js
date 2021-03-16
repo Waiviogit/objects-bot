@@ -1,11 +1,12 @@
 const _ = require('lodash');
 const {
-  getRandomString, redisGetter, sinon, redisQueue, dsteemModel, serviceBotsHelper,
+  getRandomString, redisGetter, sinon, redisQueue, serviceBotsHelper,
   actionsRsmqClient, redisSetter, broadcastOperations,
   expect, validationHelper, redis,
 } = require('test/testHelper');
-const { postMock, botMock } = require('test/mocks');
+const { hiveOperations } = require('utilities/hiveApi');
 const { commentAction } = require('constants/guestRequestsData');
+const { postMock, botMock } = require('test/mocks');
 
 describe('On broadcastOperations', async () => {
   beforeEach(async () => {
@@ -21,8 +22,8 @@ describe('On broadcastOperations', async () => {
       let mock, message, mockPostData;
 
       beforeEach(async () => {
-        sinon.stub(dsteemModel, 'post').returns(Promise.resolve({ result: 'OK' }));
-        sinon.stub(dsteemModel, 'postWithOptions').returns(Promise.resolve({ result: 'OK' }));
+        sinon.stub(hiveOperations, 'post').returns(Promise.resolve({ result: 'OK' }));
+        sinon.stub(hiveOperations, 'postWithOptions').returns(Promise.resolve({ result: 'OK' }));
         mock = postMock({ parentAuthor: getRandomString(10) });
         mockPostData = validationHelper.postingValidator(mock);
         message = getRandomString(15);
@@ -39,7 +40,7 @@ describe('On broadcastOperations', async () => {
           qname: commentAction.qname,
           botType: 'proxyBots',
         });
-        expect(dsteemModel.postWithOptions).to.be.calledOnce;
+        expect(hiveOperations.postWithOptions).to.be.calledOnce;
       });
       it('should successfully send comment with valid data to chain', async () => {
         await redisQueue.sendMessage(
@@ -52,7 +53,7 @@ describe('On broadcastOperations', async () => {
           qname: commentAction.qname,
           botType: 'proxyBots',
         });
-        expect(dsteemModel.post).to.be.calledOnce;
+        expect(hiveOperations.post).to.be.calledOnce;
       });
       it('should delete message from queue after posting ', async () => {
         await broadcastOperations.commentBroadcaster({
@@ -82,8 +83,8 @@ describe('On broadcastOperations', async () => {
       let mock, message, mockPostData;
 
       beforeEach(async () => {
-        sinon.stub(dsteemModel, 'post').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL | RC.' } }));
-        sinon.stub(dsteemModel, 'postWithOptions').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL | RC.' } }));
+        sinon.stub(hiveOperations, 'post').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL | RC.' } }));
+        sinon.stub(hiveOperations, 'postWithOptions').returns(Promise.resolve({ error: { message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL | RC.' } }));
         await redisQueue.createQueue({ client: actionsRsmqClient, qname: commentAction.qname });
         sinon.spy(console, 'error');
       });
@@ -96,7 +97,7 @@ describe('On broadcastOperations', async () => {
           });
         });
         it('should successfully returns if queue is empty', async () => {
-          expect(dsteemModel.postWithOptions).to.be.not.called;
+          expect(hiveOperations.postWithOptions).to.be.not.called;
         });
       });
       describe('switcher errors', async () => {
@@ -132,8 +133,8 @@ describe('On broadcastOperations', async () => {
     describe('On another error', async () => {
       let mock, message, mockPostData;
       beforeEach(async () => {
-        sinon.stub(dsteemModel, 'post').returns(Promise.resolve({ error: { message: 'another error' } }));
-        sinon.stub(dsteemModel, 'postWithOptions').returns(Promise.resolve({ error: { message: 'another error' } }));
+        sinon.stub(hiveOperations, 'post').returns(Promise.resolve({ error: { message: 'another error' } }));
+        sinon.stub(hiveOperations, 'postWithOptions').returns(Promise.resolve({ error: { message: 'another error' } }));
         await redisQueue.createQueue({ client: actionsRsmqClient, qname: commentAction.qname });
         message = getRandomString(10);
         mock = postMock({ parentAuthor: getRandomString(10) });
