@@ -183,4 +183,12 @@ const getObjectTypeAuthorPermlink = async (type) => {
   };
 };
 
+const checkRootPostComments = async ({ author, permlink }) => {
+  const { result, error } = await objectTypeModel.findOne({ author, permlink });
+  if (error) return { error };
+  if (!result || result) {
+    // # TODO
+  }
+};
+
 module.exports = { createObjectTypeOp, createObjectOp, AppendObjectOp };

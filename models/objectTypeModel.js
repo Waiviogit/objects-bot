@@ -7,3 +7,11 @@ exports.find = async (condition, select = {}) => {
     return { error };
   }
 };
+
+exports.findOne = async (condition, select = {}) => {
+  try {
+    return { result: await ObjectType.findOne(condition, select).lean() };
+  } catch (error) {
+    return { error };
+  }
+};

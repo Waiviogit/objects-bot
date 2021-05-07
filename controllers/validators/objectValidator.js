@@ -20,6 +20,11 @@ exports.appendSchema = Joi.object().keys({
   parentAuthor: Joi.string().allow('').required(),
   parentPermlink: Joi.string().required(),
   title: Joi.string().allow('').default('').required(),
+  author_permlink: Joi.string().required(),
+  root: Joi.object().keys({
+    author: Joi.string().required(),
+    permlink: Joi.string().required(),
+  }),
   field: Joi.object().keys({
     name: Joi.string().required(),
     locale: Joi.string().required(),
