@@ -1,11 +1,15 @@
 const { getPostData, getOptions, getAppendRequestBody } = require('utilities/helpers/postingData');
 const checkUsersForBlackList = require('utilities/helpers/checkUsersForBlackList');
+const { captureAndSendError } = require('utilities/helpers/sentryHelper');
 const { hiveClient, hiveOperations, rcApi } = require('utilities/hiveApi');
 const permlinkGenerator = require('utilities/helpers/permlinkGenerator');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const handleError = require('utilities/helpers/handleError');
+const { MAX_COMMENTS } = require('constants/wobjectsData');
 const { actionTypes } = require('constants/index');
+const { objectTypeModel } = require('models');
 const config = require('config');
+const _ = require('lodash');
 
 const createObjectTypeOp = async (body) => {
   const accounts = await addBotsToEnv.setEnvData();
@@ -35,7 +39,8 @@ const createObjectTypeOp = async (body) => {
       };
       console.info(`INFO[CreateObjectType] Object type successfully created | response body: ${JSON.stringify(payload)}`);
       return { result: { status: 200, json: payload } };
-    } if (e && e.name === 'RPCError') {
+    }
+    if (e && e.name === 'RPCError') {
       config.objects.account === accounts.serviceBots.length - 1
         ? config.objects.account = 0
         : config.objects.account += 1;
@@ -51,8 +56,16 @@ const createObjectTypeOp = async (body) => {
 };
 
 const createObjectOp = async (body) => {
-  const { body: updBody, error: publishError, accounts } = await publishHelper({ ...body });
+  const {
+    parentAuthor, parentPermlink, error: objTypeErr,
+  } = await getObjectTypeAuthorPermlink(body.type);
+  if (objTypeErr) return captureAndSendError(objTypeErr);
+
+  const { body: updBody, error: publishError, accounts } = await publishHelper(
+    { ...body, parentAuthor, parentPermlink },
+  );
   if (publishError) return handleError(publishError);
+
   let error;
   for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
     const account = accounts.serviceBots[config.objects.account];
@@ -64,7 +77,8 @@ const createObjectOp = async (body) => {
       console.info('INFO[CreateObject] Successfully created');
       console.info('INFO[CreateObject] Recall Append object');
       return AppendObjectOp(getAppendRequestBody(updBody, account));
-    } if (e && e.name === 'RPCError') {
+    }
+    if (e && e.name === 'RPCError') {
       config.objects.account === accounts.serviceBots.length - 1
         ? config.objects.account = 0
         : config.objects.account += 1;
@@ -100,7 +114,8 @@ const AppendObjectOp = async (body) => {
       };
       console.info(`INFO[AppendObject] Successfully appended | response body: ${JSON.stringify(payload)}`);
       return { result: { status: 200, json: payload } };
-    } if (e && e.name === 'RPCError') {
+    }
+    if (e && e.name === 'RPCError') {
       config.objects.account === accounts.serviceBots.length - 1
         ? config.objects.account = 0
         : config.objects.account += 1;
@@ -148,6 +163,24 @@ const dataPublisher = async ({
   );
 
   return { e, transactionStatus };
+};
+
+const getObjectTypeAuthorPermlink = async (type) => {
+  let newType;
+  const { result = [], error } = await objectTypeModel
+    .find({ name: type, commentsNum: { $lt: MAX_COMMENTS } });
+  if (error) return { error };
+
+  if (_.isEmpty(result)) {
+    ({ result: newType } = await createObjectTypeOp({ objectType: type }));
+    if (!newType) return { error: { message: `Error while creating objectType: ${type}` } };
+  }
+  if (result.length < 2) await createObjectTypeOp({ objectType: type });
+
+  return {
+    parentAuthor: newType ? _.get(newType, 'json.author') : _.get(result, '[0].author'),
+    parentPermlink: newType ? _.get(newType, 'json.permlink') : _.get(result, '[0].permlink'),
+  };
 };
 
 module.exports = { createObjectTypeOp, createObjectOp, AppendObjectOp };

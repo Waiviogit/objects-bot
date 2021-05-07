@@ -1,5 +1,5 @@
 const Joi = require('@hapi/joi');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
+const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
 
 exports.createSchema = Joi.object().keys({
   author: Joi.string().required(),
@@ -10,8 +10,7 @@ exports.createSchema = Joi.object().keys({
   locale: Joi.string().required(),
   isExtendingOpen: Joi.boolean().required(),
   isPostingOpen: Joi.boolean().required(),
-  parentAuthor: Joi.string().allow('').required(),
-  parentPermlink: Joi.string().required(),
+  type: Joi.string().valid(...Object.values(OBJECT_TYPES)).required(),
 }).options({ allowUnknown: true });
 
 exports.appendSchema = Joi.object().keys({
