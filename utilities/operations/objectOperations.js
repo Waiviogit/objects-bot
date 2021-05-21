@@ -13,7 +13,7 @@ const _ = require('lodash');
 
 const createObjectTypeOp = async (body) => {
   const { body: updBody, error: publishError, accounts } = await publishHelper(
-    { ...body, permlink: permlinkGenerator(body.objectType) },
+    { ...body, permlink: permlinkGenerator(body.objectType, 10) },
   );
   if (publishError) return handleError(publishError);
 
