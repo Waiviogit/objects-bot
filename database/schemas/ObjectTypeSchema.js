@@ -19,6 +19,7 @@ const ObjectTypeSchema = new Schema({
   },
   exposedFields: { type: [String], enum: [...Object.values(FIELDS_NAMES)], default: [] },
   commentsNum: { type: Number, default: 0 },
+  firstCreated: { type: Boolean, default: false },
 },
 {
   toObject: { virtuals: true }, timestamps: true,
