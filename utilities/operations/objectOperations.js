@@ -62,7 +62,7 @@ const AppendObjectOp = async (body) => {
 const transferObjectUpdates = async ({ body, objectType }) => {
   const { parentAuthor, parentPermlink } = await getObjectTypeAuthorPermlink(objectType);
   const updateComment = {
-    permlink: permlinkGenerator(body.objectType), // #TODO modify permlinkGenerator
+    permlink: permlinkGenerator(body.author_permlink, 10),
     author_permlink: body.author_permlink,
     parentAuthor,
     parentPermlink,
@@ -166,6 +166,7 @@ const isMaxComments = async ({ author, permlink }) => {
   const { result } = await objectTypeModel.findOne(
     { author, permlink },
   );
+
   return {
     maxComments: MAX_COMMENTS < result.commentsNum,
     objectType: result.name,
@@ -175,6 +176,7 @@ const isMaxComments = async ({ author, permlink }) => {
 const transferObjectCallback = async ({ account, body, additionalData }) => {
   additionalData.parentAuthor = account.name;
   additionalData.parentPermlink = body.permlink;
+
   return AppendObjectOp(additionalData);
 };
 
@@ -199,7 +201,7 @@ const createObjectTypeCallback = async ({ transactionStatus, account, body }) =>
     author: account.name,
     permlink: body.permlink,
   };
-  console.info(`INFO[CreateObjectType] Object type successfully created | response body: ${JSON.stringify(payload)}`);
+
   return { result: { status: 200, json: payload } };
 };
 
