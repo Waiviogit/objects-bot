@@ -94,6 +94,9 @@ const createObjectOp = async (body) => {
 };
 
 const AppendObjectOp = async (body) => {
+  const { maxComments, objectType } = await isMaxComments(body.root);
+  if (maxComments) return transferObjectUpdates({ body, objectType });
+
   const { body: updBody, error: publishError, accounts } = await publishHelper({ ...body });
   if (publishError) return handleError(publishError);
   let error;
@@ -165,6 +168,35 @@ const dataPublisher = async ({
   return { e, transactionStatus };
 };
 
+const publishDataWithBots = async ({
+  body, opType, accounts, additionalData, callback,
+}) => {
+  let error;
+
+  for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
+    const account = accounts.serviceBots[config.objects.account];
+    const { e, transactionStatus } = await dataPublisher({
+      accounts, account, body, opType,
+    });
+    if (transactionStatus) {
+      return callback({
+        transactionStatus, account, body, additionalData,
+      });
+    }
+    if (e === 'Not enough mana') continue;
+    if (e && e.name === 'RPCError') {
+      config.objects.account === accounts.serviceBots.length - 1
+        ? config.objects.account = 0
+        : config.objects.account += 1;
+      error = e.message;
+      continue;
+    }
+    error = e.message;
+    break;
+  }
+  return handleError(error);
+};
+
 const getObjectTypeAuthorPermlink = async (type) => {
   let newType;
   const { result = [], error } = await objectTypeModel
@@ -183,12 +215,43 @@ const getObjectTypeAuthorPermlink = async (type) => {
   };
 };
 
-const checkRootPostComments = async ({ author, permlink }) => {
-  const { result, error } = await objectTypeModel.findOne({ author, permlink });
-  if (error) return { error };
-  if (!result || result) {
-    // # TODO
-  }
+const isMaxComments = async ({ author, permlink }) => {
+  const { result } = await objectTypeModel.findOne(
+    { author, permlink },
+  );
+  return {
+    maxComments: MAX_COMMENTS < result.commentsNum,
+    objectType: result.name,
+  };
+};
+
+const transferObjectUpdates = async ({ body, objectType }) => {
+  const { parentAuthor, parentPermlink } = await getObjectTypeAuthorPermlink(objectType);
+  const updateComment = {
+    permlink: permlinkGenerator(body.objectType), // #TODO modify permlinkGenerator
+    author_permlink: body.author_permlink,
+    parentAuthor,
+    parentPermlink,
+  };
+
+  const { body: updBody, error: publishError, accounts } = await publishHelper(updateComment);
+  if (publishError) return handleError(publishError);
+
+  return publishDataWithBots({
+    additionalData: body,
+    opType: actionTypes.TRANSFER_UPDATES,
+    callback: transferObjectCallback,
+    body: updBody,
+    accounts,
+  });
+};
+
+const transferObjectCallback = async ({
+  account, body, additionalData,
+}) => {
+  additionalData.parentAuthor = account.name;
+  additionalData.parentPermlink = body.permlink;
+  return AppendObjectOp(additionalData);
 };
 
 module.exports = { createObjectTypeOp, createObjectOp, AppendObjectOp };

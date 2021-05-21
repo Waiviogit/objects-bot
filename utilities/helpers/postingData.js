@@ -95,6 +95,14 @@ const getPostData = (reqData, accData, type) => {
         exp_forecast: _.omit(reqData.expForecast, ['bars']),
       };
       break;
+    case actionTypes.TRANSFER_UPDATES:
+      appendObjPostData.parent_author = reqData.parentAuthor;
+      appendObjPostData.parent_permlink = reqData.parentPermlink;
+      metadata.wobj = {
+        action: type,
+        author_permlink: reqData.author_permlink,
+      };
+      break;
     default:
       break;
   }
