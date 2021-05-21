@@ -17,6 +17,7 @@ exports.OBJECT_TYPES = {
   PLACE: 'place',
   CRYPTO: 'crypto',
   HOTEL: 'hotel',
+  TEST: 'test', // #TODO remove
 };
 
 exports.MAX_COMMENTS = 60000;

@@ -107,7 +107,7 @@ const dataPublisher = async ({
     hiveOperations.postWithOptions,
     {
       comment: getPostData(body, account, opType),
-      options: await getOptions(body, account),
+      options: await getOptions(body, account, opType),
       key: account.postingKey,
     },
   );
@@ -163,9 +163,7 @@ const getObjectTypeAuthorPermlink = async (type) => {
 };
 
 const isMaxComments = async ({ author, permlink }) => {
-  const { result } = await objectTypeModel.findOne(
-    { author, permlink },
-  );
+  const { result } = await objectTypeModel.findOne({ author, permlink });
 
   return {
     maxComments: MAX_COMMENTS < result.commentsNum,
