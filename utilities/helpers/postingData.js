@@ -128,6 +128,11 @@ const getAppendRequestBody = (reqData, accData) => (
       .substring(2)}`,
     lastUpdated: Date.now(),
     wobjectName: reqData.objectName,
+    root: {
+      author: reqData.parentAuthor,
+      permlink: reqData.parentPermlink,
+    },
+    author_permlink: reqData.permlink,
   }
 );
 
