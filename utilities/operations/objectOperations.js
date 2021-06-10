@@ -45,7 +45,7 @@ const createObjectOp = async (body) => {
 };
 
 const AppendObjectOp = async (body) => {
-  const { maxComments, objectType } = await isMaxComments(body.root);
+  const { maxComments, objectType } = await isMaxComments(body.rootType);
   if (maxComments) return transferObjectUpdates({ body, objectType });
 
   const { body: updBody, error: publishError, accounts } = await publishHelper(body);
