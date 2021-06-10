@@ -80,6 +80,7 @@ const getPostData = (reqData, accData, type) => {
       appendObjPostData.parent_author = reqData.parentAuthor;
       appendObjPostData.parent_permlink = reqData.parentPermlink;
       metadata.wobj = {
+        author_permlink: reqData.author_permlink,
         action: type,
         creator: reqData.author,
         field: reqData.field,
