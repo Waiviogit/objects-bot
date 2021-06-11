@@ -1,11 +1,11 @@
 const { getPostData, getOptions, getAppendRequestBody } = require('utilities/helpers/postingData');
 const checkUsersForBlackList = require('utilities/helpers/checkUsersForBlackList');
+const { MAX_COMMENTS, MIN_OBJECT_TYPE_COUNT } = require('constants/wobjectsData');
 const { captureAndSendError } = require('utilities/helpers/sentryHelper');
 const permlinkGenerator = require('utilities/helpers/permlinkGenerator');
 const { hiveClient, hiveOperations } = require('utilities/hiveApi');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const handleError = require('utilities/helpers/handleError');
-const { MAX_COMMENTS } = require('constants/wobjectsData');
 const { actionTypes } = require('constants/index');
 const { objectTypeModel } = require('models');
 const config = require('config');
@@ -154,7 +154,7 @@ const getObjectTypeAuthorPermlink = async (type) => {
     ({ result: newType } = await createObjectTypeOp({ objectType: type }));
     if (!newType) return { error: { message: `Error while creating objectType: ${type}` } };
   }
-  if (result.length < 2) await createObjectTypeOp({ objectType: type });
+  if (result.length < MIN_OBJECT_TYPE_COUNT) await createObjectTypeOp({ objectType: type });
 
   return {
     parentAuthor: newType ? _.get(newType, 'json.author') : _.get(result, '[0].author'),
@@ -203,4 +203,6 @@ const createObjectTypeCallback = async ({ transactionStatus, account, body }) =>
   return { result: { status: 200, json: payload } };
 };
 
-module.exports = { createObjectTypeOp, createObjectOp, AppendObjectOp };
+module.exports = {
+  createObjectTypeOp, createObjectOp, AppendObjectOp, getObjectTypeAuthorPermlink,
+};

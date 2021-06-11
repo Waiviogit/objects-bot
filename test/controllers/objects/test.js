@@ -1,11 +1,13 @@
 const {
   expect, chai, sinon, getRandomString, redis, serviceBotsHelper, faker,
 } = require('test/testHelper');
+const { OBJECT_TYPES, MIN_OBJECT_TYPE_COUNT, MAX_COMMENTS } = require('constants/wobjectsData');
 const checkUsersForBlackList = require('utilities/helpers/checkUsersForBlackList');
 const { getOptions, getPostData } = require('utilities/helpers/postingData');
 const { APPEND_OBJECT, CREATE_OBJECT } = require('constants/actionTypes');
 const { hiveOperations, hiveClient } = require('utilities/hiveApi');
 const requestHelper = require('utilities/helpers/requestHelper');
+const { ObjectTypeFactory } = require('test/factories');
 const { objectMock, botMock } = require('test/mocks');
 const { nodeUrls } = require('constants/appData');
 const _ = require('lodash');
@@ -13,6 +15,7 @@ const app = require('app');
 
 describe('On object controller', async () => {
   let bots, blackList;
+  const type = _.sample(Object.values(OBJECT_TYPES));
   beforeEach(async () => {
     bots = botMock;
     blackList = faker.random.string(10);
@@ -92,8 +95,12 @@ describe('On object controller', async () => {
   });
   describe('On processCreateObject', async () => {
     let mock;
+
     beforeEach(async () => {
-      mock = objectMock();
+      for (let i = 0; i < MIN_OBJECT_TYPE_COUNT; i++) {
+        await ObjectTypeFactory.Create({ name: type, commentsNum: _.random(0, MAX_COMMENTS - 1) });
+      }
+      mock = objectMock({ type });
     });
 
     describe('On success', async () => {
@@ -182,7 +189,11 @@ describe('On object controller', async () => {
     let mock;
 
     beforeEach(async () => {
-      mock = objectMock();
+      const objectType = await ObjectTypeFactory
+        .Create({ name: type, commentsNum: _.random(0, MAX_COMMENTS - 1) });
+      mock = objectMock({
+        type, rootType: { author: objectType.author, permlink: objectType.permlink },
+      });
       sinon.stub(requestHelper, 'getUser').returns(Promise.resolve({ user: { name: 'RPCError', message: 'STEEM_MIN_ROOT_COMMENT_INTERVAL RC' } }));
     });
     describe('On success', async () => {

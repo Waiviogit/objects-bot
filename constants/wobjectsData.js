@@ -20,3 +20,5 @@ exports.OBJECT_TYPES = {
 };
 
 exports.MAX_COMMENTS = 60000;
+
+exports.MIN_OBJECT_TYPE_COUNT = 2;
