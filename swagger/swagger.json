@@ -174,11 +174,8 @@
         "isPostingOpen" : {
           "type" : "boolean"
         },
-        "parentAuthor" : {
-          "type" : "string"
-        },
-        "parentPermlink" : {
-          "type" : "string"
+        "type": {
+          "type": "string"
         }
       }
     },
@@ -219,6 +216,20 @@
         },
         "field" : {
           "$ref" : "#/definitions/objectsbotappendobject_field"
+        },
+        "author_permlink": {
+          "type": "string"
+        },
+        "rootType": {
+          "type": "object",
+          "properties": {
+            "author": {
+              "type": "string"
+            },
+            "permlink": {
+              "type": "string"
+            }
+          }
         }
       }
     },
