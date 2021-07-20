@@ -9,5 +9,12 @@ module.exports = {
   appAccName: process.env.APP_ACC_NAME || 'waivio',
   appendObjectTag: process.env.APPEND_OBJECT_TAG || 'waivio-object',
   objectTypeTag: process.env.OBJECT_TYPE_TAG || 'waivio-object-type',
-  nodeUrls: ['https://api.hive.blog', 'https://rpc.esteem.app', 'https://anyx.io'],
+  nodeUrls: [
+    'https://api.openhive.network',
+    'https://hive-api.arcange.eu',
+    'https://hive.roelandp.nl',
+    'https://rpc.esteem.app',
+    'https://api.hive.blog',
+    'https://anyx.io',
+  ],
 };
