@@ -3,7 +3,7 @@ const config = require('config');
 const validators = require('controllers/validators');
 const { actionTypes, regExp } = require('constants/index');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
-const { hiveClient, hiveOperations } = require('utilities/hiveApi');
+const { hiveOperations } = require('utilities/hiveApi');
 const { parseMetadata } = require('utilities/helpers/updateMetadata');
 const authoriseUser = require('utilities/authorazation/authoriseUser');
 
@@ -264,10 +264,7 @@ const accountsSwitcher = async (data, botType = 'proxyBots', customJsonFlag = 'c
   if (accounts.error) return { error: accounts.error };
   for (let counter = 0; counter < accounts[botType].length; counter++) {
     const account = accounts[botType][config[customJsonFlag].account];
-    const { result, error } = await hiveClient.execute(
-      hiveOperations.customJSON,
-      { data, account },
-    );
+    const { result, error } = await hiveOperations.customJSON({ data, account });
     if (result) {
       config[customJsonFlag].account === accounts[botType].length - 1
         ? config[customJsonFlag].account = 0

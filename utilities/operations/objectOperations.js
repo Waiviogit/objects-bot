@@ -1,9 +1,9 @@
 const { getPostData, getOptions, getAppendRequestBody } = require('utilities/helpers/postingData');
 const checkUsersForBlackList = require('utilities/helpers/checkUsersForBlackList');
-const { hiveClient, hiveOperations, rcApi } = require('utilities/hiveApi');
 const permlinkGenerator = require('utilities/helpers/permlinkGenerator');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const handleError = require('utilities/helpers/handleError');
+const { hiveOperations } = require('utilities/hiveApi');
 const { actionTypes } = require('constants/index');
 const config = require('config');
 
@@ -18,14 +18,10 @@ const createObjectTypeOp = async (body) => {
   for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
     const account = accounts.serviceBots[config.objects.account];
     console.info(`INFO[CreateObjectType] Try to create object type | bot: ${account.name} | request body: ${JSON.stringify(body)}`);
-    const { error: e, result: transactionStatus } = await hiveClient.execute(
-      hiveOperations.postWithOptions,
-      {
-        comment: getPostData(data, account, actionTypes.CREATE_OBJECT_TYPE),
-        options: await getOptions(data, account, actionTypes.CREATE_OBJECT_TYPE),
-        key: account.postingKey,
-      },
-    );
+    const comment = getPostData(data, account, actionTypes.CREATE_OBJECT_TYPE);
+    const options = await getOptions(data, account, actionTypes.CREATE_OBJECT_TYPE);
+    const { error: e, result: transactionStatus } = await hiveOperations
+      .postWithOptions({ comment, options, key: account.postingKey });
 
     if (transactionStatus) {
       const payload = {
@@ -138,14 +134,10 @@ const dataPublisher = async ({
     return { e: 'Not enough mana' };
   }
   console.info(`INFO[${opType}] Try | bot: ${account.name} | request body: ${JSON.stringify(body)}`);
-  const { error: e, result: transactionStatus } = await hiveClient.execute(
-    hiveOperations.postWithOptions,
-    {
-      comment: getPostData(body, account, opType),
-      options: await getOptions(body, account),
-      key: account.postingKey,
-    },
-  );
+  const comment = getPostData(body, account, opType);
+  const options = await getOptions(body, account);
+  const { error: e, result: transactionStatus } = await hiveOperations
+    .postWithOptions({ comment, options, key: account.postingKey });
 
   return { e, transactionStatus };
 };
