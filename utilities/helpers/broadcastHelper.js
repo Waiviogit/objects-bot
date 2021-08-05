@@ -3,7 +3,7 @@ const { redisGetter } = require('utilities/redis');
 const { regExp } = require('constants/index');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const apiRequests = require('utilities/waivioApi/apiRequests');
-const { hiveClient, hiveOperations } = require('utilities/hiveApi');
+const { hiveOperations } = require('utilities/hiveApi');
 
 const commentFinder = async (author, permlink) => {
   const { post } = await apiRequests.getPost({ author, permlink });
@@ -50,20 +50,14 @@ const switcher = async (message, account) => {
   const { options } = parsedData;
   options.author = account.name;
   if (!options.percent_hbd) options.percent_hbd = 0;
-  const { result, error } = await hiveClient.execute(
-    hiveOperations.postWithOptions,
-    { comment: post, options: parsedData.options, key: account.postingKey },
-  );
-
+  const { result, error } = await hiveOperations
+    .postWithOptions({ comment: post, options: parsedData.options, key: account.postingKey });
   if (error && error.message.match('beneficiaries')) return simplyPostHelper(post, account.postingKey, guestAuthor);
   return { result, error, guestAuthor };
 };
 
 const simplyPostHelper = async (post, key, guestAuthor) => {
-  const { result, error } = await hiveClient.execute(
-    hiveOperations.post,
-    { data: post, key },
-  );
+  const { result, error } = await hiveOperations.post({ data: post, key });
   return { result, error, guestAuthor };
 };
 
@@ -74,10 +68,9 @@ const updateHelper = async (author, comment) => {
   if (!rootAcc) rootAcc = _.find(accounts.reviewBots, (acc) => acc.name === author);
   comment.author = rootAcc.name;
   if (comment.post_root_author) comment.parent_author = comment.post_root_author;
-  const { result: updateResult, error: updateError } = await hiveClient.execute(
-    hiveOperations.post,
-    { data: comment, key: rootAcc.postingKey },
-  );
+  const { result: updateResult, error: updateError } = await hiveOperations.post({
+    data: comment, key: rootAcc.postingKey,
+  });
   if (updateResult) return { result: updateResult };
   // if dsteem method returns special error - message neednt to be deleted
   if (regExp.steemErrRegExp.test(updateError.message)) return { error: { message: 'update error' } };
@@ -93,10 +86,9 @@ const permlinkGenerator = async (post, account, guest) => {
   let metadata;
   if (post.parent_author) {
     try {
-      const { userComment: steemPost } = await hiveClient.execute(
-        hiveOperations.getComment,
-        { author: post.parent_author, permlink: post.parent_permlink },
-      );
+      const { userComment: steemPost } = await hiveOperations.getComment({
+        author: post.parent_author, permlink: post.parent_permlink,
+      });
       metadata = JSON.parse(steemPost.json_metadata);
     } catch (e) {}
   }

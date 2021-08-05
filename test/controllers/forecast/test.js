@@ -4,7 +4,6 @@ const {
 const { forecastMock, botMock } = require('test/mocks');
 const app = require('app');
 const { hiveOperations } = require('utilities/hiveApi');
-const { nodeUrls } = require('constants/appData');
 
 describe('On forecast controller', async () => {
   let mock;
@@ -49,7 +48,7 @@ describe('On forecast controller', async () => {
         });
         it('should try to send comment to chain by all bots', async () => {
           expect(hiveOperations.postWithOptions.callCount)
-            .to.be.eq(botMock.serviceBots.length * nodeUrls.length);
+            .to.be.eq(botMock.serviceBots.length);
         });
       });
       describe('On another errors', async () => {

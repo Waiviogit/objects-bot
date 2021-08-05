@@ -5,9 +5,8 @@ const {
 const {
   postMock, userMock, botMock, customJsonMock,
 } = require('test/mocks');
-const { hiveOperations, hiveClient } = require('utilities/hiveApi');
+const { hiveOperations } = require('utilities/hiveApi');
 const { actionTypes } = require('constants/index');
-const { nodeUrls } = require('constants/appData');
 const axios = require('axios');
 const _ = require('lodash');
 const app = require('app');
@@ -231,7 +230,6 @@ describe('On guestRequestsController', async () => {
         });
         it('should call hiveOperations method with valid params', async () => {
           expect(hiveOperations.customJSON).to.be.calledWith(
-            hiveClient.client,
             {
               data: {
                 id: actionTypes.GUEST_VOTE,
@@ -256,14 +254,15 @@ describe('On guestRequestsController', async () => {
           expect(result).to.have.status(200);
         });
         it('should call dsteem method with valid params', async () => {
-          expect(hiveOperations.customJSON).to.be.calledWith(hiveClient.client,
+          expect(hiveOperations.customJSON).to.be.calledWith(
             {
               data: {
                 id: actionTypes.GUEST_REBLOG,
                 json: mock.data.operations[0][1].json,
               },
               account: bot.proxyBots[1],
-            });
+            },
+          );
         });
       });
       describe('On update account', async () => {
@@ -280,7 +279,7 @@ describe('On guestRequestsController', async () => {
           expect(result).to.have.status(200);
         });
         it('should call dsteem method with valid params', async () => {
-          expect(hiveOperations.customJSON).to.be.calledWith(hiveClient.client, {
+          expect(hiveOperations.customJSON).to.be.calledWith({
             data: {
               id: actionTypes.GUEST_UPDATE_ACCOUNT,
               json: mock.data.operations[0][1].json,
@@ -303,7 +302,7 @@ describe('On guestRequestsController', async () => {
           expect(result).to.have.status(200);
         });
         it('should call dsteem method with valid params', async () => {
-          expect(hiveOperations.customJSON).to.be.calledWith(hiveClient.client, {
+          expect(hiveOperations.customJSON).to.be.calledWith({
             data: {
               id: actionTypes.GUEST_FOLLOW_WOBJECT,
               json: mock.data.operations[0][1].json,
@@ -326,7 +325,7 @@ describe('On guestRequestsController', async () => {
           expect(result).to.have.status(200);
         });
         it('should call dsteem method with valid params', async () => {
-          expect(hiveOperations.customJSON).to.be.calledWith(hiveClient.client, {
+          expect(hiveOperations.customJSON).to.be.calledWith({
             data: {
               id: actionTypes.GUEST_FOLLOW,
               json: mock.data.operations[0][1].json,
@@ -349,8 +348,9 @@ describe('On guestRequestsController', async () => {
           expect(result).to.have.status(200);
         });
         it('should call dsteem method with valid params', async () => {
-          expect(hiveOperations.customJSON).to.be.calledWith(hiveClient.client,
-            { data: { id: mock.id, json: JSON.stringify(mock.json) }, account: bot.proxyBots[1] });
+          expect(hiveOperations.customJSON).to.be.calledWith(
+            { data: { id: mock.id, json: JSON.stringify(mock.json) }, account: bot.proxyBots[1] },
+          );
         });
       });
     });
@@ -407,7 +407,7 @@ describe('On guestRequestsController', async () => {
           });
           it('should try to send custom json by account length times', async () => {
             expect(hiveOperations.customJSON)
-              .to.be.callCount(botMock.proxyBots.length * nodeUrls.length);
+              .to.be.callCount(botMock.proxyBots.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -425,8 +425,8 @@ describe('On guestRequestsController', async () => {
           it('should return status 500 if broadcast to chain method get error', async () => {
             expect(result).to.have.status(500);
           });
-          it('should called broadcast method nodeUrls.length times', async () => {
-            expect(hiveOperations.customJSON).to.be.callCount(nodeUrls.length);
+          it('should called broadcast method once', async () => {
+            expect(hiveOperations.customJSON).to.be.calledOnce;
           });
           it('should return message from broadcast error', async () => {
             expect(result.body.message).to.be.eq('test error');
@@ -462,7 +462,7 @@ describe('On guestRequestsController', async () => {
           });
           it('should try to send custom json by account length * nodeUrls.length times', async () => {
             expect(hiveOperations.customJSON)
-              .to.be.callCount(botMock.proxyBots.length * nodeUrls.length);
+              .to.be.callCount(botMock.proxyBots.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -496,8 +496,8 @@ describe('On guestRequestsController', async () => {
           it('should return status 500 if broadcast to chain method get error', async () => {
             expect(result).to.have.status(500);
           });
-          it('should called broadcast method nodeUrls.length times', async () => {
-            expect(hiveOperations.customJSON).to.be.callCount(nodeUrls.length);
+          it('should called broadcast method once', async () => {
+            expect(hiveOperations.customJSON).to.be.calledOnce;
           });
           it('should return message from broadcast error', async () => {
             expect(result.body.message).to.be.eq('test error');
@@ -533,7 +533,7 @@ describe('On guestRequestsController', async () => {
           });
           it('should try to send custom json by account length times', async () => {
             expect(hiveOperations.customJSON)
-              .to.be.callCount(botMock.proxyBots.length * nodeUrls.length);
+              .to.be.callCount(botMock.proxyBots.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -568,7 +568,7 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(500);
           });
           it('should called broadcast method once', async () => {
-            expect(hiveOperations.customJSON).to.be.callCount(nodeUrls.length);
+            expect(hiveOperations.customJSON).to.be.calledOnce;
           });
           it('should return message from broadcast error', async () => {
             expect(result.body.message).to.be.eq('test error');
@@ -604,7 +604,7 @@ describe('On guestRequestsController', async () => {
           });
           it('should try to send custom json by account length times', async () => {
             expect(hiveOperations.customJSON)
-              .to.be.callCount(botMock.proxyBots.length * nodeUrls.length);
+              .to.be.callCount(botMock.proxyBots.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -639,8 +639,7 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(500);
           });
           it('should called broadcast method once', async () => {
-            expect(hiveOperations.customJSON)
-              .to.be.callCount(nodeUrls.length);
+            expect(hiveOperations.customJSON).to.be.calledOnce;
           });
           it('should return message from broadcast error', async () => {
             expect(result.body.message).to.be.eq('test error');
@@ -675,7 +674,7 @@ describe('On guestRequestsController', async () => {
           });
           it('should try to send custom json by account length times', async () => {
             expect(hiveOperations.customJSON)
-              .to.be.callCount(botMock.proxyBots.length * nodeUrls.length);
+              .to.be.callCount(botMock.proxyBots.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -710,8 +709,7 @@ describe('On guestRequestsController', async () => {
             expect(result).to.have.status(500);
           });
           it('should called broadcast method nodeUrls.length times', async () => {
-            expect(hiveOperations.customJSON)
-              .to.be.callCount(nodeUrls.length);
+            expect(hiveOperations.customJSON).to.be.calledOnce;
           });
           it('should return message from broadcast error', async () => {
             expect(result.body.message).to.be.eq('test error');
@@ -762,7 +760,7 @@ describe('On guestRequestsController', async () => {
           });
           it('should try to send custom json by account length * nodeUrls.length times', async () => {
             expect(hiveOperations.customJSON)
-              .to.be.callCount(botMock.proxyBots.length * nodeUrls.length);
+              .to.be.callCount(botMock.proxyBots.length);
           });
           it('should return error status 500', async () => {
             expect(result).to.have.status(500);
@@ -780,9 +778,8 @@ describe('On guestRequestsController', async () => {
           it('should return status 500 if broadcast method get error', async () => {
             expect(result).to.have.status(500);
           });
-          it('should called broadcast method nodeUrls.length times', async () => {
-            expect(hiveOperations.customJSON)
-              .to.be.callCount(nodeUrls.length);
+          it('should called broadcast method once', async () => {
+            expect(hiveOperations.customJSON).to.be.calledOnce;
           });
           it('should return message from broadcast error', async () => {
             expect(result.body.message).to.be.eq('test error');

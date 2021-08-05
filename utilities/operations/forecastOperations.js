@@ -1,5 +1,5 @@
 const { getPostData, getOptions } = require('utilities/helpers/postingData');
-const { hiveClient, hiveOperations } = require('utilities/hiveApi');
+const { hiveOperations } = require('utilities/hiveApi');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const handleError = require('utilities/helpers/handleError');
 const { actionTypes } = require('constants/index');
@@ -52,14 +52,11 @@ const markExpiredForecastOp = async (body) => {
 
 const sendComment = async (data, account) => {
   console.info(`INFO[ForecastExpired] Try to write comment| bot: ${account.name}`);
-  return hiveClient.execute(
-    hiveOperations.postWithOptions,
-    {
-      comment: getPostData(data, account, actionTypes.FORECAST_EXPIRED),
-      options: await getOptions(data, account, actionTypes.FORECAST_EXPIRED),
-      key: account.postingKey,
-    },
-  );
+  return hiveOperations.postWithOptions({
+    comment: getPostData(data, account, actionTypes.FORECAST_EXPIRED),
+    options: await getOptions(data, account, actionTypes.FORECAST_EXPIRED),
+    key: account.postingKey,
+  });
 };
 
 module.exports = {

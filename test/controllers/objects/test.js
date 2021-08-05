@@ -4,7 +4,7 @@ const {
 const checkUsersForBlackList = require('utilities/helpers/checkUsersForBlackList');
 const { getOptions, getPostData } = require('utilities/helpers/postingData');
 const { APPEND_OBJECT, CREATE_OBJECT } = require('constants/actionTypes');
-const { hiveOperations, hiveClient } = require('utilities/hiveApi');
+const { hiveOperations } = require('utilities/hiveApi');
 const requestHelper = require('utilities/helpers/requestHelper');
 const { objectMock, botMock } = require('test/mocks');
 const { nodeUrls } = require('constants/appData');
@@ -58,7 +58,7 @@ describe('On object controller', async () => {
         });
         it('should try to send comment to chain by all bots', async () => {
           expect(hiveOperations.postWithOptions)
-            .to.be.callCount(bots.serviceBots.length * nodeUrls.length);
+            .to.be.callCount(bots.serviceBots.length);
         });
       });
       describe('On another errors', async () => {
@@ -111,7 +111,6 @@ describe('On object controller', async () => {
       it('should called post method with valid params', async () => {
         expect(hiveOperations.postWithOptions)
           .to.calledWith(
-            hiveClient.client,
             {
               comment: getPostData(mock, bots.serviceBots[1], CREATE_OBJECT),
               options: await getOptions(mock, bots.serviceBots[1]),
@@ -146,7 +145,7 @@ describe('On object controller', async () => {
         });
         it('should try to send comment to chain by all bots', async () => {
           expect(hiveOperations.postWithOptions)
-            .to.be.callCount(bots.serviceBots.length * nodeUrls.length);
+            .to.be.callCount(bots.serviceBots.length);
         });
       });
       describe('On another errors', async () => {
@@ -204,7 +203,6 @@ describe('On object controller', async () => {
       it('should called post method with valid params', async () => {
         expect(hiveOperations.postWithOptions)
           .to.be.calledWith(
-            hiveClient.client,
             {
               comment: getPostData(mock, bots.serviceBots[1], APPEND_OBJECT),
               options: await getOptions(mock, bots.serviceBots[1]),
@@ -240,7 +238,7 @@ describe('On object controller', async () => {
         });
         it('should try to send comment to chain by all bots', async () => {
           expect(hiveOperations.postWithOptions)
-            .to.be.callCount(bots.serviceBots.length * nodeUrls.length);
+            .to.be.callCount(bots.serviceBots.length);
         });
       });
       describe('On another errors', async () => {
