@@ -1,9 +1,10 @@
-const { PrivateKey, Client, RCAPI } = require('@hiveio/dhive');
+const { PrivateKey, Client } = require('@hiveio/dhive');
 const { nodeUrls } = require('constants/appData');
+
+const client = new Client(nodeUrls, { failoverThreshold: 0, timeout: 10 * 1000 });
 
 exports.post = async ({ data, key }) => {
   try {
-    const client = new Client(nodeUrls);
     return { result: await client.broadcast.comment(data, PrivateKey.fromString(key)) };
   } catch (error) {
     return { error };
@@ -12,7 +13,6 @@ exports.post = async ({ data, key }) => {
 
 exports.postWithOptions = async ({ comment, options, key }) => {
   try {
-    const client = new Client(nodeUrls);
     return {
       result: await client.broadcast.commentWithOptions(
         comment, options, PrivateKey.fromString(key),
@@ -28,7 +28,6 @@ exports.postWithOptions = async ({ comment, options, key }) => {
 
 exports.customJSON = async ({ data, account }) => {
   try {
-    const client = new Client(nodeUrls);
     return {
       result: await client.broadcast.json({
         id: data.id,
@@ -46,7 +45,6 @@ exports.customJSON = async ({ data, account }) => {
 
 exports.getComment = async ({ author, permlink }) => {
   try {
-    const client = new Client(nodeUrls);
     const userComment = await client.database.call('get_content', [author, permlink]);
 
     if (userComment.author) {
@@ -60,10 +58,8 @@ exports.getComment = async ({ author, permlink }) => {
 
 exports.getAccountRC = async (accountName) => {
   try {
-    const client = new Client(nodeUrls);
-    const rcApi = new RCAPI(client);
-    const RCAccount = await rcApi.findRCAccounts([accountName]);
-    const result = await rcApi.calculateRCMana(RCAccount[0]);
+    const RCAccount = await client.rc.findRCAccounts([accountName]);
+    const result = await client.rc.calculateRCMana(RCAccount[0]);
     return result.current_mana;
   } catch (error) {
     return { error };
