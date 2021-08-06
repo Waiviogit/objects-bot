@@ -11,7 +11,10 @@ module.exports = {
   objectTypeTag: process.env.OBJECT_TYPE_TAG || 'waivio-object-type',
   nodeUrls: [
     'https://rpc.esteem.app',
-    'https://anyx.io',
-    'https://hive.roelandp.nl',
+    'https://rpc.ausbit.dev',
+    'https://rpc.ecency.com',
+    'https://hived.emre.sh',
+    'https://api.deathwing.me',
+    'https://api.hive.blog',
   ],
 };
