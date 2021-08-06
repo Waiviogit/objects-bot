@@ -1,11 +1,9 @@
-const { PrivateKey, Client } = require('@hiveio/dhive');
-const { nodeUrls } = require('constants/appData');
-
-const client = new Client(nodeUrls, { failoverThreshold: 0, timeout: 10 * 1000 });
+const { broadcastClient, databaseClient } = require('utilities/hiveApi/hiveClient');
+const { PrivateKey } = require('@hiveio/dhive');
 
 exports.post = async ({ data, key }) => {
   try {
-    return { result: await client.broadcast.comment(data, PrivateKey.fromString(key)) };
+    return { result: await broadcastClient.broadcast.comment(data, PrivateKey.fromString(key)) };
   } catch (error) {
     return { error };
   }
@@ -14,7 +12,7 @@ exports.post = async ({ data, key }) => {
 exports.postWithOptions = async ({ comment, options, key }) => {
   try {
     return {
-      result: await client.broadcast.commentWithOptions(
+      result: await broadcastClient.broadcast.commentWithOptions(
         comment, options, PrivateKey.fromString(key),
       ),
     };
@@ -29,7 +27,7 @@ exports.postWithOptions = async ({ comment, options, key }) => {
 exports.customJSON = async ({ data, account }) => {
   try {
     return {
-      result: await client.broadcast.json({
+      result: await broadcastClient.broadcast.json({
         id: data.id,
         json: data.json,
         required_auths: [],
@@ -45,7 +43,7 @@ exports.customJSON = async ({ data, account }) => {
 
 exports.getComment = async ({ author, permlink }) => {
   try {
-    const userComment = await client.database.call('get_content', [author, permlink]);
+    const userComment = await databaseClient.database.call('get_content', [author, permlink]);
 
     if (userComment.author) {
       return { userComment };
@@ -58,8 +56,8 @@ exports.getComment = async ({ author, permlink }) => {
 
 exports.getAccountRC = async (accountName) => {
   try {
-    const RCAccount = await client.rc.findRCAccounts([accountName]);
-    const result = await client.rc.calculateRCMana(RCAccount[0]);
+    const RCAccount = await databaseClient.rc.findRCAccounts([accountName]);
+    const result = await databaseClient.rc.calculateRCMana(RCAccount[0]);
     return result.current_mana;
   } catch (error) {
     return { error };
