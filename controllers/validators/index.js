@@ -3,6 +3,7 @@ module.exports = {
   object: require('./objectValidator'),
   customJson: require('./customJsonValidator'),
   sites: require('./sitesValidator'),
+  deleteComment: require('./deleteCommentValidator'),
   validate: (data, schema, next) => {
     const result = schema.validate(data, { abortEarly: false });
 

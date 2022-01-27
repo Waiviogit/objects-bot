@@ -1,11 +1,12 @@
 const { redisQueue, actionsRsmqClient } = require('utilities/redis/rsmq');
-const { redisSetter } = require('utilities/redis');
+const { redisSetter, redisGetter } = require('utilities/redis');
 const { regExp } = require('constants/index');
 const config = require('config');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const broadcastHelper = require('utilities/helpers/broadcastHelper');
 const { LAST_BLOCK_NUM } = require('constants/redisBlockNames');
 const _ = require('lodash');
+const { deleteComment } = require('utilities/helpers/deleteCommentHelper');
 
 const commentBroadcaster = async ({
   noMessageWait = 1000, postingErrorWait = 10000, qname, path, botType,
@@ -20,15 +21,25 @@ const commentBroadcaster = async ({
       return;
     }
   }
-  if (message) {
-    const result = await broadcastStatusParse(message.message, path, postingErrorWait, qname, botType);
-    if (!result) {
-      await redisQueue.deleteMessage(
-        { client: actionsRsmqClient, qname, id: message.id },
-      );
-      await redisSetter.delActionsData(message.message);
-    }
+  let result;
+  if (message.message === 'delete_comment') {
+    result = await deletePostBroadcast(message.message, path, postingErrorWait, qname, botType);
+  } else {
+    result = await broadcastStatusParse(message.message, path, postingErrorWait, qname, botType);
   }
+
+  if (!result) {
+    await redisQueue.deleteMessage(
+      { client: actionsRsmqClient, qname, id: message.id },
+    );
+    await redisSetter.delActionsData(message.message);
+  }
+};
+
+const deletePostBroadcast = async (message) => {
+  const data = await redisGetter.getAllHashData(message);
+  const { error } = await deleteComment(JSON.parse(data));
+  if (error) return error;
 };
 
 const broadcastStatusParse = async (message, path, postingErrorWait, qname, botType) => {

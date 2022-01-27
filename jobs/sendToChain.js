@@ -36,5 +36,18 @@ const runReviews = async () => {
     });
   }
 };
+const runDeletePosts = async () => {
+  while (true) {
+    await commentBroadcaster({
+      path: 'delete_comment',
+      qname: guestRequestsData.deleteAction.qname,
+      noMessageWait: 1000,
+      postingErrorWait: 60000,
+      botType: 'serviceBots',
+    });
+  }
+};
 
-module.exports = { runPosts, runComments, runReviews };
+module.exports = {
+  runPosts, runComments, runReviews, runDeletePosts,
+};

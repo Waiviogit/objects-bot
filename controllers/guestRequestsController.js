@@ -2,6 +2,8 @@ const { queueOperations, customJsonOperations } = require('utilities');
 const validationHelper = require('controllers/validators/validationHelper');
 const authoriseUser = require('utilities/authorazation/authoriseUser');
 const commentHelper = require('utilities/helpers/commentHelper');
+const { deleteComment } = require('utilities/helpers/deleteCommentHelper');
+const validators = require('./validators');
 
 const proxyPosting = async (req, res, next) => { // add data to queue
   const comment = validationHelper.postingValidator(req.body, next);
@@ -34,7 +36,18 @@ const proxyCustomJson = async (req, res, next) => {
   next();
 };
 
+const proxyDelete = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.deleteComment.dataShcema, next);
+  if (!value) return;
+  const { result, error } = await deleteComment(value);
+  if (error) return next(error);
+  if (!result) return;
+  res.result = { status: 200, json: result };
+  next();
+};
+
 module.exports = {
   proxyPosting,
   proxyCustomJson,
+  proxyDelete,
 };

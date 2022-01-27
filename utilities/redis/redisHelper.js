@@ -35,6 +35,34 @@ const addToQueue = async (data, actionData) => {
 
   return { result };
 };
+const addToQueueDeleteComment = async (data, actionData) => {
+  const { error: createError } = await redisQueue.createQueue(
+    { client: actionsRsmqClient, qname: actionData.qname },
+  );
+
+  if (createError) return { error: { status: 500, message: createError } };
+  const { result: currentUserComments } = await redisGetter.getHashKeysAll(`${actionData.operation}:${data.data.root_author}:*`);
+
+  if (currentUserComments.length >= actionData.limit) {
+    return { error: { status: 429, message: `To many comments from ${data.data.root_author} in queue` } };
+  }
+
+  const messageId = `${actionData.operation}:${data.data.root_author}:${uuid()}`;
+
+  const { error: sendMessError } = await redisQueue.sendMessage({
+    client: actionsRsmqClient,
+    qname: actionData.qname,
+    message: messageId,
+  });
+  const redisDataError = await redisSetter.setActionsData(messageId, JSON.stringify(data));
+
+  if (sendMessError || redisDataError) {
+    return { error: { status: 503, message: sendMessError || redisDataError } };
+  }
+  const result = { waitingTime: await timeToPosting(actionData) };
+
+  return { result };
+};
 
 // get all items in queue, get count and return time for posting all items
 const timeToPosting = async (actionData) => {
@@ -49,4 +77,4 @@ const timeToPosting = async (actionData) => {
   return Math.round((allQueueItems.length * actionData.rechargeTime) / accounts.proxyBots.length);
 };
 
-module.exports = { addToQueue };
+module.exports = { addToQueue, addToQueueDeleteComment };

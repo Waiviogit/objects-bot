@@ -90,6 +90,39 @@
           }
         }
       }
+    },
+    "/objects-bot/guest-delete-comment" : {
+      "post" : {
+        "tags" : [ "object" ],
+        "summary" : "delete comment",
+        "description" : "",
+        "produces" : [ "application/json" ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "params",
+            "description": "**id** - id of operation,\n**root_author** -post author to delete. \n**permlink** - post permlink to delete  \n**userName** - username of guest account",
+            "required": false,
+            "schema": {
+              "example": {
+                "id":"waivio_guest_vote",
+                "data":{
+                  "root_author":"guest08",
+                  "permlink":"3blugh-sdc"
+              },
+                "userName":"waivio_alisher-nurlybae"}
+            }
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "**SUCCESSFUL OPERATION**\n**transactionId** - id of transaction with comment which include append object\n**author** - author of recently created comment with append object\n**permlink** - permlink of recently created comment with append object\n**parentAuthor** - author of comment with create object which append related on\n**parentPermlink** - permlink of comment with create object which append related on\n",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_2"
+            }
+          }
+        }
+      }
     }
   },
   "definitions" : {
