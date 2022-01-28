@@ -83,7 +83,7 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "**SUCCESSFUL OPERATION**cof transaction with comment which include append object\n**author** - author of recently created comment with append object\n**permlink** - permlink of recently created comment with append object\n**parentAuthor** - author of comment with create object which append related on\n**parentPermlink** - permlink of comment with create object which append related on\n",
+            "description" : "**SUCCESSFUL OPERATION**\n**transactionId** - id of transaction with comment which include append object\n**author** - author of recently created comment with append object\n**permlink** - permlink of recently created comment with append object\n**parentAuthor** - author of comment with create object which append related on\n**parentPermlink** - permlink of comment with create object which append related on\n",
             "schema" : {
               "$ref" : "#/definitions/inline_response_200_2"
             }
