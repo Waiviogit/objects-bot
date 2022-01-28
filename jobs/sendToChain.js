@@ -1,4 +1,4 @@
-const { commentBroadcaster, deletePostBroadcast,broadcastStatusParse } = require('utilities/operations/broadcastOperations');
+const { commentBroadcaster, deletePostBroadcast, broadcastStatusParse } = require('utilities/operations/broadcastOperations');
 const { guestRequestsData } = require('constants/index');
 
 const runPosts = async () => {
