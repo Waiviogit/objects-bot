@@ -9,7 +9,7 @@ const _ = require('lodash');
 const { deleteComment } = require('utilities/helpers/deleteCommentHelper');
 
 const commentBroadcaster = async ({
-  noMessageWait = 1000, postingErrorWait = 10000, qname, path, botType,
+  noMessageWait = 1000, postingErrorWait = 10000, qname, path, botType, callBack,
 }) => {
   const { error: redisError, result: message } = await redisQueue.receiveMessage({
     client: actionsRsmqClient, qname,
@@ -21,12 +21,8 @@ const commentBroadcaster = async ({
       return;
     }
   }
-  let result;
-  if (message.message === 'delete_comment') {
-    result = await deletePostBroadcast(message.message, path, postingErrorWait, qname, botType);
-  } else {
-    result = await broadcastStatusParse(message.message, path, postingErrorWait, qname, botType);
-  }
+
+  const result = await callBack(message.message, path, postingErrorWait, qname, botType);
 
   if (!result) {
     await redisQueue.deleteMessage(
@@ -38,7 +34,7 @@ const commentBroadcaster = async ({
 
 const deletePostBroadcast = async (message) => {
   const data = await redisGetter.getAllHashData(message);
-  const { error } = await deleteComment(JSON.parse(data));
+  const { error } = await deleteComment(JSON.parse(data.result));
   if (error) return error;
 };
 
@@ -78,4 +74,4 @@ const broadcastStatusParse = async (message, path, postingErrorWait, qname, botT
   return false;
 };
 
-module.exports = { commentBroadcaster };
+module.exports = { commentBroadcaster, deletePostBroadcast, broadcastStatusParse };

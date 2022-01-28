@@ -83,7 +83,7 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "**SUCCESSFUL OPERATION**\n**transactionId** - id of transaction with comment which include append object\n**author** - author of recently created comment with append object\n**permlink** - permlink of recently created comment with append object\n**parentAuthor** - author of comment with create object which append related on\n**parentPermlink** - permlink of comment with create object which append related on\n",
+            "description" : "**SUCCESSFUL OPERATION**cof transaction with comment which include append object\n**author** - author of recently created comment with append object\n**permlink** - permlink of recently created comment with append object\n**parentAuthor** - author of comment with create object which append related on\n**parentPermlink** - permlink of comment with create object which append related on\n",
             "schema" : {
               "$ref" : "#/definitions/inline_response_200_2"
             }
@@ -105,27 +105,42 @@
             "required": false,
             "schema": {
               "example": {
-                "id":"waivio_guest_vote",
-                "data":{
-                  "root_author":"guest08",
-                  "permlink":"3blugh-sdc"
-              },
-                "userName":"waivio_alisher-nurlybae"}
+               "$ref": "#/definitions/deleteUserReqParams"
+              }
             }
           }
         ],
         "responses" : {
           "200" : {
-            "description" : "**SUCCESSFUL OPERATION**\n**transactionId** - id of transaction with comment which include append object\n**author** - author of recently created comment with append object\n**permlink** - permlink of recently created comment with append object\n**parentAuthor** - author of comment with create object which append related on\n**parentPermlink** - permlink of comment with create object which append related on\n",
-            "schema" : {
-              "$ref" : "#/definitions/inline_response_200_2"
-            }
+            "description" : "**SUCCESSFUL OPERATION**\n**id** - id of transaction  "
           }
         }
       }
     }
   },
   "definitions" : {
+    "deleteUserReqParams": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "userName": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "root_author": {
+              "type": "string"
+            },
+            "permlink": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "inline_response_200_1" : {
       "type" : "object",
       "properties" : {

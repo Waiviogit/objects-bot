@@ -4,57 +4,35 @@ const redisSetter = require('utilities/redis/redisSetter');
 const { actionsRsmqClient, redisQueue } = require('utilities/redis/rsmq');
 const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const updateMetadata = require('utilities/helpers/updateMetadata');
+const _ = require('lodash');
 
 // Create queue if it not exist, and add "data" to this queue
-const addToQueue = async (data, actionData) => {
+const addToQueue = async (sendData, actionData) => {
+  const data = {};
+  if (actionData.qname === 'delete_post') {
+    data.author = sendData.data.root_author;
+  }
+
   const { error: createError } = await redisQueue.createQueue(
     { client: actionsRsmqClient, qname: actionData.qname },
   );
 
   if (createError) return { error: { status: 500, message: createError } };
-  const { result: currentUserComments } = await redisGetter.getHashKeysAll(`${actionData.operation}:${data.comment.author}:*`);
+  const { result: currentUserComments } = await redisGetter.getHashKeysAll(`${actionData.operation}:${data.author}:*`);
 
   if (currentUserComments.length >= actionData.limit) {
-    return { error: { status: 429, message: `To many comments from ${data.comment.author} in queue` } };
+    return { error: { status: 429, message: `To many comments from ${data.author} in queue` } };
   }
-  data.comment.json_metadata = updateMetadata.metadataModify(data.comment.json_metadata);
+  if (_.get(sendData, 'comment.json_metadata')) sendData.comment.json_metadata = updateMetadata.metadataModify(sendData.comment.json_metadata);
 
-  const messageId = `${actionData.operation}:${data.comment.author}:${uuid()}`;
+  const messageId = `${actionData.operation}:${data.author}:${uuid()}`;
 
   const { error: sendMessError } = await redisQueue.sendMessage({
     client: actionsRsmqClient,
     qname: actionData.qname,
     message: messageId,
   });
-  const redisDataError = await redisSetter.setActionsData(messageId, JSON.stringify(data));
-
-  if (sendMessError || redisDataError) {
-    return { error: { status: 503, message: sendMessError || redisDataError } };
-  }
-  const result = { waitingTime: await timeToPosting(actionData) };
-
-  return { result };
-};
-const addToQueueDeleteComment = async (data, actionData) => {
-  const { error: createError } = await redisQueue.createQueue(
-    { client: actionsRsmqClient, qname: actionData.qname },
-  );
-
-  if (createError) return { error: { status: 500, message: createError } };
-  const { result: currentUserComments } = await redisGetter.getHashKeysAll(`${actionData.operation}:${data.data.root_author}:*`);
-
-  if (currentUserComments.length >= actionData.limit) {
-    return { error: { status: 429, message: `To many comments from ${data.data.root_author} in queue` } };
-  }
-
-  const messageId = `${actionData.operation}:${data.data.root_author}:${uuid()}`;
-
-  const { error: sendMessError } = await redisQueue.sendMessage({
-    client: actionsRsmqClient,
-    qname: actionData.qname,
-    message: messageId,
-  });
-  const redisDataError = await redisSetter.setActionsData(messageId, JSON.stringify(data));
+  const redisDataError = await redisSetter.setActionsData(messageId, JSON.stringify(sendData));
 
   if (sendMessError || redisDataError) {
     return { error: { status: 503, message: sendMessError || redisDataError } };
@@ -77,4 +55,4 @@ const timeToPosting = async (actionData) => {
   return Math.round((allQueueItems.length * actionData.rechargeTime) / accounts.proxyBots.length);
 };
 
-module.exports = { addToQueue, addToQueueDeleteComment };
+module.exports = { addToQueue };

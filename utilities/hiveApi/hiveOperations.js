@@ -24,7 +24,7 @@ exports.postWithOptions = async ({ comment, options, key }) => {
   }
 };
 
-exports.operations = async (operations, key) => {
+exports.sendOperations = async (operations, key) => {
   try {
     return { result: await broadcastClient.broadcast.sendOperations(operations, PrivateKey.fromString(key)) };
   } catch (error) {

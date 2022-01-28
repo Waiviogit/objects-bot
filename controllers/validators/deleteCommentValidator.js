@@ -6,5 +6,5 @@ exports.dataShcema = Joi.object().keys({
     root_author: Joi.string().required(),
     permlink: Joi.string().required(),
   }).required(),
-  userName: Joi.string(),
+  userName: Joi.string().required(),
 });
