@@ -6,11 +6,11 @@ const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const updateMetadata = require('utilities/helpers/updateMetadata');
 const _ = require('lodash');
 
-const getKey = (sendData, actionData) => (actionData.qname === 'delete_post' ? sendData.data.root_author : sendData.comment.author);
+const getKey = (sendData, qname) => (qname === 'delete_post' ? sendData.data.root_author : sendData.comment.author);
 
 // Create queue if it not exist, and add "data" to this queue
 const addToQueue = async (sendData, actionData) => {
-  const key = getKey(sendData, actionData);
+  const key = getKey(sendData, actionData.qname);
 
   const { error: createError } = await redisQueue.createQueue(
     { client: actionsRsmqClient, qname: actionData.qname },
