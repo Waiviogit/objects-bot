@@ -17,7 +17,7 @@ exports.deleteComment = async (data) => {
 
   const operation = [['delete_comment', { author: data.data.root_author, permlink: data.data.permlink }]];
 
-  if (!await hiveOperations.getAccountRC(data.data.root_author) < MIN_RC) {
+  if (await hiveOperations.getAccountRC(data.data.root_author) < MIN_RC) {
     await redisHelper.addToQueue(data, deleteAction);
     return { error: new Error('not enough RC, operation added to the queue') };
   }

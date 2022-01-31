@@ -7,6 +7,7 @@ const broadcastHelper = require('utilities/helpers/broadcastHelper');
 const { LAST_BLOCK_NUM } = require('constants/redisBlockNames');
 const _ = require('lodash');
 const { deleteComment } = require('utilities/helpers/deleteCommentHelper');
+const jsonHelper = require('utilities/helpers/jsonHelper');
 
 const commentBroadcaster = async ({
   noMessageWait = 1000, postingErrorWait = 10000, qname, path, botType, callBack,
@@ -35,7 +36,7 @@ const commentBroadcaster = async ({
 
 const deletePostBroadcast = async (message) => {
   const data = await redisGetter.getAllHashData(message);
-  const { error } = await deleteComment(JSON.parse(data.result));
+  const { error } = await deleteComment(jsonHelper.parseJson(data.result));
   if (error) return error;
 };
 
