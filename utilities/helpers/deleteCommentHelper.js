@@ -3,11 +3,12 @@ const { hiveOperations } = require('utilities/hiveApi');
 const { redisHelper } = require('utilities/redis');
 const { deleteAction } = require('constants/guestRequestsData');
 const { MIN_RC } = require('constants/userData');
+const config = require('config');
 const { getAppData } = require('../waivioApi/apiRequests');
 const { sendOperations } = require('../hiveApi/hiveOperations');
 
 exports.deleteComment = async (data) => {
-  const { app, error } = await getAppData('waivio');
+  const { app, error } = await getAppData({ name: config.app });
   if (error) return { error };
 
   const key = _.get(_.filter(app.service_bots, (bot) => {

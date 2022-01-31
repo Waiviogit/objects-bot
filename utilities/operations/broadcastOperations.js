@@ -21,15 +21,16 @@ const commentBroadcaster = async ({
       return;
     }
   }
+  if (!message) return;
 
   const result = await callBack(message.message, path, postingErrorWait, qname, botType);
 
-  if (!result) {
-    await redisQueue.deleteMessage(
-      { client: actionsRsmqClient, qname, id: message.id },
-    );
-    await redisSetter.delActionsData(message.message);
-  }
+  if (result) return;
+
+  await redisQueue.deleteMessage(
+    { client: actionsRsmqClient, qname, id: message.id },
+  );
+  await redisSetter.delActionsData(message.message);
 };
 
 const deletePostBroadcast = async (message) => {

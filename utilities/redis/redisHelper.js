@@ -11,6 +11,8 @@ const addToQueue = async (sendData, actionData) => {
   const data = {};
   if (actionData.qname === 'delete_post') {
     data.author = sendData.data.root_author;
+  } else {
+    data.author = sendData.comment.author;
   }
 
   const { error: createError } = await redisQueue.createQueue(
