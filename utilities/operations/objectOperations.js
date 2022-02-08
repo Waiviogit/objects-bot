@@ -6,6 +6,7 @@ const handleError = require('utilities/helpers/handleError');
 const { hiveOperations } = require('utilities/hiveApi');
 const { actionTypes } = require('constants/index');
 const config = require('config');
+const { MIN_RC } = require('constants/userData');
 
 const createObjectTypeOp = async (body) => {
   const accounts = await addBotsToEnv.setEnvData();
@@ -126,7 +127,7 @@ const publishHelper = async (body) => {
 const dataPublisher = async ({
   account, body, opType, accounts,
 }) => {
-  if (await hiveOperations.getAccountRC(account.name) < 2100000000) {
+  if (await hiveOperations.getAccountRC(account.name) < MIN_RC) {
     config.objects.account === accounts.serviceBots.length - 1
       ? config.objects.account = 0
       : config.objects.account += 1;

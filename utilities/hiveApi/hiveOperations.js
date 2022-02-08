@@ -24,6 +24,14 @@ exports.postWithOptions = async ({ comment, options, key }) => {
   }
 };
 
+exports.sendOperations = async (operations, key) => {
+  try {
+    return { result: await broadcastClient.broadcast.sendOperations(operations, PrivateKey.fromString(key)) };
+  } catch (error) {
+    return { error };
+  }
+};
+
 exports.customJSON = async ({ data, account }) => {
   try {
     return {

@@ -1,4 +1,4 @@
-const { commentBroadcaster } = require('utilities/operations/broadcastOperations');
+const { commentBroadcaster, deletePostBroadcast, broadcastStatusParse } = require('utilities/operations/broadcastOperations');
 const { guestRequestsData } = require('constants/index');
 
 const runPosts = async () => {
@@ -9,6 +9,7 @@ const runPosts = async () => {
       noMessageWait: 1000,
       postingErrorWait: 60000,
       botType: 'proxyBots',
+      callBack: broadcastStatusParse,
     });
   }
 };
@@ -21,6 +22,7 @@ const runComments = async () => {
       noMessageWait: 1000,
       postingErrorWait: 10000,
       botType: 'proxyBots',
+      callBack: broadcastStatusParse,
     });
   }
 };
@@ -33,8 +35,23 @@ const runReviews = async () => {
       noMessageWait: 1000,
       postingErrorWait: 60000,
       botType: 'reviewBots',
+      callBack: broadcastStatusParse,
+    });
+  }
+};
+const runDeletePosts = async () => {
+  while (true) {
+    await commentBroadcaster({
+      path: 'delete_comment',
+      qname: guestRequestsData.deleteAction.qname,
+      noMessageWait: 1000,
+      postingErrorWait: 60000,
+      botType: 'serviceBots',
+      callBack: deletePostBroadcast,
     });
   }
 };
 
-module.exports = { runPosts, runComments, runReviews };
+module.exports = {
+  runPosts, runComments, runReviews, runDeletePosts,
+};

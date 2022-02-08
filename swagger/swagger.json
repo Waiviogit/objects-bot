@@ -90,9 +90,57 @@
           }
         }
       }
+    },
+    "/objects-bot/guest-delete-comment" : {
+      "post" : {
+        "tags" : [ "object" ],
+        "summary" : "delete comment",
+        "description" : "",
+        "produces" : [ "application/json" ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "params",
+            "description": "**id** - id of operation,\n**root_author** -post author to delete. \n**permlink** - post permlink to delete  \n**userName** - username of guest account",
+            "required": false,
+            "schema": {
+              "example": {
+               "$ref": "#/definitions/deleteUserReqParams"
+              }
+            }
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "**SUCCESSFUL OPERATION**\n**id** - id of transaction  "
+          }
+        }
+      }
     }
   },
   "definitions" : {
+    "deleteUserReqParams": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "userName": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "root_author": {
+              "type": "string"
+            },
+            "permlink": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "inline_response_200_1" : {
       "type" : "object",
       "properties" : {
