@@ -74,7 +74,7 @@ if (process.env.NODE_ENV !== 'test') {
   job.runPosts();
   job.runComments();
   job.runReviews();
-  job.runDeletePosts();
+  // job.runDeletePosts();
 }
 
 module.exports = app;

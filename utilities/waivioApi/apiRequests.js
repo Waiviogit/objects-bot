@@ -18,3 +18,15 @@ exports.getPost = async ({ author, permlink }) => {
     return { error };
   }
 };
+
+exports.getGuestBalance = async ({ account, symbol }) => {
+  try {
+    const result = await axios.get(
+      `https://${config.waivio_auth.host}/api/user/${account}/guest-balance`,
+      { params: { symbol } },
+    );
+    return { result: result.data };
+  } catch (error) {
+    return { error };
+  }
+};
