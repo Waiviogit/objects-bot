@@ -3,6 +3,7 @@ const validationHelper = require('controllers/validators/validationHelper');
 const authoriseUser = require('utilities/authorazation/authoriseUser');
 const commentHelper = require('utilities/helpers/commentHelper');
 const { deleteComment } = require('utilities/helpers/deleteCommentHelper');
+const transferOperation = require('utilities/operations/transferOperation');
 const validators = require('./validators');
 
 const proxyPosting = async (req, res, next) => { // add data to queue
@@ -46,8 +47,22 @@ const proxyDelete = async (req, res, next) => {
   next();
 };
 
+const guestTransfer = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.guestTransfer.dataShcema, next);
+  if (!value) return;
+  const { error: authError } = await authoriseUser.authorise(value.account);
+  if (authError) return next(authError);
+
+  const { result, error: transferError } = await transferOperation.transfer(value);
+  if (transferError) return next(transferError);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 module.exports = {
   proxyPosting,
   proxyCustomJson,
   proxyDelete,
+  guestTransfer,
 };

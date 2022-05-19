@@ -71,3 +71,26 @@ exports.getAccountRC = async (accountName) => {
     return { error };
   }
 };
+
+exports.broadcastJson = async ({
+  id = 'ssc-mainnet-hive',
+  json,
+  key,
+  required_auths = [],
+  required_posting_auths = [],
+}) => {
+  try {
+    return {
+      result: await broadcastClient.broadcast.json({
+        id,
+        json,
+        required_auths,
+        required_posting_auths,
+      },
+      PrivateKey.fromString(key)),
+    };
+  } catch (error) {
+    console.error(error.message);
+    return { error };
+  }
+};

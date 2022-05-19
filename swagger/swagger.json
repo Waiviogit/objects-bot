@@ -116,6 +116,51 @@
           }
         }
       }
+    },
+    "/objects-bot/guest-transfer" : {
+      "post" : {
+        "tags" : [ "object" ],
+        "summary" : "guestTransfer",
+        "description" : "",
+        "produces" : [ "application/json" ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/guestTransferParams"
+            }
+          },
+          {
+            "name" : "waivio-auth",
+            "in" : "header",
+            "description" : "send if it is guest",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "name" : "access-token",
+            "in" : "header",
+            "description" : "Hive user access token",
+            "required" : true,
+            "type" : "string"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "**SUCCESSFUL OPERATION**\n**id** - id of transaction",
+           "schema": {
+             "type": "object",
+             "properties": {
+               "id": {
+                 "type": "string"
+               }
+             }
+           }
+          }
+        }
+      }
     }
   },
   "definitions" : {
@@ -135,6 +180,34 @@
               "type": "string"
             },
             "permlink": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "guestTransferParams": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "account": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "to": {
+              "type": "string"
+            },
+            "quantity": {
+              "type": "number"
+            },
+            "symbol": {
+              "type": "string"
+            },
+            "memo": {
               "type": "string"
             }
           }
