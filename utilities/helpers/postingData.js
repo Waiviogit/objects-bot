@@ -46,7 +46,7 @@ const getPostData = (reqData, accData, type) => {
   const metadata = {
     app: `${appData.appName}/${appData.version}`,
     community: '',
-    tags: appData.appendObjectTag,
+    tags: [appData.appendObjectTag, ...appData.engineTags],
   };
 
   appendObjPostData.author = accData.name;
