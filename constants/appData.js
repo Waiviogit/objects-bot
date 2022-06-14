@@ -11,7 +11,7 @@ module.exports = {
   objectTypeTag: process.env.OBJECT_TYPE_TAG || 'waivio-object-type',
   nodeUrls: [
     'https://api.hive.blog',
-    'https://hive-api.arcange.eu',
+    'https://api.openhive.network',
     'https://anyx.io',
     'https://hive.roelandp.nl',
     'https://api.pharesim.me',
