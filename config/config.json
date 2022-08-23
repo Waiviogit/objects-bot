@@ -8,7 +8,8 @@
     "redis": {
       "actionsQueue": 3,
       "actionsData": 5,
-      "notifications": 0
+      "notifications": 0,
+      "serviceBots": 8
     },
     "waivio_auth": {
       "host": "www.waivio.com",
@@ -50,7 +51,8 @@
     "redis": {
       "actionsQueue": 3,
       "actionsData": 5,
-      "notifications": 0
+      "notifications": 0,
+      "serviceBots": 8
     },
     "waivio_auth": {
       "host": "waiviodev.com",
@@ -92,7 +94,8 @@
     "redis": {
       "actionsQueue": 3,
       "actionsData": 5,
-      "notifications": 0
+      "notifications": 0,
+      "serviceBots": 8
     },
     "waivio_auth": {
       "host": "waiviodev.com",
@@ -134,7 +137,8 @@
     "redis": {
       "actionsQueue": 7,
       "actionsData": 7,
-      "notifications": 7
+      "notifications": 7,
+      "serviceBots": 7
     },
     "waivio_auth": {
       "host": "waiviodev.com",
