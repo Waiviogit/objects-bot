@@ -137,3 +137,11 @@
         "locale": "string"
     },
 ```
+## Print length field:
+```
+   "field": {
+        "name": "printLength" ,
+        "body": "234", //string -number
+        "locale": "string"
+    },
+```
