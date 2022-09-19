@@ -115,10 +115,10 @@
 ```
 ## Authors field:
 ```
-    const authorsBody = JSON.stringify([{
+    const authorsBody = JSON.stringify({
         name: "string",  // required
         authorPermlink: "string",  // required, must be existed object person
-    }])
+    })
    "field": {
         "name": "authors" ,
         "body": authorsBody,
