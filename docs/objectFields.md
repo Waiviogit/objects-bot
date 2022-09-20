@@ -117,7 +117,7 @@
 ```
     const authorsBody = JSON.stringify({
         name: "string",  // required
-        authorPermlink: "string",  // required, must be existed object person
+        authorPermlink: "string",
     })
    "field": {
         "name": "authors" ,
@@ -129,7 +129,7 @@
 ```
     const publisherBody = JSON.stringify({
         name: "string",  // required
-        authorPermlink: "string",  // required, must be existed object business
+        authorPermlink: "string",
     })
    "field": {
         "name": "publisher" ,
