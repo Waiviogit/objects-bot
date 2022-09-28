@@ -47,6 +47,7 @@ const getPostData = (reqData, accData, type) => {
     app: `${appData.appName}/${appData.version}`,
     community: '',
     tags: [appData.appendObjectTag, ...appData.engineTags],
+    ...reqData.datafinityObject && { datafinityObject: reqData.datafinityObject }
   };
 
   appendObjPostData.author = accData.name;
