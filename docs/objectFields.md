@@ -145,3 +145,30 @@
         "locale": "string"
     },
 ```
+## News feed field:
+```
+    const newsFeedBody = JSON.stringify({
+          "allowList": string[][],
+          "ignoreList": string[],
+          "typeList": string[],
+          "authors": string[]
+    })
+   "field": {
+        "name": "newsFeed" ,
+        "body": newsFeedBody,
+        "locale": "string"
+    },
+```
+## Widget field:
+```
+    const widgetBody = JSON.stringify({
+           column: string,
+           type: string,
+           content: string,
+    })
+   "field": {
+        "name": "widget" ,
+        "body": widgetBody,
+        "locale": "string"
+    },
+```
