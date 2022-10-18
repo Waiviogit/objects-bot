@@ -58,13 +58,18 @@ const getWithdrawToAddress = async ({
   };
 };
 
-const getWithdrawContract = ({ amount }) => ({
+const getWithdrawContract = ({
+  amount, address, inputSymbol, account, inputQuantity,
+}) => ({
   withdraw: {
     contractName: 'hivepegged',
     contractAction: 'withdraw',
     contractPayload: {
-      // TODO try to add account
-      quantity: amount,
+      inputSymbol,
+      inputQuantity,
+      address,
+      account,
+      quantity: new BigNumber(amount).toFixed(3), // front-end use only this param!
     },
   },
 });
@@ -154,10 +159,14 @@ exports.withdraw = async ({ account, data }) => {
     params, quantity, inputSymbol,
   });
   if (error) return { error };
+
+  /// prediction withdraw for front-end
+  const predictionAmount = amount * DEFAULT_WITHDRAW_FEE_MUL;
+
   const { withdraw, error: errWithdrawData } = await params.withdrawContract({
-    address, outputSymbol, params, amount,
+    address, outputSymbol, params, amount, inputSymbol, account, inputQuantity: quantity,
   });
-  // withdraw in HIVE would be on our account (need parse withdraw) and transfer to user
+
   if (errWithdrawData) return { error: errWithdrawData };
   const customJsonPayload = [...swapJson, withdraw];
 
