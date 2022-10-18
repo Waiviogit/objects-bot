@@ -5,6 +5,8 @@ const { marketPools } = require('utilities/hiveEngine');
 const BigNumber = require('bignumber.js');
 const _ = require('lodash');
 const axios = require('axios');
+const { validateBalanceRequest, engineBroadcast } = require('./transferOperation');
+const { getTokenBalances } = require('../hiveEngine/tokensContract');
 
 const DEFAULT_PRECISION = 8;
 const DEFAULT_SLIPPAGE = 0.0001;
@@ -126,13 +128,28 @@ const withdrawParams = Object.freeze({
   },
 });
 
+const validateEngineBalance = async ({ account, symbol, quantity }) => {
+  const wallet = await getTokenBalances({ query: { account, symbol }, method: 'findOne' });
+  if (!wallet) return false;
+  return new BigNumber(wallet.balance).gte(quantity);
+};
+
 exports.withdraw = async ({ account, data }) => {
   const {
     quantity, inputSymbol, outputSymbol, address,
   } = data;
-  // check balance api or db connect
-  // check balance our account in WAIV
+  const validHotAccBalance = await validateEngineBalance({
+    account: process.env.GUEST_HOT_ACC, symbol: inputSymbol, quantity,
+  });
+  if (!validHotAccBalance) return { error: { message: 'not sufficient balance' } };
+
+  const validGuestBalance = await validateBalanceRequest(
+    { account, symbol: inputSymbol, quantity },
+  );
+  if (!validGuestBalance) return { error: { message: `${account} not sufficient balance` } };
+
   const params = withdrawParams[inputSymbol][outputSymbol];
+
   const { swapJson, amount, error } = await params.getSwapData({
     params, quantity, inputSymbol,
   });
@@ -143,9 +160,12 @@ exports.withdraw = async ({ account, data }) => {
   // withdraw in HIVE would be on our account (need parse withdraw) and transfer to user
   if (errWithdrawData) return { error: errWithdrawData };
   const customJsonPayload = [...swapJson, withdraw];
-};
 
-(async () => {
-  const yo = await getAccountToTransfer();
-  console.log();
-})();
+  const { result, error: broadcastError } = await engineBroadcast({
+    account: { name: process.env.GUEST_HOT_ACC, key: process.env.GUEST_HOT_KEY },
+    operations: customJsonPayload,
+  });
+
+  if (broadcastError) return { error: broadcastError };
+  return { result };
+};
