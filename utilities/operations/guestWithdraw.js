@@ -5,6 +5,7 @@ const { marketPools } = require('utilities/hiveEngine');
 const BigNumber = require('bignumber.js');
 const _ = require('lodash');
 const axios = require('axios');
+const Web3 = require('web3');
 const { validateBalanceRequest, engineBroadcast } = require('./transferOperation');
 const { getTokenBalances } = require('../hiveEngine/tokensContract');
 
@@ -14,11 +15,25 @@ const DEFAULT_SLIPPAGE_MAX = 0.01;
 const DEFAULT_TRADE_FEE_MUL = 0.9975;
 const DEFAULT_WITHDRAW_FEE_MUL = 0.9925;
 
+const getETHAccountToTransfer = ({
+  destination,
+}) => {
+  const validAddress = Web3.utils.isAddress(destination);
+  if (!validAddress) return { error: new Error('invalid ETH address') };
+  return {
+    account: 'swap-eth',
+    memo: destination,
+  };
+};
+
 const getAccountToTransfer = async ({
   destination,
   from_coin,
   to_coin,
 }) => {
+  if (to_coin === 'ETH') {
+    return getETHAccountToTransfer({ destination });
+  }
   try {
     const result = await axios.post(
       'https://converter-api.hive-engine.com/api/convert/',
@@ -35,24 +50,66 @@ const getAccountToTransfer = async ({
   }
 };
 
+const validateEthAmount = async (amount) => {
+  try {
+    const resp = await axios.get('https://ethgw.hive-engine.com/api/utils/withdrawalfee/SWAP.ETH');
+    const fee = _.get(resp, 'data.data');
+    if (!fee) return false;
+    return BigNumber(amount).minus(fee).times(DEFAULT_WITHDRAW_FEE_MUL).gt(0);
+  } catch (error) {
+    return false;
+  }
+};
+
+const validateBtcAmount = async (amount) => {
+  try {
+    const resp = await axios.get('https://api.tribaldex.com/settings');
+    const minimum_withdrawals = _.get(resp, 'data.minimum_withdrawals');
+    if (!minimum_withdrawals) return false;
+    const fee = _.find(minimum_withdrawals, (el) => el[0] === 'SWAP.BTC')[1];
+    if (!fee) return false;
+    return BigNumber(amount).minus(fee).gte(0);
+  } catch (error) {
+    return false;
+  }
+};
+
+const validateAmount = async ({ amount, outputSymbol }) => {
+  const validation = {
+    HIVE: (el) => BigNumber(el).gte(0.002),
+    ETH: validateEthAmount,
+    BTC: validateBtcAmount,
+    LTC: () => true,
+  };
+  return validation[outputSymbol](amount);
+};
+
 const getWithdrawToAddress = async ({
-  address, outputSymbol, amount,
+  address, outputSymbol, amount, inputSymbol, inputQuantity, account,
 }) => {
-  const { error, memo, account } = await getAccountToTransfer({
+  const { error, memo, account: to } = await getAccountToTransfer({
     destination: address,
     from_coin: AVAILABLE_TOKEN_WITHDRAW[outputSymbol],
     to_coin: outputSymbol,
   });
   if (error) return { error };
+
+  const validAmount = await validateAmount({ amount, outputSymbol });
+  if (!validAmount) return { error: new Error(`to low amount: ${amount} for ${outputSymbol} on output to withdraw`) };
   return {
     withdraw: {
       contractName: 'tokens',
       contractAction: 'transfer',
       contractPayload: {
         symbol: AVAILABLE_TOKEN_WITHDRAW[outputSymbol],
-        to: account,
+        to,
         quantity: amount,
         memo,
+        // front-end: remove properties below
+        inputSymbol,
+        inputQuantity,
+        account,
+        address,
       },
     },
   };
@@ -130,6 +187,18 @@ const withdrawParams = Object.freeze({
       tokenPair: ['SWAP.HIVE:WAIV', 'SWAP.HIVE:SWAP.BTC'],
       exchangeSequence: ['WAIV', 'SWAP.HIVE'],
     },
+    LTC: {
+      getSwapData: indirectSwapData,
+      withdrawContract: getWithdrawToAddress,
+      tokenPair: ['SWAP.HIVE:WAIV', 'SWAP.HIVE:SWAP.LTC'],
+      exchangeSequence: ['WAIV', 'SWAP.HIVE'],
+    },
+    ETH: {
+      getSwapData: indirectSwapData,
+      withdrawContract: getWithdrawToAddress,
+      tokenPair: ['SWAP.HIVE:WAIV', 'SWAP.HIVE:SWAP.ETH'],
+      exchangeSequence: ['WAIV', 'SWAP.HIVE'],
+    },
   },
 });
 
@@ -169,7 +238,6 @@ exports.withdraw = async ({ account, data }) => {
 
   if (errWithdrawData) return { error: errWithdrawData };
   const customJsonPayload = [...swapJson, withdraw];
-
   const { result, error: broadcastError } = await engineBroadcast({
     account: { name: process.env.GUEST_HOT_ACC, key: process.env.GUEST_HOT_KEY },
     operations: customJsonPayload,
