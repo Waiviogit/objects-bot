@@ -6,7 +6,6 @@ const swaggerDocument = require('swagger/swagger.json');
 const Sentry = require('@sentry/node');
 const Tracing = require('@sentry/tracing');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
-require('utilities/operations/guestWithdraw');
 
 const { routes } = require('routes');
 
