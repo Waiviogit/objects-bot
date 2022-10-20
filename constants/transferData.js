@@ -1,3 +1,10 @@
 exports.AVAILABLE_TOKEN = {
   WAIV: 'WAIV',
 };
+
+exports.AVAILABLE_TOKEN_WITHDRAW = {
+  BTC: 'SWAP.BTC',
+  HIVE: 'SWAP.HIVE',
+  LTC: 'SWAP.LTC',
+  ETH: 'SWAP.ETH',
+};
