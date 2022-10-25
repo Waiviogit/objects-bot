@@ -161,6 +161,51 @@
           }
         }
       }
+    },
+    "/objects-bot/guest-withdraw" : {
+      "post" : {
+        "tags" : [ "object" ],
+        "summary" : "guestTransfer",
+        "description" : "",
+        "produces" : [ "application/json" ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/guestWithdrawParams"
+            }
+          },
+          {
+            "name" : "waivio-auth",
+            "in" : "header",
+            "description" : "send if it is guest",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "name" : "access-token",
+            "in" : "header",
+            "description" : "Hive user access token",
+            "required" : true,
+            "type" : "string"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "**SUCCESSFUL OPERATION**\n**id** - id of transaction",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "definitions" : {
@@ -180,6 +225,34 @@
               "type": "string"
             },
             "permlink": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "guestWithdrawParams" : {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "account": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "quantity": {
+              "type": "number"
+            },
+            "inputSymbol": {
+              "type": "string"
+            },
+            "outputSymbol": {
+              "type": "string"
+            },
+            "address": {
               "type": "string"
             }
           }
