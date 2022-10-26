@@ -14,6 +14,7 @@ exports.deleteComment = async (data) => {
   const key = _.get(_.filter(app.service_bots, (bot) => {
     if (bot.name === data.data.root_author) return bot;
   }), '[0].postingKey');
+  if (!key) return { error: new Error('key not found') };
 
   const operation = [['delete_comment', { author: data.data.root_author, permlink: data.data.permlink }]];
 
