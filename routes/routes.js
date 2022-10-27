@@ -13,7 +13,7 @@ routes.route('/append-object').post(object.processAppendObject);
 routes.route('/set-expired').post(forecast.markForecastAsExpired);
 routes.route('/guest-create-comment').post(guestRequests.proxyPosting);
 routes.route('/guest-custom-json').post(guestRequests.proxyCustomJson);
-routes.route('/guest-delete-comment').post(guestRequests.proxyDelete);
+// routes.route('/guest-delete-comment').post(guestRequests.proxyDelete);
 routes.route('/guest-transfer').post(guestRequests.guestTransfer);
 routes.route('/guest-withdraw').post(guestRequests.guestWithdraw);
 routes.route('/create-site').post(sitesController.sendCreateSite);
