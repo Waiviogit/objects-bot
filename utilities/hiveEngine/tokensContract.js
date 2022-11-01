@@ -21,3 +21,21 @@ exports.getTokenBalances = async ({ query, method }) => engineProxy({
   },
   method,
 });
+
+exports.getRewardPool = async ({ query, method }) => engineProxy({
+  params: {
+    contract: 'comments',
+    table: 'rewardPools',
+    query,
+  },
+  method,
+});
+
+exports.getVotingPowers = async ({ query, method }) => engineProxy({
+  params: {
+    contract: 'comments',
+    table: 'votingPower',
+    query,
+  },
+  method,
+});

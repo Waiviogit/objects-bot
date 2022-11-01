@@ -7,6 +7,7 @@ const { hiveOperations } = require('utilities/hiveApi');
 const { actionTypes } = require('constants/index');
 const config = require('config');
 const { MIN_RC } = require('constants/userData');
+const { voteForField } = require('./importVote');
 
 const createObjectTypeOp = async (body) => {
   const accounts = await addBotsToEnv.setEnvData();
@@ -85,6 +86,14 @@ const AppendObjectOp = async (body) => {
     const { e, transactionStatus } = await dataPublisher({
       accounts, account, body: updBody, opType: actionTypes.APPEND_OBJECT,
     });
+    if (transactionStatus && body.importingAccount && body.importId) {
+      await voteForField({
+        voter: body.importingAccount,
+        author: account.name,
+        permlink: body.permlink,
+        importId: body.importId,
+      });
+    }
     if (e === 'Not enough mana') continue;
     if (transactionStatus) {
       const payload = {

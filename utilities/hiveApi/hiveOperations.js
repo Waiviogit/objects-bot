@@ -94,3 +94,17 @@ exports.broadcastJson = async ({
     return { error };
   }
 };
+
+exports.vote = async ({
+  key, voter, author, permlink, weight,
+}) => {
+  try {
+    const result = await broadcastClient.broadcast.vote({
+      voter, author, permlink, weight,
+    },
+    PrivateKey.fromString(key));
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
