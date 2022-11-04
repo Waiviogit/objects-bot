@@ -168,7 +168,7 @@ const indirectSwapData = async ({
       tradeFeeMul: DEFAULT_TRADE_FEE_MUL,
     });
     swapJson.push(json);
-    amount = BigNumber(minAmountOut).toFixed();
+    amount = BigNumber(minAmountOut).toFixed(DEFAULT_PRECISION);
   }
 
   return { swapJson, amount };
