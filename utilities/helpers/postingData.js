@@ -74,6 +74,7 @@ const getPostData = (reqData, accData, type) => {
         default_name: reqData.objectName,
         is_posting_open: Boolean(reqData.isPostingOpen),
         is_extending_open: Boolean(reqData.isExtendingOpen),
+        locale: reqData.locale,
       };
       break;
     case actionTypes.APPEND_OBJECT:
