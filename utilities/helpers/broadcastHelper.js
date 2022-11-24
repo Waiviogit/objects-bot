@@ -39,7 +39,7 @@ const switcher = async (message, account) => {
   const app = chooseApp(parsedMetadata.app);
   const guestAuthor = _.cloneDeep(post.author);
   // Prepare comment body
-  post.body = `${post.body}<hr/><center>[Posted](https://${app}/${await permlinkGenerator(post, account, guestAuthor)}) by Waivio guest: [@${post.author}](https://${app}/@${post.author})</center>`;
+  post.body = `${post.body}<hr/><center><a href="/${await permlinkGenerator(post, account, guestAuthor)}">Posted</a>by Waivio guest:<a href="/@${post.author}">@${post.author}</a></center>`;
   // Change comment author for bot name
   post.author = account.name;
 
