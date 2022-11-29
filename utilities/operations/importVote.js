@@ -38,7 +38,7 @@ const getVoteAmount = async ({ account }) => {
 
 const getMinVotingPower = async ({ user, importId }) => {
   const result = await get({
-    key: `${IMPORT_REDIS_KEYS.MIN_POWER}:${user}:${importId}`,
+    key: `${IMPORT_REDIS_KEYS.MIN_POWER}:${user}`,
   });
   if (!result) return MAX_VOTING_POWER;
   return parseFloat(result);
