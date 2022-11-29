@@ -83,7 +83,7 @@
     })
    "field": {
         "name": "companyId" ,
-        "body": productIdBody,
+        "body": companyIdBody,
         "locale": "string"
     },
 ```
