@@ -14,4 +14,8 @@ const getAllHashData = async (key) => {
 
 const smembersAsync = async ({ key, client = botsClient }) => client.smembersAsync(key);
 
-module.exports = { getHashKeysAll, getAllHashData, smembersAsync };
+const get = async ({ key, client = actionsDataClient }) => client.getAsync(key);
+
+module.exports = {
+  getHashKeysAll, getAllHashData, smembersAsync, get,
+};

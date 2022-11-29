@@ -9,3 +9,9 @@ exports.HIVE_ENGINE_NODES = [
 ];
 
 exports.REQUEST_TIMEOUT = 5000;
+
+exports.MAX_VOTING_POWER = 10000;
+
+exports.VOTE_REGENERATION_DAYS = 5;
+
+exports.DOWNVOTE_REGENERATION_DAYS = 5;
