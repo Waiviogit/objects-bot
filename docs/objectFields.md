@@ -172,3 +172,41 @@
         "locale": "string"
     },
 ```
+## Merchant field:
+```
+    const merchantBody = JSON.stringify({
+        name: "string", 
+        authorPermlink: "string",
+    })
+   "field": {
+        "name": "merchant" ,
+        "body": merchantBody,
+        "locale": "string"
+    },
+```
+
+## Manufacturer field:
+```
+    const manufacturerBody = JSON.stringify({
+        name: "string", 
+        authorPermlink: "string",
+    })
+   "field": {
+        "name": "manufacturer" ,
+        "body": manufacturerBody,
+        "locale": "string"
+    },
+```
+
+## Brand field:
+```
+    const brandBody = JSON.stringify({
+        name: "string", 
+        authorPermlink: "string",
+    })
+   "field": {
+        "name": "brand" ,
+        "body": brandBody,
+        "locale": "string"
+    },
+```
