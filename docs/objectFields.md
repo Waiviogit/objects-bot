@@ -210,3 +210,16 @@
         "locale": "string"
     },
 ```
+
+## Features field:
+```
+    const featuresBody = JSON.stringify({
+        key: "string", 
+        value: "string",
+    })
+   "field": {
+        "name": "features" ,
+        "body": featuresBody,
+        "locale": "string"
+    },
+```
