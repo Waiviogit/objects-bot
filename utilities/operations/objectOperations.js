@@ -86,12 +86,11 @@ const AppendObjectOp = async (body) => {
     const { e, transactionStatus } = await dataPublisher({
       accounts, account, body: updBody, opType: actionTypes.APPEND_OBJECT,
     });
-    if (transactionStatus && body.importingAccount && body.importId) {
+    if (transactionStatus && body.importingAccount) {
       await voteForField({
         voter: body.importingAccount,
         author: account.name,
         permlink: body.permlink,
-        importId: body.importId,
       });
     }
     if (e === 'Not enough mana') continue;

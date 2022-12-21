@@ -36,7 +36,7 @@ const getVoteAmount = async ({ account }) => {
   return VOTE_COST.USUAL;
 };
 
-const getMinVotingPower = async ({ user, importId }) => {
+const getMinVotingPower = async ({ user }) => {
   const result = await get({
     key: `${IMPORT_REDIS_KEYS.MIN_POWER}:${user}`,
   });
@@ -45,20 +45,29 @@ const getMinVotingPower = async ({ user, importId }) => {
 };
 
 exports.voteForField = async ({
-  voter, author, permlink, importId,
+  voter, author, permlink,
 }) => {
-  const minVotingPower = await getMinVotingPower({ user: voter, importId });
+  const minVotingPower = await getMinVotingPower({ user: voter });
   const key = process.env.IMPORT_BOT_KEY;
+
   const powers = await getEnginePowers({ account: voter, symbol: 'WAIV' });
-  if (!powers) return;
+  if (!powers) {
+    console.error('\n voteForField !powers');
+    return;
+  }
   if (powers.votingPower < minVotingPower) {
+    console.error('\n voteForField !powers.votingPower < minVotingPower');
     return;
   }
   const amount = await getVoteAmount({ account: voter });
   const weight = await getWeightForVote({
     account: voter, votingPower: powers.votingPower, amount,
   });
-  if (!weight) return;
+
+  if (!weight) {
+    console.error('\n voteForField !weight');
+    return;
+  }
 
   await vote({
     voter,
