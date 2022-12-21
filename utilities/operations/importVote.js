@@ -28,6 +28,7 @@ const getWeightForVote = async ({ account, votingPower, amount }) => {
     .integerValue()
     .toNumber();
   if (weight > MAX_VOTING_POWER) return MAX_VOTING_POWER;
+  return weight;
 };
 
 const getVoteAmount = async ({ account }) => {
@@ -77,3 +78,8 @@ exports.voteForField = async ({
     key,
   });
 };
+
+(async () => {
+  await this.voteForField({ voter: 'wiv01' });
+  console.log();
+})();
