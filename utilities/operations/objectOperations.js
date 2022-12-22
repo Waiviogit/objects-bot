@@ -61,7 +61,21 @@ const createObjectOp = async (body) => {
     if (transactionStatus) {
       console.info('INFO[CreateObject] Successfully created');
       console.info('INFO[CreateObject] Recall Append object');
-      if (body.datafinityObject) return { result: { status: 'ok' } };
+      if (body.datafinityObject) {
+        return {
+          result: {
+            status: 200,
+            json: {
+              author: account.name,
+              permlink: updBody.permlink,
+              parentAuthor: updBody.parentAuthor,
+              parentPermlink: updBody.parentPermlink,
+              transactionId: transactionStatus.id,
+              block_num: transactionStatus.block_num,
+            },
+          },
+        };
+      }
       return AppendObjectOp(getAppendRequestBody(updBody, account));
     } if (e && e.name === 'RPCError') {
       config.objects.account === accounts.serviceBots.length - 1
