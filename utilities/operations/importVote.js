@@ -7,6 +7,8 @@ const { getEnginePowers } = require('../hiveEngine/operations');
 const { smembersAsync, get } = require('../redis/redisGetter');
 const { WHITE_LIST_KEY, VOTE_COST, IMPORT_REDIS_KEYS } = require('../../constants/importObjects');
 
+const isEven = (number) => number % 2 === 0;
+
 const getWeightForVote = async ({ account, votingPower, amount }) => {
   const tokenBalance = await getTokenBalances({ query: { symbol: 'WAIV', account }, method: 'findOne' });
   if (!tokenBalance) return 0;
@@ -28,7 +30,8 @@ const getWeightForVote = async ({ account, votingPower, amount }) => {
     .integerValue()
     .toNumber();
   if (weight > MAX_VOTING_POWER) return MAX_VOTING_POWER;
-  return weight;
+  const evenWeight = isEven(weight);
+  return evenWeight ? weight : weight + 1;
 };
 
 const getVoteAmount = async ({ account }) => {
@@ -78,8 +81,3 @@ exports.voteForField = async ({
     key,
   });
 };
-
-(async () => {
-  await this.voteForField({ voter: 'wiv01' });
-  console.log();
-})();

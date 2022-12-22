@@ -61,7 +61,7 @@ const createObjectOp = async (body) => {
     if (transactionStatus) {
       console.info('INFO[CreateObject] Successfully created');
       console.info('INFO[CreateObject] Recall Append object');
-      if (body.datafinityObject) return;
+      if (body.datafinityObject) return { result: { status: 'ok' } };
       return AppendObjectOp(getAppendRequestBody(updBody, account));
     } if (e && e.name === 'RPCError') {
       config.objects.account === accounts.serviceBots.length - 1
