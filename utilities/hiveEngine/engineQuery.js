@@ -3,7 +3,7 @@ const _ = require('lodash');
 const { HIVE_ENGINE_NODES, REQUEST_TIMEOUT } = require('constants/hiveEngine');
 
 exports.engineQuery = async ({
-  hostUrl = 'https://api.hive-engine.com/rpc',
+  hostUrl = 'https://herpc.dtools.dev',
   method = 'find',
   params,
   endpoint = '/contracts',
