@@ -8,6 +8,7 @@ const { smembersAsync, get } = require('../redis/redisGetter');
 const { WHITE_LIST_KEY, VOTE_COST, IMPORT_REDIS_KEYS } = require('../../constants/importObjects');
 const { getPriceWaivUsd } = require('../helpers/tokenPriceHelper');
 const { sentryCaptureException } = require('../helpers/sentryHelper');
+const { Wobj } = require('../../models');
 
 const isEven = (number) => number % 2 === 0;
 
@@ -50,8 +51,37 @@ const getMinVotingPower = async ({ user }) => {
   return parseFloat(result);
 };
 
+const getSameFields = async ({ voter, authorPermlink, fieldType }) => {
+  const { result } = await Wobj.findOne({ filter: { author_permlink: authorPermlink } });
+  if (!result) return [];
+  if (_.isEmpty(result.fields)) return [];
+  return _.filter(result.fields, (f) => {
+    const activeVote = _.find(
+      f.active_votes,
+      (v) => v.voter === voter
+            && v.percent > 0
+            && v.percent % 2 === 0,
+
+    );
+    return activeVote && f.name === fieldType;
+  });
+};
+
+const unvoteOnSameFields = async ({ voter, sameFields }) => {
+  for (const field of sameFields) {
+    await vote({
+      voter,
+      author: field.author,
+      permlink: field.permlink,
+      weight: 0,
+      key: process.env.IMPORT_BOT_KEY,
+    });
+    await new Promise((r) => setTimeout(r, 4000));
+  }
+};
+
 exports.voteForField = async ({
-  voter, author, permlink,
+  voter, author, permlink, authorPermlink, fieldType,
 }) => {
   const minVotingPower = await getMinVotingPower({ user: voter });
   const key = process.env.IMPORT_BOT_KEY;
@@ -83,6 +113,11 @@ exports.voteForField = async ({
   if (!weight) {
     await sentryCaptureException(new Error(`voteForField !weight ${voter}`));
     return;
+  }
+
+  const sameFields = await getSameFields({ voter, authorPermlink, fieldType });
+  if (!_.isEmpty(sameFields)) {
+    await unvoteOnSameFields({ voter, sameFields });
   }
 
   await vote({
