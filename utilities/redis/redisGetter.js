@@ -1,4 +1,4 @@
-const { actionsDataClient, botsClient } = require('utilities/redis/redis');
+const { actionsDataClient, botsClient, lastBlockClient } = require('utilities/redis/redis');
 
 const getHashKeysAll = async (key) => {
   const result = await actionsDataClient.keysAsync(key);
@@ -16,6 +16,8 @@ const smembersAsync = async ({ key, client = botsClient }) => client.smembersAsy
 
 const get = async ({ key, client = actionsDataClient }) => client.getAsync(key);
 
+const getHashAll = async (key, client = lastBlockClient) => client.hgetallAsync(key);
+
 module.exports = {
-  getHashKeysAll, getAllHashData, smembersAsync, get,
+  getHashKeysAll, getAllHashData, smembersAsync, get, getHashAll,
 };

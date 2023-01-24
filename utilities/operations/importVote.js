@@ -6,6 +6,8 @@ const { MAX_VOTING_POWER } = require('../../constants/hiveEngine');
 const { getEnginePowers } = require('../hiveEngine/operations');
 const { smembersAsync, get } = require('../redis/redisGetter');
 const { WHITE_LIST_KEY, VOTE_COST, IMPORT_REDIS_KEYS } = require('../../constants/importObjects');
+const { getPriceWaivUsd } = require('../helpers/tokenPriceHelper');
+const { sentryCaptureException } = require('../helpers/sentryHelper');
 
 const isEven = (number) => number % 2 === 0;
 
@@ -56,20 +58,30 @@ exports.voteForField = async ({
 
   const powers = await getEnginePowers({ account: voter, symbol: 'WAIV' });
   if (!powers) {
-    console.error('\n voteForField !powers');
+    await sentryCaptureException(new Error(`voteForField !powers ${voter}`));
     return;
   }
   if (powers.votingPower < minVotingPower) {
-    console.error('\n voteForField !powers.votingPower < minVotingPower');
+    await sentryCaptureException(new Error(`voteForField !powers.votingPower < minVotingPower ${voter}`));
     return;
   }
-  const amount = await getVoteAmount({ account: voter });
+  const amountUsd = await getVoteAmount({ account: voter });
+
+  const { price, error: getPriceWaivUsdError } = await getPriceWaivUsd();
+
+  if (getPriceWaivUsdError) {
+    await sentryCaptureException(new Error('voteForField getPriceWaivUsdError'));
+    return;
+  }
+
+  const amount = amountUsd / price;
+
   const weight = await getWeightForVote({
     account: voter, votingPower: powers.votingPower, amount,
   });
 
   if (!weight) {
-    console.error('\n voteForField !weight');
+    await sentryCaptureException(new Error(`voteForField !weight ${voter}`));
     return;
   }
 
