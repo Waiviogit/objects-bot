@@ -106,6 +106,8 @@ const AppendObjectOp = async (body) => {
         voter: body.importingAccount,
         author: account.name,
         permlink: body.permlink,
+        authorPermlink: body.parentPermlink,
+        fieldType: body.field.name,
       });
     }
     if (e === 'Not enough mana') continue;
