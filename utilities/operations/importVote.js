@@ -73,8 +73,8 @@ const unvoteOnSameFields = async ({ voter, sameFields }) => {
       field.active_votes,
       (v) => v.voter === voter,
     );
-    if (activeVote) {
-      await sentryCaptureException(new Error(`unvoteOnSameFields !activeVote ${voter} ${JSON.stringify(field)}`));
+    if (!activeVote) {
+      await sentryCaptureException(new Error(`unvoteOnSameFields !activeVote ${voter}  a: ${field.author} p: ${field.permlink}`));
       continue;
     }
 
