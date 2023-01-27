@@ -69,11 +69,22 @@ const getSameFields = async ({ voter, authorPermlink, fieldType }) => {
 
 const unvoteOnSameFields = async ({ voter, sameFields }) => {
   for (const field of sameFields) {
+    const activeVote = _.find(
+      field.active_votes,
+      (v) => v.voter === voter,
+    );
+    if (activeVote) {
+      await sentryCaptureException(new Error(`unvoteOnSameFields !activeVote ${voter} ${JSON.stringify(field)}`));
+      continue;
+    }
+
+    const weight = activeVote.percent === MAX_VOTING_POWER ? 9999 : activeVote.percent + 1;
+
     await vote({
       voter,
       author: field.author,
       permlink: field.permlink,
-      weight: 0,
+      weight,
       key: process.env.IMPORT_BOT_KEY,
     });
     await new Promise((r) => setTimeout(r, 4000));
