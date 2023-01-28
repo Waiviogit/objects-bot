@@ -9,6 +9,7 @@ const { WHITE_LIST_KEY, VOTE_COST, IMPORT_REDIS_KEYS } = require('../../constant
 const { getPriceWaivUsd } = require('../helpers/tokenPriceHelper');
 const { sentryCaptureException } = require('../helpers/sentryHelper');
 const { Wobj } = require('../../models');
+const { ARRAY_FIELDS } = require('../../constants/wobjectsData');
 
 const isEven = (number) => number % 2 === 0;
 
@@ -52,6 +53,8 @@ const getMinVotingPower = async ({ user }) => {
 };
 
 const getSameFields = async ({ voter, authorPermlink, fieldType }) => {
+  if (_.includes(ARRAY_FIELDS, fieldType)) return [];
+
   const { result } = await Wobj.findOne({ filter: { author_permlink: authorPermlink } });
   if (!result) return [];
   if (_.isEmpty(result.fields)) return [];
