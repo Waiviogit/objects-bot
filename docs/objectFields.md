@@ -223,3 +223,30 @@
         "locale": "string"
     },
 ```
+
+## Related field:
+```
+   "field": {
+        "name": "related" ,
+        "body": "author_permlink",
+        "locale": "string"
+    },
+```
+
+## Add-on field:
+```
+   "field": {
+        "name": "add-on" ,
+        "body": "author_permlink",
+        "locale": "string"
+    },
+```
+
+## Similar field:
+```
+   "field": {
+        "name": "similar" ,
+        "body": "author_permlink",
+        "locale": "string"
+    },
+```
