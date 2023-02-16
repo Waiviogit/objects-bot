@@ -250,3 +250,21 @@
         "locale": "string"
     },
 ```
+
+## Pin field:
+```
+   "field": {
+        "name": "pin" ,
+        "body": "author/permlink",
+        "locale": "string"
+    },
+```
+
+## Remove field:
+```
+   "field": {
+        "name": "remove" ,
+        "body": "author/permlink",
+        "locale": "string"
+    },
+```
