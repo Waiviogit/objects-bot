@@ -268,3 +268,19 @@
         "locale": "string"
     },
 ```
+
+## Shop Filter field:
+```
+    const filterBody = JSON.stringify({
+        type: string, 
+        departments: string[],
+        tags: string[],
+        authorities: string[],
+    })
+    
+   "field": {
+        "name": "shopFilter" ,
+        "body": filterBody,
+        "locale": "string"
+    },
+```
