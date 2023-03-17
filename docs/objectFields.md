@@ -284,3 +284,22 @@
         "locale": "string"
     },
 ```
+
+
+## Menu Item field:
+```
+    const menuItemBody = JSON.stringify({
+        title: string,  //required
+        style: string,  //required
+        image: string, 
+        linkToObject: string, // existing author_permlink
+        linkToWeb: string, // valid uri
+    })
+    // menuItemBody must have either linkToObject or linkToWeb
+    
+   "field": {
+        "name": "menuItem" ,
+        "body": menuItemBody,
+        "locale": "string"
+    },
+```

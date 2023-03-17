@@ -105,10 +105,10 @@ exports.voteForField = async ({
     await sentryCaptureException(new Error(`voteForField !powers ${voter}`));
     return;
   }
-  if (powers.votingPower < minVotingPower) {
-    await sentryCaptureException(new Error(`voteForField !powers.votingPower < minVotingPower ${voter}`));
-    return;
-  }
+  // if (powers.votingPower < minVotingPower) {
+  //   await sentryCaptureException(new Error(`voteForField !powers.votingPower < minVotingPower ${voter}`));
+  //   return;
+  // }
   const amountUsd = await getVoteAmount({ account: voter });
 
   const { price, error: getPriceWaivUsdError } = await getPriceWaivUsd();
