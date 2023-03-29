@@ -2,10 +2,6 @@
   "name": "objects-bot",
   "version": "1.0.0",
   "description": "bot for waivio",
-  "engines": {
-    "node": "8.x",
-    "npm": "6.x"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Waiviogit/objects-bot.git"
@@ -13,7 +9,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "start": "node ./bin/service.js",
+    "start": "node --max-old-space-size=400 ./bin/service.js",
     "test": "NODE_ENV=test nyc --reporter=html mocha"
   },
   "dependencies": {
