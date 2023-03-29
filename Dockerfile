@@ -1,11 +1,11 @@
-FROM node:13
+FROM node:18.12.0-slim
 
-RUN mkdir -p /home/oleh/objects-bot/
-WORKDIR /home/oleh/objects-bot/
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
-COPY . /home/oleh/objects-bot/
+COPY ./package.json ./
+
 RUN npm install
+COPY . .
 
-EXPOSE 9000
-
-CMD ["node", "app.js"]
+CMD ["npm", "run", "start"]
