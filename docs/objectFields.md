@@ -303,3 +303,60 @@
         "locale": "string"
     },
 ```
+
+## affiliateButton field:
+```    
+   "field": {
+        "name": "affiliateButton" ,
+        "body": affiliateButtonURI, //valid uri
+        "locale": "string"
+    },
+```
+
+## affiliateProductIdTypes field:
+```
+   const affiliateProductIdTypesBody = JSON.stringify(["asin"])
+    
+   "field": {
+        "name": "affiliateProductIdTypes" ,
+        "body": affiliateProductIdTypesBody,
+        "locale": "string"
+    },
+```
+
+## affiliateGeoArea field:
+```
+   const affiliateGeoAreaBody = JSON.stringify(["US", "GLOBAL", "NORTH AMERICA"])
+    
+   "field": {
+        "name": "affiliateGeoArea" ,
+        "body": affiliateGeoAreaBody,
+        "locale": "string"
+    },
+```
+
+## affiliateUrlTemplate field:
+```
+   $productId and $affiliateCode is required inside the string
+    
+   "field": {
+        "name": "affiliateUrlTemplate" ,
+        "body": "https://amazon.com/dp/$productId/ref=?$affiliateCode",
+        "locale": "string"
+    },
+```
+
+## affiliateCode field:
+```
+   const affiliateCodeBody = JSON.stringify(["PERSONAL", "ACCHSUIT"])
+   
+   //where first argument is string with either PERSONAL or example.social.gifts
+   //and second is string with code itself
+    
+   "field": {
+        "name": "affiliateCode" ,
+        "body": affiliateCodeBody,
+        "locale": "string"
+    },
+```
+
