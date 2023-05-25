@@ -316,6 +316,7 @@
 ## affiliateProductIdTypes field:
 ```
    const affiliateProductIdTypesBody = JSON.stringify(["asin"])
+   // lowercase only !
     
    "field": {
         "name": "affiliateProductIdTypes" ,
