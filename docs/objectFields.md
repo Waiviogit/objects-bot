@@ -293,6 +293,7 @@
         style: string,  //required
         image: string, 
         linkToObject: string, // existing author_permlink
+        objectType: string, // if linkToObject
         linkToWeb: string, // valid uri
     })
     // menuItemBody must have either linkToObject or linkToWeb
