@@ -1,5 +1,14 @@
-const { DOWNVOTE_REGENERATION_DAYS, MAX_VOTING_POWER, VOTE_REGENERATION_DAYS } = require('../../constants/hiveEngine');
+const BigNumber = require('bignumber.js');
+const {
+  DOWNVOTE_REGENERATION_DAYS,
+  MAX_VOTING_POWER,
+  VOTE_REGENERATION_DAYS,
+  TOKEN_WAIV,
+  CACHE_CURRENT_PRICE_KEY,
+} = require('../../constants/hiveEngine');
 const { getVotingPowers } = require('./tokensContract');
+const { getMarketPools } = require('./marketPools');
+const { redisGetter } = require('../redis');
 
 const calculateMana = (
   votingPower,
@@ -28,4 +37,14 @@ const calculateMana = (
 exports.getEnginePowers = async ({ account }) => {
   const powers = await getVotingPowers({ query: { account, rewardPoolId: 13 }, method: 'findOne' });
   return calculateMana(powers);
+};
+
+exports.usdToWaiv = async ({ amountUsd }) => {
+  const hiveCurrency = await redisGetter.getHashAll(CACHE_CURRENT_PRICE_KEY);
+  const [pool] = await getMarketPools({ query: { _id: TOKEN_WAIV.MARKET_POOL_ID } });
+
+  const hiveAmount = BigNumber(amountUsd).div(hiveCurrency.price);
+  const waivAmount = hiveAmount.times(pool.basePrice);
+
+  return waivAmount.dp(TOKEN_WAIV.DP).toNumber();
 };
