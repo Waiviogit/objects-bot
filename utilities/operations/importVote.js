@@ -134,8 +134,3 @@ exports.voteForField = async ({
     key,
   });
 };
-
-(async () => {
-  await this.voteForField({ voter: 'flowmaster' });
-  console.log();
-})();
