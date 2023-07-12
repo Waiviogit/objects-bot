@@ -3,10 +3,9 @@ const _ = require('lodash');
 const { vote } = require('../hiveApi/hiveOperations');
 const { getTokenBalances, getRewardPool } = require('../hiveEngine/tokensContract');
 const { MAX_VOTING_POWER } = require('../../constants/hiveEngine');
-const { getEnginePowers } = require('../hiveEngine/operations');
+const { getEnginePowers, usdToWaiv } = require('../hiveEngine/operations');
 const { smembersAsync, get } = require('../redis/redisGetter');
 const { WHITE_LIST_KEY, VOTE_COST, IMPORT_REDIS_KEYS } = require('../../constants/importObjects');
-const { getPriceWaivUsd } = require('../helpers/tokenPriceHelper');
 const { sentryCaptureException } = require('../helpers/sentryHelper');
 const { Wobj } = require('../../models');
 const { ARRAY_FIELDS } = require('../../constants/wobjectsData');
@@ -111,14 +110,7 @@ exports.voteForField = async ({
   // }
   const amountUsd = await getVoteAmount({ account: voter });
 
-  const { price, error: getPriceWaivUsdError } = await getPriceWaivUsd();
-
-  if (getPriceWaivUsdError) {
-    await sentryCaptureException(new Error('voteForField getPriceWaivUsdError'));
-    return;
-  }
-
-  const amount = amountUsd / price;
+  const amount = await usdToWaiv({ amountUsd });
 
   const weight = await getWeightForVote({
     account: voter, votingPower: powers.votingPower, amount,
