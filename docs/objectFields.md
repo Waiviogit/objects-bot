@@ -316,23 +316,20 @@
 
 ## affiliateProductIdTypes field:
 ```
-   const affiliateProductIdTypesBody = JSON.stringify(["asin"])
    // lowercase only !
     
    "field": {
         "name": "affiliateProductIdTypes" ,
-        "body": affiliateProductIdTypesBody,
+        "body": "string",
         "locale": "string"
     },
 ```
 
 ## affiliateGeoArea field:
-```
-   const affiliateGeoAreaBody = JSON.stringify(["US", "GLOBAL", "NORTH AMERICA"])
-    
+```  
    "field": {
         "name": "affiliateGeoArea" ,
-        "body": affiliateGeoAreaBody,
+        "body": "string",
         "locale": "string"
     },
 ```
