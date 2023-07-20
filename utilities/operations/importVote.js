@@ -96,7 +96,7 @@ const unvoteOnSameFields = async ({ voter, sameFields }) => {
 exports.voteForField = async ({
   voter, author, permlink, authorPermlink, fieldType,
 }) => {
-  const minVotingPower = await getMinVotingPower({ user: voter });
+  //const minVotingPower = await getMinVotingPower({ user: voter });
   const key = process.env.IMPORT_BOT_KEY;
 
   const powers = await getEnginePowers({ account: voter, symbol: 'WAIV' });

@@ -36,7 +36,11 @@ const calculateMana = (
 
 exports.getEnginePowers = async ({ account }) => {
   const powers = await getVotingPowers({ query: { account, rewardPoolId: 13 }, method: 'findOne' });
-  return calculateMana(powers);
+  return calculateMana(powers || {
+    votingPower: MAX_VOTING_POWER,
+    downvotingPower: MAX_VOTING_POWER,
+    lastVoteTimestamp: Date.now(),
+  });
 };
 
 exports.usdToWaiv = async ({ amountUsd }) => {
