@@ -9,6 +9,7 @@ const { WHITE_LIST_KEY, VOTE_COST, IMPORT_REDIS_KEYS } = require('../../constant
 const { sentryCaptureException } = require('../helpers/sentryHelper');
 const { Wobj } = require('../../models');
 const { ARRAY_FIELDS } = require('../../constants/wobjectsData');
+const { getWeightToReject } = require('../waivioApi/apiRequests');
 
 const isEven = (number) => number % 2 === 0;
 
@@ -69,7 +70,7 @@ const getSameFields = async ({ voter, authorPermlink, fieldType }) => {
   });
 };
 
-const unvoteOnSameFields = async ({ voter, sameFields }) => {
+const unvoteOnSameFields = async ({ voter, sameFields, authorPermlink }) => {
   for (const field of sameFields) {
     const activeVote = _.find(
       field.active_votes,
@@ -80,7 +81,12 @@ const unvoteOnSameFields = async ({ voter, sameFields }) => {
       continue;
     }
 
-    const weight = activeVote.percent === MAX_VOTING_POWER ? 9999 : activeVote.percent + 1;
+    const weight = getWeightToReject({
+      userName: voter,
+      author: field.author,
+      permlink: field.permlink,
+      authorPermlink,
+    });
 
     await vote({
       voter,
@@ -96,7 +102,7 @@ const unvoteOnSameFields = async ({ voter, sameFields }) => {
 exports.voteForField = async ({
   voter, author, permlink, authorPermlink, fieldType,
 }) => {
-  //const minVotingPower = await getMinVotingPower({ user: voter });
+  // const minVotingPower = await getMinVotingPower({ user: voter });
   const key = process.env.IMPORT_BOT_KEY;
 
   const powers = await getEnginePowers({ account: voter, symbol: 'WAIV' });
@@ -123,7 +129,7 @@ exports.voteForField = async ({
 
   const sameFields = await getSameFields({ voter, authorPermlink, fieldType });
   if (!_.isEmpty(sameFields)) {
-    await unvoteOnSameFields({ voter, sameFields });
+    await unvoteOnSameFields({ voter, sameFields, authorPermlink });
   }
 
   await vote({
