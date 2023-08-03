@@ -1,5 +1,6 @@
 const axios = require('axios');
 const config = require('config');
+const _ = require('lodash');
 
 exports.getAppData = async ({ name }) => {
   try {
@@ -28,5 +29,22 @@ exports.getGuestBalance = async ({ account, symbol }) => {
     return { result: result.data };
   } catch (error) {
     return { error };
+  }
+};
+
+exports.getWeightToReject = async ({
+  userName, author, permlink, authorPermlink,
+}) => {
+  try {
+    const result = await axios.post(
+      `https://${config.waivio_auth.host}/api/users/min-reject`,
+
+      {
+        userName, author, permlink, authorPermlink,
+      },
+    );
+    return _.get(result, 'data.result', 9999);
+  } catch (error) {
+    return 9999;
   }
 };
