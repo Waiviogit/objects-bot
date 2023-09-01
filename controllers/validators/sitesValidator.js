@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 
 exports.createWebsite = Joi.object().keys({
   name: Joi.string().required(),

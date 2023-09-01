@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 
 exports.simpleSchema = Joi.object().keys({
   author: Joi.string().required(),

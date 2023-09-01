@@ -10,6 +10,8 @@ routes.use('/objects-bot', routes);
 routes.route('/create-object-type').post(object.processCreateObjectType);
 routes.route('/create-object').post(object.processCreateObject);
 routes.route('/append-object').post(object.processAppendObject);
+routes.route('/vote-field').post(object.voteForField);
+
 routes.route('/set-expired').post(forecast.markForecastAsExpired);
 routes.route('/guest-create-comment').post(guestRequests.proxyPosting);
 routes.route('/guest-custom-json').post(guestRequests.proxyCustomJson);

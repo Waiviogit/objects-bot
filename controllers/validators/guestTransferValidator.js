@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 const { AVAILABLE_TOKEN, AVAILABLE_TOKEN_WITHDRAW } = require('constants/transferData');
 
 exports.dataShcema = Joi.object().keys({

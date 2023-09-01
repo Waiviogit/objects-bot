@@ -9,4 +9,5 @@ module.exports = {
   objectOperations: require('./operations/objectOperations'),
   forecastOperations: require('./operations/forecastOperations'),
   customJsonOperations: require('./operations/customJsonOperations'),
+  importVote: require('./operations/importVote'),
 };
