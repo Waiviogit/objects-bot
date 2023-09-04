@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 
 exports.dataShcema = Joi.object().keys({
   id: Joi.string().required(),

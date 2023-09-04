@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 
 exports.createSchema = Joi.object().keys({
@@ -31,3 +31,11 @@ exports.appendSchema = Joi.object().keys({
     }).required(),
   }).required(),
 }).options({ allowUnknown: true });
+
+exports.voteSchema = Joi.object().keys({
+  voter: Joi.string().required(),
+  author: Joi.string().required(),
+  permlink: Joi.string().required(),
+  authorPermlink: Joi.string().required(),
+  fieldType: Joi.string().required(),
+});

@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 
 exports.voteSchema = Joi.object().keys({
   voter: Joi.string().required(),
