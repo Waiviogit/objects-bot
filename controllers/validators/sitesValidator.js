@@ -5,6 +5,7 @@ exports.createWebsite = Joi.object().keys({
   parentHost: Joi.string().required(),
   owner: Joi.string().required(),
   host: Joi.string().required(),
+  advanced: Joi.boolean().default(false),
 }).options({ allowUnknown: true, stripUnknown: true });
 
 exports.deleteWebsite = Joi.object().keys({
