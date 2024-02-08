@@ -7,6 +7,7 @@ const GuestManaSchema = new Schema(
     account: { type: String, required: true },
     mana: { type: Number, required: true },
     lastManaUpdate: { type: Number, default: 0 },
+    importAuthorization: { type: Boolean, default: false },
   },
   {
     timestamps: false,
