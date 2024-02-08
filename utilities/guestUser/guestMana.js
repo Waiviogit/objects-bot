@@ -15,9 +15,12 @@ const MAX_MANA = 1000;
 const regenerationRatePerSecond = 42 / (60 * 60); // 42 mana per hour
 
 const getManaRecord = async (account) => {
+  if (!account.includes('_')) return;
+
   const { result } = await GuestManaModel.findOneByName(account);
   if (result) return result;
-  return GuestManaModel.create({ account, mana: MAX_MANA });
+  const { result: createdDoc } = await GuestManaModel.create({ account, mana: MAX_MANA });
+  return createdDoc;
 };
 
 const updateLastManaUpdateTimestamp = async ({ account, cost }) => {
