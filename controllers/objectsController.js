@@ -39,7 +39,7 @@ const voteForField = async (req, res, next) => {
   if (req.headers.api_key !== process.env.API_KEY) return next({ status: 401, message: 'unauthorized' });
 
   if (!value) return;
-  const { error, result } = await importVote.voteForField(value);
+  const { error, result } = await importVote.voteForField({ ...value, voteRequest: true });
 
   if (error) return next(error);
   res.result = result;
