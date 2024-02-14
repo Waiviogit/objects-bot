@@ -10,6 +10,9 @@ const { sentryCaptureException } = require('../helpers/sentryHelper');
 const { Wobj } = require('../../models');
 const { ARRAY_FIELDS } = require('../../constants/wobjectsData');
 const { getWeightToReject } = require('../waivioApi/apiRequests');
+const { guestVoteJSON } = require('./customJsonOperations');
+const { guestMana } = require('../guestUser');
+const { isGuest } = require('../helpers/userHelper');
 
 const isEven = (number) => number % 2 === 0;
 
@@ -99,10 +102,66 @@ const unvoteOnSameFields = async ({ voter, sameFields, authorPermlink }) => {
   }
 };
 
-exports.voteForField = async ({
-  voter, author, permlink, authorPermlink, fieldType,
+const unvoteOnSameFieldsGuest = async ({ voter, sameFields }) => {
+  for (const field of sameFields) {
+    const activeVote = _.find(
+      field.active_votes,
+      (v) => v.voter === voter,
+    );
+    if (!activeVote) {
+      continue;
+    }
+
+    const weight = 9999;
+
+    await guestVoteJSON({
+      voter,
+      author: field.author,
+      permlink: field.permlink,
+      weight,
+    });
+    await guestMana.consumeMana({
+      account: voter,
+      cost: guestMana.MANA_CONSUMPTION.VOTE,
+    });
+    await new Promise((r) => setTimeout(r, 4000));
+  }
+};
+
+const voteForFieldGuest = async ({
+  voter, author, permlink, authorPermlink, fieldType, voteRequest,
 }) => {
-  // const minVotingPower = await getMinVotingPower({ user: voter });
+  const weight = 10000;
+
+  const sameFields = await getSameFields({ voter, authorPermlink, fieldType });
+  if (!_.isEmpty(sameFields)) {
+    await unvoteOnSameFieldsGuest({ voter, sameFields });
+  }
+
+  await guestVoteJSON({
+    voter,
+    author,
+    permlink,
+    weight,
+  });
+
+  await guestMana.consumeMana({
+    account: voter,
+    cost: voteRequest
+      ? guestMana.MANA_CONSUMPTION.VOTE
+      : guestMana.MANA_CONSUMPTION.FIELD_VOTE,
+  });
+};
+
+exports.voteForField = async ({
+  voter, author, permlink, authorPermlink, fieldType, voteRequest,
+}) => {
+  if (isGuest(voter)) {
+    return voteForFieldGuest({
+      voter, author, permlink, authorPermlink, fieldType, voteRequest,
+    });
+  }
+
   const key = process.env.IMPORT_BOT_KEY;
 
   const powers = await getEnginePowers({ account: voter, symbol: 'WAIV' });
@@ -110,10 +169,7 @@ exports.voteForField = async ({
     await sentryCaptureException(new Error(`voteForField !powers ${voter}`));
     return;
   }
-  // if (powers.votingPower < minVotingPower) {
-  //   await sentryCaptureException(new Error(`voteForField !powers.votingPower < minVotingPower ${voter}`));
-  //   return;
-  // }
+
   const amountUsd = await getVoteAmount({ account: voter });
 
   const amount = await usdToWaiv({ amountUsd });

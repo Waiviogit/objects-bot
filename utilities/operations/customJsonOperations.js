@@ -290,4 +290,4 @@ const errorGenerator = (next) => {
   return next(error);
 };
 
-module.exports = { switcher, accountsSwitcher };
+module.exports = { switcher, accountsSwitcher, guestVoteJSON };
