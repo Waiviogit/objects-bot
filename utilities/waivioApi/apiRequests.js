@@ -42,6 +42,9 @@ exports.getWeightToReject = async ({
       {
         userName, author, permlink, authorPermlink,
       },
+      {
+        timeout: 5000,
+      },
     );
     return _.get(result, 'data.result', 9999);
   } catch (error) {
