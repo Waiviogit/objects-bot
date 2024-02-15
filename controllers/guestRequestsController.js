@@ -22,13 +22,13 @@ const proxyPosting = async (req, res, next) => { // add data to queue
     }
     const actionCost = guestMana.MANA_CONSUMPTION[postOrCommentGuest(comment)];
     const validMP = await guestMana.validateMana({
-      account: comment.userName,
+      account: comment.author,
       cost: actionCost,
     });
 
     if (!validMP) return next(getManaError());
     await guestMana.consumeMana({
-      account: comment.userName,
+      account: comment.author,
       cost: actionCost,
     });
 
