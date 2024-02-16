@@ -34,14 +34,10 @@ const updateOneMana = async ({ account, lastManaUpdate, cost }) => {
     const result = await GuestMana.updateOne({
       account,
     }, {
-      $inc: {
-        mana: -cost,
-      },
-      $min: {
-        mana: 0,
-      },
+      $inc: { mana: -cost },
       lastManaUpdate,
     });
+
     return { result };
   } catch (error) {
     return { error };
