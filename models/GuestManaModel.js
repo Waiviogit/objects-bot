@@ -38,6 +38,13 @@ const updateOneMana = async ({ account, lastManaUpdate, cost }) => {
       lastManaUpdate,
     });
 
+    await GuestMana.updateOne({
+      account,
+    }, {
+      $max: { mana: 0 },
+      lastManaUpdate,
+    });
+
     return { result };
   } catch (error) {
     return { error };
