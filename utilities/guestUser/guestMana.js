@@ -23,9 +23,9 @@ const getManaRecord = async (account) => {
   return createdDoc;
 };
 
-const updateLastManaUpdateTimestamp = async ({ account, cost }) => {
+const updateLastManaUpdateTimestamp = async ({ account, mana }) => {
   const lastManaUpdate = Date.now();
-  await GuestManaModel.updateOneMana({ account, cost, lastManaUpdate });
+  await GuestManaModel.updateOneMana({ account, mana, lastManaUpdate });
 };
 
 // Function to calculate mana regeneration
@@ -54,7 +54,7 @@ const consumeMana = async ({ account = '', cost = MANA_CONSUMPTION.FIELD }) => {
   const currentMana = await getCurrentMana(account);
 
   if (currentMana >= cost) {
-    await updateLastManaUpdateTimestamp({ account, cost });
+    await updateLastManaUpdateTimestamp({ account, mana: currentMana - cost });
     return true;
   }
 };

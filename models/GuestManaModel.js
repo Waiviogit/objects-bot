@@ -29,19 +29,12 @@ const findOneByName = async (account) => {
   }
 };
 
-const updateOneMana = async ({ account, lastManaUpdate, cost }) => {
+const updateOneMana = async ({ account, lastManaUpdate, mana }) => {
   try {
     const result = await GuestMana.updateOne({
       account,
     }, {
-      $inc: { mana: -cost },
-      lastManaUpdate,
-    });
-
-    await GuestMana.updateOne({
-      account,
-    }, {
-      $max: { mana: 0 },
+      mana,
       lastManaUpdate,
     });
 
