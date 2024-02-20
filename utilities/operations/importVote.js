@@ -10,9 +10,10 @@ const { sentryCaptureException } = require('../helpers/sentryHelper');
 const { Wobj } = require('../../models');
 const { ARRAY_FIELDS } = require('../../constants/wobjectsData');
 const { getWeightToReject } = require('../waivioApi/apiRequests');
-const { guestVoteJSON } = require('./customJsonOperations');
+const { accountsSwitcher } = require('./customJsonOperations');
 const { guestMana } = require('../guestUser');
 const { isGuest } = require('../helpers/userHelper');
+const { actionTypes } = require('../../constants');
 
 const isEven = (number) => number % 2 === 0;
 
@@ -36,6 +37,8 @@ const getWeightForVote = async ({ account, votingPower, amount }) => {
     .dividedBy(votingPower)
     .integerValue()
     .toNumber();
+  if (weight === 0) return MAX_VOTING_POWER;
+
   if (weight > MAX_VOTING_POWER) return MAX_VOTING_POWER;
   const evenWeight = isEven(weight);
   return evenWeight ? weight : weight + 1;
@@ -114,12 +117,16 @@ const unvoteOnSameFieldsGuest = async ({ voter, sameFields }) => {
 
     const weight = 9999;
 
-    await guestVoteJSON({
-      voter,
-      author: field.author,
-      permlink: field.permlink,
-      weight,
+    await accountsSwitcher({
+      id: actionTypes.GUEST_VOTE,
+      json: JSON.stringify({
+        voter,
+        author: field.author,
+        permlink: field.permlink,
+        weight,
+      }),
     });
+
     await guestMana.consumeMana({
       account: voter,
       cost: guestMana.MANA_CONSUMPTION.VOTE,
@@ -138,11 +145,14 @@ const voteForFieldGuest = async ({
     await unvoteOnSameFieldsGuest({ voter, sameFields });
   }
 
-  await guestVoteJSON({
-    voter,
-    author,
-    permlink,
-    weight,
+  await accountsSwitcher({
+    id: actionTypes.GUEST_VOTE,
+    json: JSON.stringify({
+      voter,
+      author,
+      permlink,
+      weight,
+    }),
   });
 
   await guestMana.consumeMana({
