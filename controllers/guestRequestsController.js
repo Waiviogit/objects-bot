@@ -47,14 +47,18 @@ const proxyPosting = async (req, res, next) => { // add data to queue
 const proxyCustomJson = async (req, res, next) => {
   const params = req.body;
 
+  const account = params.userName
+      || params?.data?.operations?.[0]?.[1]?.required_posting_auths?.[0]
+      ||params?.data?.operations?.[0]?.[1]?.required_auths?.[0];
+
   const validMP = await guestMana.validateMana({
-    account: params.userName,
+    account,
     cost: guestMana.MANA_CONSUMPTION.CUSTOM_JSON,
   });
 
   if (!validMP) return next(getManaError());
   await guestMana.consumeMana({
-    account: params.userName,
+    account,
     cost: guestMana.MANA_CONSUMPTION.CUSTOM_JSON,
   });
 

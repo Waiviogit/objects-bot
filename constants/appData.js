@@ -12,10 +12,12 @@ module.exports = {
   objectTypeTag: process.env.OBJECT_TYPE_TAG || 'waivio-object-type',
   engineTags: process.env.ENGINE_TAGS ? process.env.ENGINE_TAGS.split(',') : ['waivio'],
   nodeUrls: [
-    'https://api.hive.blog',
+    // 'https://api.hive.blog',
+    'https://api.deathwing.me',
     'https://api.openhive.network',
     'https://anyx.io',
-    'https://hive.roelandp.nl',
-    'https://api.pharesim.me',
+
+  //  'https://hive.roelandp.nl',
+    // 'https://api.pharesim.me',
   ],
 };
