@@ -49,7 +49,8 @@ const proxyCustomJson = async (req, res, next) => {
 
   const account = params.userName
       || params?.data?.operations?.[0]?.[1]?.required_posting_auths?.[0]
-      ||params?.data?.operations?.[0]?.[1]?.required_auths?.[0];
+      ||params?.data?.operations?.[0]?.[1]?.required_auths?.[0]
+      || params?.json?.userId;
 
   const validMP = await guestMana.validateMana({
     account,
