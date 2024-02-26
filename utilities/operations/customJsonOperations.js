@@ -63,10 +63,31 @@ const switcher = async (data, next) => {
         return guestHideContent(data.data.operations[0][1].json, data.id, next);
       }
       return errorGenerator(next);
+    case actionTypes.WEBSITE_GUEST:
+      return guestWebsiteAction(data, next)
+
     default:
       return errorGenerator(next);
   }
 };
+
+const guestWebsiteAction = async ({userName, operation} = {}, next) => {
+
+  const { error } = await authoriseUser.authorise(userName);
+
+  if (error) return next(error);
+
+  const { result, error: broadcastError } = await accountsSwitcher({
+    id: actionTypes.WEBSITE_GUEST,
+    json: JSON.stringify({
+       operation,
+       userName,
+    }),
+  });
+
+  if (broadcastError) return next(broadcastError);
+  return result;
+}
 
 const guestReferralCustomJson = async ({ data, id, next }) => {
   const value = validators.validate(data, validators.customJson.referralSchema, next);

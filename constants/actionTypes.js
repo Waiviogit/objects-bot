@@ -17,4 +17,5 @@ module.exports = {
   GUEST_WOBJ_RATING: 'waivio_guest_wobj_rating',
   GUEST_HIDE_POST: 'waivio_guest_hide_post',
   GUEST_HIDE_COMMENT: 'waivio_guest_hide_comment',
+  WEBSITE_GUEST: 'website_guest',
 };
