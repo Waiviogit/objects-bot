@@ -71,7 +71,7 @@ const switcher = async (data, next) => {
   }
 };
 
-const guestWebsiteAction = async ({userName, operation} = {}, next) => {
+const guestWebsiteAction = async ({userName, data} = {}, next) => {
 
   const { error } = await authoriseUser.authorise(userName);
 
@@ -80,7 +80,7 @@ const guestWebsiteAction = async ({userName, operation} = {}, next) => {
   const { result, error: broadcastError } = await accountsSwitcher({
     id: actionTypes.WEBSITE_GUEST,
     json: JSON.stringify({
-       operation,
+       data,
        userName,
     }),
   });
