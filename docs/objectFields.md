@@ -428,3 +428,12 @@
     },
 ```
 
+## mapObjectsList field:
+```
+   "field": {
+        "name": "affiliateCode" ,
+        "body": string, //author_permlink list object
+        "locale": "string"
+    },
+```
+
