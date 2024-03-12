@@ -19,6 +19,7 @@ module.exports = {
   Mongoose: mongoose,
   models: {
     WObject: require('./schemas/wObjectSchema'),
+    ObjectType: require('./schemas/ObjectTypeSchema'),
     GuestMana: require('./schemas/GuestManaSchema'),
   },
 };

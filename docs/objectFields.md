@@ -359,3 +359,81 @@
     },
 ```
 
+## mapObjectTypes field:
+```
+   const mapObjectTypesBody = JSON.stringify(["restaurant", "hotel"])
+  
+   "field": {
+        "name": "affiliateCode" ,
+        "body": mapObjectTypesBody,
+        "locale": "string"
+    },
+```
+
+## mapObjectTags field:
+```
+   const mapObjectTagsBody = JSON.stringify(["vegeterian", "parking"])
+  
+   "field": {
+        "name": "affiliateCode" ,
+        "body": mapObjectTagsBody,
+        "locale": "string"
+    },
+```
+
+
+## mapMobileView field:
+```
+   const mapMobileViewBody = JSON.stringify({
+        "topPoint" : number[], //ordered first from -180 to 180, second from -90 to 90
+        "bottomPoint" : number[], //ordered first from -180 to 180, second from -90 to 90
+        "center" : number[], //ordered first from -180 to 180, second from -90 to 90
+        "zoom": number // from 1 to 18
+   })
+  
+   "field": {
+        "name": "affiliateCode" ,
+        "body": mapMobileViewBody,
+        "locale": "string"
+    },
+```
+
+## mapDesktopView field:
+```
+   const mapDesktopViewBody = JSON.stringify({
+        "topPoint" : number[], //ordered first from -180 to 180, second from -90 to 90
+        "bottomPoint" : number[], //ordered first from -180 to 180, second from -90 to 90
+        "center" : number[], //ordered first from -180 to 180, second from -90 to 90
+        "zoom": number // from 1 to 18
+   })
+  
+   "field": {
+        "name": "affiliateCode" ,
+        "body": mapDesktopViewBody,
+        "locale": "string"
+    },
+```
+
+## mapRectangles field:
+```
+   const mapRectanglesBody = JSON.stringify([{
+        "topPoint" : number[], //ordered first from -180 to 180, second from -90 to 90
+        "bottomPoint" : number[], //ordered first from -180 to 180, second from -90 to 90
+   }])
+  
+   "field": {
+        "name": "affiliateCode" ,
+        "body": mapRectanglesBody,
+        "locale": "string"
+    },
+```
+
+## mapObjectsList field:
+```
+   "field": {
+        "name": "affiliateCode" ,
+        "body": string, //author_permlink list object
+        "locale": "string"
+    },
+```
+

@@ -6,12 +6,14 @@
     "es6": true
   },
   "parserOptions": {
-    "ecmaVersion": 2021
+    "ecmaVersion": 2020
   },
   "extends": ["airbnb-base" ],
   "rules": {
-    "global-require": 0,
+    "class-methods-use-this": 0,
     "import/no-unresolved": 0,
+    "one-var": 0,
+    "global-require": 0,
     "no-restricted-syntax": 0,
     "no-use-before-define": 0,
     "no-case-declarations": 0,
@@ -20,10 +22,7 @@
     "guard-for-in": 0,
     "no-underscore-dangle": 0,
     "no-unused-expressions": 0,
-    "one-var": 0,
-    "one-var-declaration-per-line": 0,
     "consistent-return": 0,
-    "no-mixed-operators": 0,
     "mocha/no-exclusive-tests": "error",
     "no-negated-in-lhs": 2,
     "default-case": 0,
@@ -32,11 +31,11 @@
     "no-plusplus": 0,
     "no-param-reassign": 0,
     "no-warning-comments": 1,
+    "one-var-declaration-per-line": 0,
     "vars-on-top": 2,
     "no-catch-shadow": 2,
     "handle-callback-err": 1,
     "consistent-this": [ 2, "self" ],
-    "newline-after-var": 0,
     "no-bitwise": 2,
     "no-mixed-spaces-and-tabs": 2,
     "generator-star-spacing": [ 2, { "before": true, "after": false } ]
