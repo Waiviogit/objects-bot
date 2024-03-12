@@ -364,7 +364,7 @@
    const mapObjectTypesBody = JSON.stringify(["restaurant", "hotel"])
   
    "field": {
-        "name": "affiliateCode" ,
+        "name": "mapObjectTypes" ,
         "body": mapObjectTypesBody,
         "locale": "string"
     },
@@ -375,7 +375,7 @@
    const mapObjectTagsBody = JSON.stringify(["vegeterian", "parking"])
   
    "field": {
-        "name": "affiliateCode" ,
+        "name": "mapObjectTags" ,
         "body": mapObjectTagsBody,
         "locale": "string"
     },
@@ -392,7 +392,7 @@
    })
   
    "field": {
-        "name": "affiliateCode" ,
+        "name": "mapMobileView" ,
         "body": mapMobileViewBody,
         "locale": "string"
     },
@@ -408,7 +408,7 @@
    })
   
    "field": {
-        "name": "affiliateCode" ,
+        "name": "mapDesktopView" ,
         "body": mapDesktopViewBody,
         "locale": "string"
     },
@@ -422,7 +422,7 @@
    }])
   
    "field": {
-        "name": "affiliateCode" ,
+        "name": "mapRectangles" ,
         "body": mapRectanglesBody,
         "locale": "string"
     },
@@ -431,8 +431,22 @@
 ## mapObjectsList field:
 ```
    "field": {
-        "name": "affiliateCode" ,
+        "name": "mapObjectsList" ,
         "body": string, //author_permlink list object
+        "locale": "string"
+    },
+```
+## walletAddress field:
+```
+    const walletAddressBody = JSON.stringify({
+        "title" : string
+        "symbol" : string // required
+        "address" : string // required
+   })
+   
+   "field": {
+        "name": "walletAddress" ,
+        "body": walletAddressBody,
         "locale": "string"
     },
 ```
