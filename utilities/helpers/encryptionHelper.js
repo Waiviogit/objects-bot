@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const { de } = require('faker/lib/locales');
 
 const encryptionKeyEnv = Buffer.from(process.env.BOTS_ENCRYPTION_KEY, 'hex');
 
@@ -27,7 +28,14 @@ const decryptData = ({ encryptedData, iv, encryptionKey = encryptionKeyEnv }) =>
   }
 };
 
+const decryptKey = ({ encryptedData, iv }) => {
+  const { result, error } = decryptData({ encryptedData, iv });
+  if (error) return '';
+  return result;
+};
+
 module.exports = {
   encryptData,
   decryptData,
+  decryptKey,
 };

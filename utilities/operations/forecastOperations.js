@@ -4,6 +4,7 @@ const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const handleError = require('utilities/helpers/handleError');
 const { actionTypes } = require('constants/index');
 const config = require('config');
+const { decryptKey } = require('../helpers/encryptionHelper');
 
 const markExpiredForecastOp = async (body) => {
   const accounts = await addBotsToEnv.setEnvData();
@@ -55,7 +56,7 @@ const sendComment = async (data, account) => {
   return hiveOperations.postWithOptions({
     comment: getPostData(data, account, actionTypes.FORECAST_EXPIRED),
     options: await getOptions(data, account, actionTypes.FORECAST_EXPIRED),
-    key: account.postingKey,
+    key: decryptKey(account.postingKey),
   });
 };
 

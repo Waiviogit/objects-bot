@@ -16,9 +16,16 @@ const delActionsData = async (key) => {
 
 const setSubscribe = async (key, subscriber) => redisNotifyClient.saddAsync(key, subscriber);
 
-const setEx = ({
+const setEx = async ({
   key, ttl, value, client = botsClient,
-}) => client.setAsync(key, value, { EX: ttl });
+}) => {
+  try {
+    await client.setAsync(key, value);
+    await client.expireAsync(key, ttl);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 const del = async ({ key, client = botsClient }) => client.delAsync(key);
 
