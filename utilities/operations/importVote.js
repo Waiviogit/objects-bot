@@ -198,16 +198,11 @@ exports.voteForField = async ({
     await unvoteOnSameFields({ voter, sameFields, authorPermlink });
   }
 
-  // await vote({
-  //   voter,
-  //   author,
-  //   permlink,
-  //   weight,
-  //   key,
-  // });
+  await vote({
+    voter,
+    author,
+    permlink,
+    weight,
+    key,
+  });
 };
-
-(async () => {
-  await this.voteForField({voter: 'liubaru1'})
-  console.log()
-})()
