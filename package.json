@@ -9,8 +9,10 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "start": "node --max-old-space-size=400 ./bin/service.js",
+    "start": "node --max-old-space-size=400 --trace-warnings ./bin/service.js",
     "addExposedFieldsToObjectTypes": "node ./utilities/tasks/addExposedFields.js",
+    "generateEncryptionKey": "node ./utilities/tasks/generateEncryptionKey.js",
+    "addServiceKeys": "node ./utilities/tasks/addServiceKeys.js",
     "test": "NODE_ENV=test nyc --reporter=html mocha"
   },
   "dependencies": {

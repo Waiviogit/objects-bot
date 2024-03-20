@@ -1,4 +1,4 @@
-const { actionsDataClient, redisNotifyClient } = require('utilities/redis/redis');
+const { actionsDataClient, redisNotifyClient, botsClient } = require('utilities/redis/redis');
 
 const setActionsData = async (key, data) => {
   try {
@@ -16,8 +16,16 @@ const delActionsData = async (key) => {
 
 const setSubscribe = async (key, subscriber) => redisNotifyClient.saddAsync(key, subscriber);
 
+const setEx = ({
+  key, ttl, value, client = botsClient,
+}) => client.setAsync(key, value, { EX: ttl });
+
+const del = async ({ key, client = botsClient }) => client.delAsync(key);
+
 module.exports = {
   setActionsData,
   delActionsData,
   setSubscribe,
+  setEx,
+  del,
 };
