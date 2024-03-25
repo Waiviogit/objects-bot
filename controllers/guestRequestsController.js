@@ -13,6 +13,9 @@ const proxyPosting = async (req, res, next) => { // add data to queue
   const comment = validationHelper.postingValidator(req.body, next);
   if (!comment) return;
 
+  const validName = validationHelper.appValidation(comment.comment.author);
+  if (!validName) return next({ status: 401, message: 'Forbidden' });
+
   const { error, isValid } = await authoriseUser.authorise(comment.comment.author);
   if (error) return next(error);
   if (isValid) {
@@ -49,8 +52,11 @@ const proxyCustomJson = async (req, res, next) => {
 
   const account = params.userName
       || params?.data?.operations?.[0]?.[1]?.required_posting_auths?.[0]
-      ||params?.data?.operations?.[0]?.[1]?.required_auths?.[0]
+      || params?.data?.operations?.[0]?.[1]?.required_auths?.[0]
       || params?.json?.userId;
+
+  const validName = validationHelper.appValidation(account);
+  if (!validName) return next({ status: 401, message: 'Forbidden' });
 
   const validMP = await guestMana.validateMana({
     account,
