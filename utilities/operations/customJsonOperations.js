@@ -6,6 +6,8 @@ const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const { hiveOperations } = require('utilities/hiveApi');
 const { parseMetadata } = require('utilities/helpers/updateMetadata');
 const authoriseUser = require('utilities/authorazation/authoriseUser');
+const { signCustomJson } = require('../helpers/signatureHelper');
+const jsonHelper = require('../helpers/jsonHelper');
 
 const switcher = async (data, next) => {
   switch (data.id) {
@@ -64,15 +66,14 @@ const switcher = async (data, next) => {
       }
       return errorGenerator(next);
     case actionTypes.WEBSITE_GUEST:
-      return guestWebsiteAction(data, next)
+      return guestWebsiteAction(data, next);
 
     default:
       return errorGenerator(next);
   }
 };
 
-const guestWebsiteAction = async ({userName, data} = {}, next) => {
-
+const guestWebsiteAction = async ({ userName, data } = {}, next) => {
   const { error } = await authoriseUser.authorise(userName);
 
   if (error) return next(error);
@@ -80,14 +81,14 @@ const guestWebsiteAction = async ({userName, data} = {}, next) => {
   const { result, error: broadcastError } = await accountsSwitcher({
     id: actionTypes.WEBSITE_GUEST,
     json: JSON.stringify({
-       data,
-       userName,
+      data,
+      userName,
     }),
   });
 
   if (broadcastError) return next(broadcastError);
   return result;
-}
+};
 
 const guestReferralCustomJson = async ({ data, id, next }) => {
   const value = validators.validate(data, validators.customJson.referralSchema, next);
@@ -143,9 +144,7 @@ const guestCreateJSON = async (data, next) => {
 };
 
 const guestFollowWobjectJSON = async (data, next) => {
-  const value = validators.validate(
-    parseMetadata(data, next), validators.customJson.followWobjSchema, next,
-  );
+  const value = validators.validate(parseMetadata(data, next), validators.customJson.followWobjSchema, next);
 
   if (!value) return;
   const { error, isValid } = await authoriseUser.authorise(value[1].user);
@@ -163,9 +162,7 @@ const guestFollowWobjectJSON = async (data, next) => {
 };
 
 const guestFollowJSON = async (data, next) => {
-  const value = validators.validate(
-    parseMetadata(data, next), validators.customJson.followSchema, next,
-  );
+  const value = validators.validate(parseMetadata(data, next), validators.customJson.followSchema, next);
 
   if (!value) return;
   const { error, isValid } = await authoriseUser.authorise(value[1].follower);
@@ -183,9 +180,7 @@ const guestFollowJSON = async (data, next) => {
 };
 
 const guestReblogJSON = async (data, next) => {
-  const value = validators.validate(
-    parseMetadata(data, next), validators.customJson.reblogSchema, next,
-  );
+  const value = validators.validate(parseMetadata(data, next), validators.customJson.reblogSchema, next);
 
   if (!value) return;
   const { error, isValid } = await authoriseUser.authorise(value[1].account);
@@ -203,9 +198,7 @@ const guestReblogJSON = async (data, next) => {
 };
 
 const guestUpdateAccountJSON = async (data, next) => {
-  const value = validators.validate(
-    parseMetadata(data, next), validators.customJson.updateSchema, next,
-  );
+  const value = validators.validate(parseMetadata(data, next), validators.customJson.updateSchema, next);
 
   if (!value) return;
   const { error, isValid } = await authoriseUser.authorise(value.account);
@@ -224,7 +217,8 @@ const guestUpdateAccountJSON = async (data, next) => {
 const guestRatingWobj = async (data, next) => {
   const value = validators.validate(
     parseMetadata(data, next),
-    validators.customJson.guestRatingSchema, next,
+    validators.customJson.guestRatingSchema,
+    next,
   );
   if (!value) return;
   const { error, isValid } = await authoriseUser.authorise(value.guestName);
@@ -243,7 +237,8 @@ const guestRatingWobj = async (data, next) => {
 const guestHideContent = async (data, id, next) => {
   const value = validators.validate(
     parseMetadata(data, next),
-    validators.customJson.guestHideContentSchema, next,
+    validators.customJson.guestHideContentSchema,
+    next,
   );
   if (!value) return;
   const { error, isValid } = await authoriseUser.authorise(value.guestName);
@@ -260,9 +255,7 @@ const guestHideContent = async (data, id, next) => {
 };
 
 const guestSubscribeNotificationsJSON = async (data, next) => {
-  const value = validators.validate(
-    parseMetadata(data, next), validators.customJson.subscribeNotificationsSchema, next,
-  );
+  const value = validators.validate(parseMetadata(data, next), validators.customJson.subscribeNotificationsSchema, next);
   if (!value) return;
 
   const { error, isValid } = await authoriseUser.authorise(value[1].follower);
@@ -279,12 +272,28 @@ const guestSubscribeNotificationsJSON = async (data, next) => {
   }
 };
 
+const addSignatureToJson = ({ account, id, json }) => {
+  const parsedJson = jsonHelper.parseJson(json, {});
+  parsedJson.signature = signCustomJson({
+    account, id, json,
+  });
+
+  return JSON.stringify(parsedJson);
+};
+
 const accountsSwitcher = async (data, botType = 'proxyBots', customJsonFlag = 'custom_json') => {
   let err;
   const accounts = await addBotsToEnv.setEnvData();
   if (accounts.error) return { error: accounts.error };
   for (let counter = 0; counter < accounts[botType].length; counter++) {
     const account = accounts[botType][config[customJsonFlag].account];
+
+    data.json = addSignatureToJson({
+      account: account.name,
+      id: data.id,
+      json: data.json,
+    });
+
     const { result, error } = await hiveOperations.customJSON({ data, account });
     if (result) {
       config[customJsonFlag].account === accounts[botType].length - 1
