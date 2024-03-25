@@ -21,5 +21,6 @@ module.exports = {
     WObject: require('./schemas/wObjectSchema'),
     ObjectType: require('./schemas/ObjectTypeSchema'),
     GuestMana: require('./schemas/GuestManaSchema'),
+    ServiceBot: require('./schemas/ServiceBotSchema'),
   },
 };

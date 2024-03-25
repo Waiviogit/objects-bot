@@ -1,5 +1,6 @@
 const { broadcastClient, databaseClient } = require('utilities/hiveApi/hiveClient');
 const { PrivateKey } = require('@hiveio/dhive');
+const { decryptKey } = require('../helpers/encryptionHelper');
 
 exports.post = async ({ data, key }) => {
   try {
@@ -12,9 +13,7 @@ exports.post = async ({ data, key }) => {
 exports.postWithOptions = async ({ comment, options, key }) => {
   try {
     return {
-      result: await broadcastClient.broadcast.commentWithOptions(
-        comment, options, PrivateKey.fromString(key),
-      ),
+      result: await broadcastClient.broadcast.commentWithOptions(comment, options, PrivateKey.fromString(key)),
     };
   } catch (error) {
     if (error.message === 'Invalid parameters') {
@@ -35,13 +34,15 @@ exports.sendOperations = async (operations, key) => {
 exports.customJSON = async ({ data, account }) => {
   try {
     return {
-      result: await broadcastClient.broadcast.json({
-        id: data.id,
-        json: data.json,
-        required_auths: [],
-        required_posting_auths: [account.name],
-      },
-      PrivateKey.fromString(account.postingKey)),
+      result: await broadcastClient.broadcast.json(
+        {
+          id: data.id,
+          json: data.json,
+          required_auths: [],
+          required_posting_auths: [account.name],
+        },
+        PrivateKey.fromString(decryptKey(account.postingKey)),
+      ),
     };
   } catch (error) {
     console.error(error.message);
@@ -81,13 +82,15 @@ exports.broadcastJson = async ({
 }) => {
   try {
     return {
-      result: await broadcastClient.broadcast.json({
-        id,
-        json,
-        required_auths,
-        required_posting_auths,
-      },
-      PrivateKey.fromString(key)),
+      result: await broadcastClient.broadcast.json(
+        {
+          id,
+          json,
+          required_auths,
+          required_posting_auths,
+        },
+        PrivateKey.fromString(key),
+      ),
     };
   } catch (error) {
     console.error(error.message);
@@ -99,10 +102,12 @@ exports.vote = async ({
   key, voter, author, permlink, weight,
 }) => {
   try {
-    const result = await broadcastClient.broadcast.vote({
-      voter, author, permlink, weight,
-    },
-    PrivateKey.fromString(key));
+    const result = await broadcastClient.broadcast.vote(
+      {
+        voter, author, permlink, weight,
+      },
+      PrivateKey.fromString(key),
+    );
     return { result };
   } catch (error) {
     return { error };

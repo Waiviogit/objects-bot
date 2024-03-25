@@ -8,6 +8,7 @@ const { actionTypes } = require('constants/index');
 const config = require('config');
 const { MIN_RC } = require('constants/userData');
 const { voteForField } = require('./importVote');
+const { decryptKey } = require('../helpers/encryptionHelper');
 
 const createObjectTypeOp = async (body) => {
   const accounts = await addBotsToEnv.setEnvData();
@@ -23,7 +24,7 @@ const createObjectTypeOp = async (body) => {
     const comment = getPostData(data, account, actionTypes.CREATE_OBJECT_TYPE);
     const options = await getOptions(data, account, actionTypes.CREATE_OBJECT_TYPE);
     const { error: e, result: transactionStatus } = await hiveOperations
-      .postWithOptions({ comment, options, key: account.postingKey });
+      .postWithOptions({ comment, options, key: decryptKey(account.postingKey) });
 
     if (transactionStatus) {
       const payload = {
@@ -163,7 +164,7 @@ const dataPublisher = async ({
   const comment = getPostData(body, account, opType);
   const options = await getOptions(body, account);
   const { error: e, result: transactionStatus } = await hiveOperations
-    .postWithOptions({ comment, options, key: account.postingKey });
+    .postWithOptions({ comment, options, key: decryptKey(account.postingKey) });
 
   return { e, transactionStatus };
 };

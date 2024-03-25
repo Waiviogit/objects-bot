@@ -1,0 +1,7 @@
+[
+   {
+     "name": "example1",
+     "postingKey": "privatePostingKey",
+     "roles": ["serviceBot", "proxyBot", "reviewBot"]
+  }
+]
