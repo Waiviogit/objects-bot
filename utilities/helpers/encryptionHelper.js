@@ -1,7 +1,7 @@
 const crypto = require('crypto');
-const { de } = require('faker/lib/locales');
+const config = require('config');
 
-const encryptionKeyEnv = Buffer.from(process.env.BOTS_ENCRYPTION_KEY, 'hex');
+const encryptionKeyEnv = Buffer.from(config.botsEncryptionKey, 'hex');
 
 // Encrypt the wallet key
 const encryptData = ({ data, encryptionKey = encryptionKeyEnv }) => {

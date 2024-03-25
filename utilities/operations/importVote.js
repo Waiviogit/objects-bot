@@ -1,4 +1,5 @@
 const BigNumber = require('bignumber.js');
+const config = require('config');
 const _ = require('lodash');
 const { vote } = require('../hiveApi/hiveOperations');
 const { getTokenBalances, getRewardPool } = require('../hiveEngine/tokensContract');
@@ -99,7 +100,7 @@ const unvoteOnSameFields = async ({ voter, sameFields, authorPermlink }) => {
       author: field.author,
       permlink: field.permlink,
       weight,
-      key: process.env.IMPORT_BOT_KEY,
+      key: config.importBotKey,
     });
     await new Promise((r) => setTimeout(r, 4000));
   }
@@ -172,8 +173,6 @@ exports.voteForField = async ({
     });
   }
 
-  const key = process.env.IMPORT_BOT_KEY;
-
   const powers = await getEnginePowers({ account: voter, symbol: 'WAIV' });
   if (!powers) {
     await sentryCaptureException(new Error(`voteForField !powers ${voter}`));
@@ -203,6 +202,6 @@ exports.voteForField = async ({
     author,
     permlink,
     weight,
-    key,
+    key: config.importBotKey,
   });
 };

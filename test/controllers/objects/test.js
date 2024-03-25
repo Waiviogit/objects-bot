@@ -7,7 +7,6 @@ const { APPEND_OBJECT, CREATE_OBJECT } = require('constants/actionTypes');
 const { hiveOperations } = require('utilities/hiveApi');
 const requestHelper = require('utilities/helpers/requestHelper');
 const { objectMock, botMock } = require('test/mocks');
-const { nodeUrls } = require('constants/appData');
 const _ = require('lodash');
 const app = require('app');
 

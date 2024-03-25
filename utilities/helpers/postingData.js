@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { orderBy, uniqWith } = require('lodash');
-const { actionTypes, appData } = require('constants/index');
+const { actionTypes } = require('constants/index');
+const config = require('config');
 const requestHelper = require('utilities/helpers/requestHelper');
 
 const getOptions = async (reqData, accData, type) => {
@@ -12,7 +13,7 @@ const getOptions = async (reqData, accData, type) => {
     case actionTypes.FORECAST_EXPIRED:
       beneficiaries = orderBy([
         { weight: 1500, account: accData.name },
-        { weight: 8500, account: appData.appAccName },
+        { weight: 8500, account: config.appAccName },
       ], ['account'], ['asc']);
       break;
     case actionTypes.CREATE_OBJECT:
@@ -21,7 +22,7 @@ const getOptions = async (reqData, accData, type) => {
       const { user: checkForGuest } = await requestHelper.getUser(reqData.author);
       beneficiaries = orderBy(
         uniqWith([
-          { weight: 3000, account: appData.appObjectBeneficiaryAcc },
+          { weight: 3000, account: config.appObjectBeneficiaryAcc },
           {
             weight: 7000,
             account: checkForGuest && checkForGuest.auth ? accData.name : reqData.author,
@@ -46,9 +47,9 @@ const getOptions = async (reqData, accData, type) => {
 const getPostData = (reqData, accData, type) => {
   const appendObjPostData = {};
   const metadata = {
-    app: `${appData.appName}/${appData.version}`,
+    app: `${config.appName}/${config.version}`,
     community: '',
-    tags: [appData.appendObjectTag, ...appData.engineTags],
+    tags: [config.appendObjectTag, ...config.engineTags],
     ...reqData.datafinityObject && { datafinityObject: reqData.datafinityObject },
     ...reqData.importId && { importId: reqData.importId },
   };
@@ -61,7 +62,7 @@ const getPostData = (reqData, accData, type) => {
   switch (type) {
     case actionTypes.CREATE_OBJECT_TYPE:
       appendObjPostData.parent_author = '';
-      appendObjPostData.parent_permlink = appData.objectTypeTag;
+      appendObjPostData.parent_permlink = config.objectTypeTag;
       appendObjPostData.title = `Object Type - ${reqData.objectType}`;
       appendObjPostData.body = `Object Type - ${reqData.objectType} created`;
       metadata.wobj = {

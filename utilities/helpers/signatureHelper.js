@@ -1,7 +1,8 @@
 const { PrivateKey } = require('@hiveio/dhive');
 const crypto = require('crypto');
+const config = require('config');
 
-const signTransaction = ({ trx = '', privateMemoKey = process.env.APP_MEMO_KEY }) => {
+const signTransaction = ({ trx = '', privateMemoKey = config.appMemoKey }) => {
   try {
     // instance of private key
     const key = PrivateKey.fromString(privateMemoKey);
