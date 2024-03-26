@@ -1,4 +1,5 @@
 const validators = require('controllers/validators');
+const config = require('config');
 
 exports.postingValidator = (reqBody, next) => {
   let options, isReview = false;
@@ -25,5 +26,5 @@ exports.postingValidator = (reqBody, next) => {
 
 exports.appValidation = (name = '') => {
   const [app] = name.split('_');
-  return app === process.env.APP_ACCOUNT;
+  return app === config.appAccName;
 };

@@ -3,6 +3,7 @@ const { orderBy, uniqWith } = require('lodash');
 const { actionTypes } = require('constants/index');
 const config = require('config');
 const requestHelper = require('utilities/helpers/requestHelper');
+const { signComment } = require('./signatureHelper');
 
 const getOptions = async (reqData, accData, type) => {
   const optionsData = {};
@@ -44,6 +45,11 @@ const getOptions = async (reqData, accData, type) => {
   return optionsData;
 };
 
+const addSignatureObject = ({ author, permlink }) => ({
+  signature: signComment({ author, permlink }),
+  signer: config.appAccName,
+});
+
 const getPostData = (reqData, accData, type) => {
   const appendObjPostData = {};
   const metadata = {
@@ -67,8 +73,13 @@ const getPostData = (reqData, accData, type) => {
       appendObjPostData.body = `Object Type - ${reqData.objectType} created`;
       metadata.wobj = {
         action: type,
+        creator: reqData.author,
         name: reqData.objectType.trim().toLowerCase(),
       };
+      metadata.signedTrx = addSignatureObject({
+        author: appendObjPostData.author,
+        permlink: appendObjPostData.permlink,
+      });
       break;
     case actionTypes.CREATE_OBJECT:
       appendObjPostData.parent_author = reqData.parentAuthor;
@@ -81,6 +92,10 @@ const getPostData = (reqData, accData, type) => {
         is_extending_open: Boolean(reqData.isExtendingOpen),
         locale: reqData.locale,
       };
+      metadata.signedTrx = addSignatureObject({
+        author: appendObjPostData.author,
+        permlink: appendObjPostData.permlink,
+      });
       break;
     case actionTypes.APPEND_OBJECT:
       appendObjPostData.parent_author = reqData.parentAuthor;
@@ -90,6 +105,10 @@ const getPostData = (reqData, accData, type) => {
         creator: reqData.author,
         field: reqData.field,
       };
+      metadata.signedTrx = addSignatureObject({
+        author: appendObjPostData.author,
+        permlink: appendObjPostData.permlink,
+      });
       break;
     case actionTypes.FORECAST_EXPIRED:
       appendObjPostData.parent_author = reqData.parentAuthor;

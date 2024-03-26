@@ -274,10 +274,16 @@ const guestSubscribeNotificationsJSON = async (data, next) => {
 
 const addSignatureToJson = ({ account, id, json }) => {
   const parsedJson = jsonHelper.parseJson(json, {});
-  parsedJson.signature = signCustomJson({
+  const signature = signCustomJson({
     account, id, json,
   });
 
+  if (Array.isArray(parsedJson)) {
+    parsedJson.push(signature);
+    return JSON.stringify(parsedJson);
+  }
+
+  parsedJson.signature = signature;
   return JSON.stringify(parsedJson);
 };
 
