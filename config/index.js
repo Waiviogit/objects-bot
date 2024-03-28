@@ -34,8 +34,19 @@ const commonConfig = {
   ],
 };
 
-module.exports = {
+const configObject = {
   ...config,
   ...envConfig,
   ...commonConfig,
 };
+
+/// freeze env and common config but leave fields from json because of counters
+[...Object.keys(envConfig), ...Object.keys(commonConfig)].forEach(((field) => {
+  Object.defineProperty(configObject, field, {
+    value: configObject[field],
+    writable: false,
+    configurable: false,
+  });
+}));
+
+module.exports = configObject;
