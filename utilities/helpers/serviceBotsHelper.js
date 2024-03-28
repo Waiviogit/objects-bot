@@ -1,6 +1,5 @@
 const { ServiceBotsModel } = require('models');
 const { cachedFunc } = require('./cacheHelper');
-const { decryptKey } = require('./encryptionHelper');
 
 const getServiceBots = async () => {
   const { result, error } = await ServiceBotsModel.getAllServiceBots();

@@ -6,6 +6,7 @@ const BigNumber = require('bignumber.js');
 const _ = require('lodash');
 const axios = require('axios');
 const Web3 = require('web3');
+const config = require('config');
 const { validateBalanceRequest, engineBroadcast } = require('./transferOperation');
 const { getTokenBalances } = require('../hiveEngine/tokensContract');
 
@@ -213,7 +214,7 @@ exports.withdraw = async ({ account, data }) => {
     quantity, inputSymbol, outputSymbol, address,
   } = data;
   const validHotAccBalance = await validateEngineBalance({
-    account: process.env.GUEST_HOT_ACC, symbol: inputSymbol, quantity,
+    account: config.guestHotAccount, symbol: inputSymbol, quantity,
   });
   if (!validHotAccBalance) return { error: { message: 'not sufficient balance' } };
 
@@ -239,7 +240,7 @@ exports.withdraw = async ({ account, data }) => {
   if (errWithdrawData) return { error: errWithdrawData };
   const customJsonPayload = [...swapJson, withdraw];
   const { result, error: broadcastError } = await engineBroadcast({
-    account: { name: process.env.GUEST_HOT_ACC, key: process.env.GUEST_HOT_KEY },
+    account: { name: config.guestHotAccount, key: config.guestHotKey },
     operations: customJsonPayload,
   });
 

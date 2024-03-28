@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const config = require('config');
 const { ServiceBot } = require('../../database').models;
 const serviceKeys = require('../../serviceKeys.json');
 const { encryptData } = require('../helpers/encryptionHelper');
@@ -58,7 +59,7 @@ const addServiceKeys = async (encryptionKey) => {
 };
 
 (async () => {
-  const encryptionKey = process.argv[2] || process.env.BOTS_ENCRYPTION_KEY;
+  const encryptionKey = process.argv[2] || config.botsEncryptionKey;
   await addServiceKeys(encryptionKey);
   process.exit();
 })();

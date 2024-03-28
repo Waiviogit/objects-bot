@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
 const config = require('config');
 
-const URI = process.env.MONGO_URI_WAIVIO
-  ? process.env.MONGO_URI_WAIVIO
-  : `mongodb://${config.db.host}:${config.db.port}/${config.db.database}`;
-
-mongoose.connect(URI, {
+mongoose.connect(config.mongoConnectionString, {
   useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true,
 })
   .then(() => console.log('connection successful!'))

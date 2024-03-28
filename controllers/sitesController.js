@@ -1,11 +1,12 @@
 const validators = require('controllers/validators');
 const sitesHelper = require('utilities/helpers/sitesHelper');
 const { CREATE_WEBSITE, DELETE_WEBSITE, SEND_INVOICE } = require('constants/sitesConstants');
+const config = require('config');
 
 exports.sendCreateSite = async (req, res, next) => {
   const value = validators.validate(req.body, validators.sites.createWebsite, next);
   if (!value) return;
-  if (req.headers.api_key !== process.env.API_KEY) return next({ status: 401, message: 'unauthorized' });
+  if (req.headers.api_key !== config.apiKey) return next({ status: 401, message: 'unauthorized' });
   const { result, error } = await sitesHelper.websiteActions(value, CREATE_WEBSITE);
 
   if (error) return next(error);
@@ -17,7 +18,7 @@ exports.sendCreateSite = async (req, res, next) => {
 exports.sendRemoveSite = async (req, res, next) => {
   const value = validators.validate(req.body, validators.sites.deleteWebsite, next);
   if (!value) return;
-  if (req.headers.api_key !== process.env.API_KEY) return next({ status: 401, message: 'unauthorized' });
+  if (req.headers.api_key !== config.apiKey) return next({ status: 401, message: 'unauthorized' });
   const { result, error } = await sitesHelper.websiteActions(value, DELETE_WEBSITE);
 
   if (error) return next(error);
@@ -29,7 +30,7 @@ exports.sendRemoveSite = async (req, res, next) => {
 exports.sendInvoice = async (req, res, next) => {
   const value = validators.validate(req.body, validators.sites.sendInvoice, next);
   if (!value) return;
-  if (req.headers.api_key !== process.env.API_KEY) return next({ status: 401, message: 'unauthorized' });
+  if (req.headers.api_key !== config.apiKey) return next({ status: 401, message: 'unauthorized' });
 
   const { result, error } = await sitesHelper.websiteActions(value, SEND_INVOICE);
 

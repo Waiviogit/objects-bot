@@ -5,6 +5,8 @@ const addBotsToEnv = require('utilities/helpers/serviceBotsHelper');
 const apiRequests = require('utilities/waivioApi/apiRequests');
 const { hiveOperations } = require('utilities/hiveApi');
 const { decryptKey } = require('./encryptionHelper');
+const jsonHelper = require('./jsonHelper');
+const { signComment } = require('./signatureHelper');
 
 const commentFinder = async (author, permlink) => {
   const { post } = await apiRequests.getPost({ author, permlink });
@@ -13,29 +15,37 @@ const commentFinder = async (author, permlink) => {
   }
 };
 
+const addSignatureToJsonMetadata = ({ jsonMetadata, author, permlink }) => {
+  const json = jsonHelper.parseJson(jsonMetadata, {});
+  json.signature = signComment({ author, permlink });
+
+  return JSON.stringify(json);
+};
+
 const switcher = async (message, account) => {
   const { result: postingData } = await redisGetter.getAllHashData(message);
-  let parsedData, parsedMetadata;
   if (!postingData) return { error: { message: 'No data from redis' } };
-  try {
-    parsedData = JSON.parse(postingData);
-    // check post to exists in base, if exist -> it is update
-    if (!parsedData.comment.parent_author) {
-      const checkInBase = await commentFinder(parsedData.comment.author, parsedData.comment.permlink);
-      // if author exists - we need to update post
-      if (_.has(checkInBase, 'author')) return await updateHelper(checkInBase.author, parsedData.comment);
-    }
-    // if in post data from redis exists special flag - it is comment for update
-    if (parsedData.comment.parent_author && parsedData.comment.guest_root_author) {
-      return await updateHelper(parsedData.comment.guest_root_author, _.omit(parsedData.comment, ['guest_root_author']));
-    }
-    parsedMetadata = JSON.parse(parsedData.comment.json_metadata);
-  } catch (e) {
-    return { error: e };
+  const parsedData = jsonHelper.parseJson(postingData);
+
+  parsedData.comment.json_metadata = addSignatureToJsonMetadata({
+    jsonMetadata: parsedData?.comment?.json_metadata,
+    author: account.name,
+    permlink: parsedData?.comment?.permlink,
+  });
+
+  // check post to exists in base, if exist -> it is update
+  if (!parsedData.comment.parent_author) {
+    const checkInBase = await commentFinder(parsedData.comment.author, parsedData.comment.permlink);
+    // if author exists - we need to update post
+    if (_.has(checkInBase, 'author')) return updateHelper(checkInBase.author, parsedData.comment);
   }
+  // if in post data from redis exists special flag - it is comment for update
+  if (parsedData.comment.parent_author && parsedData.comment.guest_root_author) {
+    return updateHelper(parsedData.comment.guest_root_author, _.omit(parsedData.comment, ['guest_root_author']));
+  }
+
   const post = parsedData.comment;
   console.info(`Try to create comment by | ${account.name}`);
-  const app = chooseApp(parsedMetadata.app);
   const guestAuthor = _.cloneDeep(post.author);
   // Prepare comment body
   post.body = `${post.body}<hr/><center><a href="/${await permlinkGenerator(post, account, guestAuthor)}">Posted</a> by Waivio guest: <a href="/@${post.author}">@${post.author}</a></center>`;
@@ -94,19 +104,6 @@ const permlinkGenerator = async (post, account, guest) => {
   return post.parent_author
     ? `@${_.get(metadata, 'comment.userId', post.parent_author)}/${post.parent_permlink}#@${guest}/${post.permlink}`
     : `@${guest}/${post.permlink}`;
-};
-
-const chooseApp = (app) => {
-  if (new RegExp(/waivio/).test(app)) {
-    return 'www.waivio.com';
-  }
-  if (new RegExp(/investarena/).test(app)) {
-    return 'www.investarena.com';
-  }
-  if (new RegExp(/beaxy/).test(app)) {
-    return 'crypto.investarena.com';
-  }
-  return 'waivio';
 };
 
 module.exports = { switcher };

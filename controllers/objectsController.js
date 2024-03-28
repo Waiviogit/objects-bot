@@ -1,5 +1,6 @@
 const { objectOperations, importVote } = require('utilities');
 const validators = require('controllers/validators');
+const config = require('config');
 
 const processCreateObjectType = async (req, res, next) => {
   if (!req.body.objectType) {
@@ -36,7 +37,7 @@ const processAppendObject = async (req, res, next) => {
 
 const voteForField = async (req, res, next) => {
   const value = validators.validate(req.body, validators.object.voteSchema, next);
-  if (req.headers.api_key !== process.env.API_KEY) return next({ status: 401, message: 'unauthorized' });
+  if (req.headers.api_key !== config.apiKey) return next({ status: 401, message: 'unauthorized' });
 
   if (!value) return;
   const { error, result } = await importVote.voteForField({ ...value, voteRequest: true });

@@ -5,6 +5,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('swagger/swagger.json');
 const Sentry = require('@sentry/node');
 const Tracing = require('@sentry/tracing');
+const config = require('config');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 
 const { routes } = require('routes');
@@ -13,8 +14,8 @@ const app = express();
 const { createNamespace } = require('cls-hooked');
 
 Sentry.init({
-  environment: process.env.NODE_ENV,
-  dsn: process.env.SENTRY_DNS,
+  environment: config.environment,
+  dsn: config.sentryDsn,
   integrations: [
     // enable HTTP calls tracing
     new Sentry.Integrations.Http({ tracing: true }),
@@ -70,7 +71,7 @@ app.use((err, req, res, next) => {
   // render the error page
   res.status(err.status || 500).json({ message: err.message });
 });
-if (process.env.NODE_ENV !== 'test') {
+if (config.environment !== 'test') {
   job.runPosts();
   job.runComments();
   job.runReviews();

@@ -1,7 +1,9 @@
 const _ = require('lodash');
 const { orderBy, uniqWith } = require('lodash');
-const { actionTypes, appData } = require('constants/index');
+const { actionTypes } = require('constants/index');
+const config = require('config');
 const requestHelper = require('utilities/helpers/requestHelper');
+const { signComment } = require('./signatureHelper');
 
 const getOptions = async (reqData, accData, type) => {
   const optionsData = {};
@@ -12,7 +14,7 @@ const getOptions = async (reqData, accData, type) => {
     case actionTypes.FORECAST_EXPIRED:
       beneficiaries = orderBy([
         { weight: 1500, account: accData.name },
-        { weight: 8500, account: appData.appAccName },
+        { weight: 8500, account: config.appAccName },
       ], ['account'], ['asc']);
       break;
     case actionTypes.CREATE_OBJECT:
@@ -21,7 +23,7 @@ const getOptions = async (reqData, accData, type) => {
       const { user: checkForGuest } = await requestHelper.getUser(reqData.author);
       beneficiaries = orderBy(
         uniqWith([
-          { weight: 3000, account: appData.appObjectBeneficiaryAcc },
+          { weight: 3000, account: config.appObjectBeneficiaryAcc },
           {
             weight: 7000,
             account: checkForGuest && checkForGuest.auth ? accData.name : reqData.author,
@@ -43,12 +45,17 @@ const getOptions = async (reqData, accData, type) => {
   return optionsData;
 };
 
+const addSignatureObject = ({ author, permlink }) => ({
+  signature: signComment({ author, permlink }),
+  signer: config.appAccName,
+});
+
 const getPostData = (reqData, accData, type) => {
   const appendObjPostData = {};
   const metadata = {
-    app: `${appData.appName}/${appData.version}`,
+    app: `${config.appName}/${config.version}`,
     community: '',
-    tags: [appData.appendObjectTag, ...appData.engineTags],
+    tags: [config.appendObjectTag, ...config.engineTags],
     ...reqData.datafinityObject && { datafinityObject: reqData.datafinityObject },
     ...reqData.importId && { importId: reqData.importId },
   };
@@ -61,13 +68,18 @@ const getPostData = (reqData, accData, type) => {
   switch (type) {
     case actionTypes.CREATE_OBJECT_TYPE:
       appendObjPostData.parent_author = '';
-      appendObjPostData.parent_permlink = appData.objectTypeTag;
+      appendObjPostData.parent_permlink = config.objectTypeTag;
       appendObjPostData.title = `Object Type - ${reqData.objectType}`;
       appendObjPostData.body = `Object Type - ${reqData.objectType} created`;
       metadata.wobj = {
         action: type,
+        creator: reqData.author,
         name: reqData.objectType.trim().toLowerCase(),
       };
+      metadata.signedTrx = addSignatureObject({
+        author: appendObjPostData.author,
+        permlink: appendObjPostData.permlink,
+      });
       break;
     case actionTypes.CREATE_OBJECT:
       appendObjPostData.parent_author = reqData.parentAuthor;
@@ -80,6 +92,10 @@ const getPostData = (reqData, accData, type) => {
         is_extending_open: Boolean(reqData.isExtendingOpen),
         locale: reqData.locale,
       };
+      metadata.signedTrx = addSignatureObject({
+        author: appendObjPostData.author,
+        permlink: appendObjPostData.permlink,
+      });
       break;
     case actionTypes.APPEND_OBJECT:
       appendObjPostData.parent_author = reqData.parentAuthor;
@@ -89,6 +105,10 @@ const getPostData = (reqData, accData, type) => {
         creator: reqData.author,
         field: reqData.field,
       };
+      metadata.signedTrx = addSignatureObject({
+        author: appendObjPostData.author,
+        permlink: appendObjPostData.permlink,
+      });
       break;
     case actionTypes.FORECAST_EXPIRED:
       appendObjPostData.parent_author = reqData.parentAuthor;
