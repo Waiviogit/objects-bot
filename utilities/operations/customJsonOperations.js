@@ -305,6 +305,7 @@ const accountsSwitcher = async (data, botType = 'proxyBots', customJsonFlag = 'c
       config[customJsonFlag].account === accounts[botType].length - 1
         ? config[customJsonFlag].account = 0
         : config[customJsonFlag].account += 1;
+      console.log(`[Custom_Json] ${result.id}`);
       return { result };
     } if (error && regExp.steemErrRegExp.test(error.message)) {
       config[customJsonFlag].account === accounts[botType].length - 1
