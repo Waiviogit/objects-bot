@@ -70,6 +70,7 @@ const FIELDS_NAMES = {
   MAP_DESKTOP_VIEW: 'mapDesktopView',
   MAP_OBJECTS_LIST: 'mapObjectsList',
   WALLET_ADDRESS: 'walletAddress',
+  ADMIN_ASSIGNED: 'adminAssigned',
 };
 
 const ARRAY_FIELDS = [
@@ -103,6 +104,7 @@ const MAIN_FIELDS = [
   FIELDS_NAMES.TITLE,
   FIELDS_NAMES.DESCRIPTION,
   FIELDS_NAMES.BACKGROUND,
+  FIELDS_NAMES.ADMIN_ASSIGNED,
 ];
 
 const MAP_TYPE_FIELDS = [

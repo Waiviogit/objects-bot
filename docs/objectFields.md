@@ -451,3 +451,12 @@
     },
 ```
 
+## adminAssigned field:
+```
+   "field": {
+        "name": "adminAssigned" ,
+        "body": "string", //name of account that assigned as admin
+        "locale": "string"
+    },
+```
+
