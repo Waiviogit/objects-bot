@@ -451,10 +451,10 @@
     },
 ```
 
-## adminAssigned field:
+## delegation field:
 ```
    "field": {
-        "name": "adminAssigned" ,
+        "name": "delegation" ,
         "body": "string", //name of account that assigned as admin
         "locale": "string"
     },

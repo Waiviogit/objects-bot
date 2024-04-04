@@ -70,7 +70,7 @@ const FIELDS_NAMES = {
   MAP_DESKTOP_VIEW: 'mapDesktopView',
   MAP_OBJECTS_LIST: 'mapObjectsList',
   WALLET_ADDRESS: 'walletAddress',
-  ADMIN_ASSIGNED: 'adminAssigned',
+  DELEGATION: 'delegation',
 };
 
 const ARRAY_FIELDS = [
