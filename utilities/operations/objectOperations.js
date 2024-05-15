@@ -6,7 +6,6 @@ const handleError = require('utilities/helpers/handleError');
 const { hiveOperations } = require('utilities/hiveApi');
 const { actionTypes } = require('constants/index');
 const config = require('config');
-const { MIN_RC } = require('constants/userData');
 const { voteForField } = require('./importVote');
 const { decryptKey } = require('../helpers/encryptionHelper');
 
@@ -56,7 +55,11 @@ const createObjectOp = async (body) => {
   for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
     const account = accounts.serviceBots[config.objects.account];
     const { e, transactionStatus } = await dataPublisher({
-      accounts, account, body: updBody, opType: actionTypes.CREATE_OBJECT,
+      accounts,
+      account,
+      body: updBody,
+      opType: actionTypes.CREATE_OBJECT,
+      fromImport: !!body.datafinityObject,
     });
     if (e === 'Not enough mana') continue;
     if (transactionStatus) {
@@ -100,7 +103,11 @@ const AppendObjectOp = async (body) => {
   for (let counter = 0; counter < accounts.serviceBots.length; counter++) {
     const account = accounts.serviceBots[config.objects.account];
     const { e, transactionStatus } = await dataPublisher({
-      accounts, account, body: updBody, opType: actionTypes.APPEND_OBJECT,
+      accounts,
+      account,
+      body: updBody,
+      opType: actionTypes.APPEND_OBJECT,
+      fromImport: !!body.importingAccount,
     });
     if (transactionStatus && body.importingAccount) {
       await voteForField({
@@ -151,9 +158,15 @@ const publishHelper = async (body) => {
 };
 
 const dataPublisher = async ({
-  account, body, opType, accounts,
+  account, body, opType, accounts, fromImport,
 }) => {
-  if (await hiveOperations.getAccountRC(account.name) < MIN_RC) {
+  const minPercentToBroadcast = fromImport
+    ? 7500
+    : 7000;
+
+  const { result: percentRc } = await hiveOperations.getAccountRCPercentage(account.name);
+
+  if (percentRc <= minPercentToBroadcast) {
     config.objects.account === accounts.serviceBots.length - 1
       ? config.objects.account = 0
       : config.objects.account += 1;
