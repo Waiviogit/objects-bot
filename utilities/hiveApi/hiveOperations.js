@@ -73,6 +73,15 @@ exports.getAccountRC = async (accountName) => {
   }
 };
 
+exports.getAccountRCPercentage = async (accountName) => {
+  try {
+    const result = await databaseClient.rc.getRCMana(accountName);
+    return { result: result.percentage };
+  } catch (error) {
+    return { error };
+  }
+};
+
 exports.broadcastJson = async ({
   id = 'ssc-mainnet-hive',
   json,
