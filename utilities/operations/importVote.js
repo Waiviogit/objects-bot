@@ -51,6 +51,11 @@ const getVoteAmount = async ({ account }) => {
   return VOTE_COST.USUAL;
 };
 
+const isUserInWhitelist = async ({ account }) => {
+  const whitelist = await smembersAsync({ key: WHITE_LIST_KEY });
+  return _.includes(whitelist, account);
+};
+
 const getMinVotingPower = async ({ user }) => {
   const result = await get({
     key: `${IMPORT_REDIS_KEYS.MIN_POWER}:${user}`,
@@ -167,6 +172,8 @@ const voteForFieldGuest = async ({
 exports.voteForField = async ({
   voter, author, permlink, authorPermlink, fieldType, voteRequest,
 }) => {
+  if (await isUserInWhitelist({ account: voter })) return;
+
   if (isGuest(voter)) {
     return voteForFieldGuest({
       voter, author, permlink, authorPermlink, fieldType, voteRequest,
