@@ -1,16 +1,28 @@
-# What is object?
+- [What is an object?](https://github.com/Waiviogit/waivio/wiki/Draft-about-object)
+- [How does it work?](https://github.com/Waiviogit/waivio/wiki/Draft-about-object#how-does-it-work)
+- [Object types and general list of fields](https://github.com/Waiviogit/waivio/wiki/Draft-about-object#how-does-it-work)
+- [General payload for adding an update-field](https://github.com/Waiviogit/waivio/wiki/Draft-about-object#general-payload-for-adding-a-field)
+  - [Template](https://github.com/Waiviogit/waivio/wiki/Draft-about-object#template)
+  - [Details](https://github.com/Waiviogit/waivio/wiki/Draft-about-object#details)
+  - [Example](https://github.com/Waiviogit/waivio/wiki/Draft-about-object#example)
+- ["field" detailed information](https://github.com/Waiviogit/waivio/wiki/Draft-about-object#field-detailed-information)
+
+
+
+# What is an object?
 An **object** on Waivio is a user-created entity such as a restaurant, hashtag, business, product, etc.,  which is given a unique URL (permlink) on the Hive blockchain. It serves as a specific reference point that can be linked to posts and contributes to the structured accumulation of knowledge within the Waivio and Hive ecosystem.
 
-# How it works?
+# How does it work?
 Simplified concept: The object type is a post, and each first-level comment under it is an object. Second-level comments and beyond are its updates. Users add updates through our bots and vote for them; updates with the most votes win.
 
 
 # Object types
 Object types that you might be interested in include: product, book, business, restaurant, list, and page. 
 
-Each of these types has a list of fields, which is the information that can be added to each object.
+Each of these types has a list of fields, which represents the information that can be added to each object.
 
-## List of fields that the user can add for each object type
+
+**List of fields that the user can add for each object type:**
 
 |Object type|Fields |
 |---|---|
@@ -25,8 +37,14 @@ Each of these types has a list of fields, which is the information that can be a
 
 
 
-# Add field general payload
+# General payload for adding an update-field
 Request – /objects-bot/append-object
+
+* Field or update (noun), or field-update, the same thing with the same meaning, can be called interchangeably.
+
+
+[Here Simplified Document with Requests Only](https://github.com/Waiviogit/objects-bot/blob/dev/docs/objectFields.md)
+
 
 ### Template:
 ```
@@ -80,8 +98,8 @@ Request – /objects-bot/append-object
 ***
 
 
-# Field detailed information
-Now, when you know main details about how to make request to add updates-field, know you can read about each specif field in details.
+# "field" detailed information
+Now, when you know main details about how to make request to add update-field, know you can read about each specif field in details.
 
 
 ## address
