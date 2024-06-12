@@ -7,6 +7,10 @@ const processCreateObjectType = async (req, res, next) => {
     console.error(`ERR[CreateObjectType] Invalid request data: ${JSON.stringify(req.body)}`);
     return next({ status: 422, message: 'Not enough data' });
   }
+  if (!req.body.key !== config.objectTypeKey) {
+    console.error(`ERR[CreateObjectType] Invalid request data: ${JSON.stringify(req.body)}`);
+    return next({ status: 401, message: 'Not allowed' });
+  }
   const { error, result } = await objectOperations.createObjectTypeOp(req.body);
 
   if (error) return next(error);
