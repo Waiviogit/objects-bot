@@ -1,11 +1,55 @@
-- [What is an object?](https://github.com/Waiviogit/waivio/wiki/Draft-about-object)
-- [How does it work?](https://github.com/Waiviogit/waivio/wiki/Draft-about-object#how-does-it-work)
-- [Object types and general list of fields](https://github.com/Waiviogit/waivio/wiki/Draft-about-object#how-does-it-work)
-- [General payload for adding an update-field](https://github.com/Waiviogit/waivio/wiki/Draft-about-object#general-payload-for-adding-a-field)
-  - [Template](https://github.com/Waiviogit/waivio/wiki/Draft-about-object#template)
-  - [Details](https://github.com/Waiviogit/waivio/wiki/Draft-about-object#details)
-  - [Example](https://github.com/Waiviogit/waivio/wiki/Draft-about-object#example)
-- ["field" detailed information](https://github.com/Waiviogit/waivio/wiki/Draft-about-object#field-detailed-information)
+- [What is an object?](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#what-is-an-object)
+- [How does it work?](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#how-does-it-work)
+- [Object types and general list of fields](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#object-types)
+- [General payload for adding an update-field](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#general-payload-for-adding-an-update-field)
+  - [Template](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#template)
+  - [Details](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#details)
+  - [Example](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#details)
+- ["field" detailed information](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#details)
+  - [address](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#address)
+  - [addOn](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#addon)
+  - [authority](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#authority)
+  - [avatar](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#avatar)
+  - [background](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#background)
+  - [brand](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#brand)
+  - [categoryItem](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#categoryitem)
+  - [companyId](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#companyid)
+  - [delegation](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#delegation)
+  - [description](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#description)
+  - [dimensions](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#dimensions)
+  - [departments](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#departments)
+  - [email](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#email)
+  - [features](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#features)
+  - [galleryAlbum](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#galleryalbum)
+  - [galleryItem](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#galleryitem)
+  - [groupId](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#groupid)
+  - [listItem](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#listitem)
+  - [map](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#map)
+  - [manufacturer](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#manufacturer)
+  - [menuItem](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#menuitem)
+  - [merchant](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#merchant)
+  - [name](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#name)
+  - [options](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#options)
+  - [pageContent](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#pagecontent)
+  - [parent](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#parent)
+  - [phone](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#phone)
+  - [pin](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#pin)
+  - [price](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#price)
+  - [productId](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#productid)
+  - [productWeight](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#productweight)
+  - [rating](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#rating)
+  - [related](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#related)
+  - [remove](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#remove)
+  - [similar](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#similar)
+  - [sortCustom](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#sortcustom)
+  - [status](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#status)
+  - [tagCategory](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#tagcategory)
+  - [title](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#title)
+  - [walletAddress](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#walletaddress)
+  - [website](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#website)
+  - [workTime](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#worktime)
+- [Additional information]()
+
 
 
 
@@ -99,7 +143,7 @@ Request – /objects-bot/append-object
 
 
 # "field" detailed information
-Now, when you know main details about how to make request to add update-field, know you can read about each specif field in details.
+Now, when you know main details about how to make request to add update-field, here you can read about each specif field in details.
 
 
 ## address
@@ -885,3 +929,6 @@ This field is used to add a working hours information.
   "locale": "en-US"
 }
 ```
+
+# Additional information
+- [Simplified Document with Requests Only](https://github.com/Waiviogit/objects-bot/blob/dev/docs/objectFields.md)
