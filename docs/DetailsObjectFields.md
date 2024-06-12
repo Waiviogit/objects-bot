@@ -86,10 +86,12 @@ Now, when you know main details about how to make request to add updates-field, 
 
 ## address
 Field for adding an address.
+
 `body` - includes information from all fields: address, street, city, state, postalCode, country.
 
 ```
-"field": {
+// example
+{
   "name": "address",
   "body": "{\"address\":\"testFullAddress\",\"street\":\"testStreet\",\"city\":\"testCity\",\"state\":\"testState\",\"postalCode\":\"testPostalCode1111\",\"country\":\"testCountry\"}",
   "locale": "en-US"
@@ -99,12 +101,14 @@ Field for adding an address.
 
 
 
-## addon
+## addOn
 The add-on field is for including additional objects that users might find interesting, providing a way to connect one object with another.
+
 `body` - object permlink of the object that will be added.
 
 ```
-"field": {
+// example
+{
   "name": "addOn",
   "body": "hfa-test-product-14031521",
   "locale": "en-US"
@@ -126,7 +130,8 @@ For example, a manufacturer posted descriptions of its products on the Hive bloc
 `body` - has two options: administrative, ownership.
 
 ```
-"field": {
+// example
+{
     "name": "authority",
     "body": "ownership",
     "locale": "en-US"
@@ -143,7 +148,8 @@ The field to add the avatar for the object.
 `id` - ID of album.
 
 ```
-"field": {
+// example
+{
   "name": "avatar",
   "body": "https://waivio.nyc3.digitaloceanspaces.com/666b0f5e8112c9786543b51f87297537657ab8425e74ff2df2736e9216e99d77",
   "locale": "en-US",
@@ -159,7 +165,8 @@ The field to add the background image for the object.
 
 
 ```
-"field": {
+// example
+{
   "name": "background",
   "body": "https://waivio.nyc3.digitaloceanspaces.com/23dec65bb8f56b2979a5c50be6d79cbe59ce39f3466544e0b5af46f72f282568",
   "locale": "en-US"
@@ -180,8 +187,8 @@ const brandBody = JSON.stringify({
         "authorPermlink" : string // required
 })
 
-
-"field": {
+// example
+{
   "name": "brand",
   "body": "{\"name\":\"brand name\",\"authorPermlink\":\"fcs-test-brand-02021105\"}",
   "locale": "en-US"
@@ -190,15 +197,18 @@ const brandBody = JSON.stringify({
 
 ```
 
-## categoryitem
+## categoryItem
 This field is used to add a tag. The tag requires a Tag category (tagCategory) where it will be added, allowing us to categorize tags. Tags are objects with a hashtag type.
 
 `body` - the permalink of the "hashtag" object.
+
 `id` - tag category ID.
+
 `tagCategory` - tag category name.
 
 ```
-"field": {
+// example
+{
     "name": "categoryItem",
     "body": "testing",
     "locale": "en-US",
@@ -207,7 +217,7 @@ This field is used to add a tag. The tag requires a Tag category (tagCategory) w
 }
 ```
 
-### companyId
+## companyId
 The field to add company ID. 
 
 `body` - stringified object, which contains the following fields: "companyId" (the ID value) and "companyIdType" (the type value). Both fields type: string. 
@@ -219,7 +229,8 @@ const companyIdBody = JSON.stringify({
         companyIdType: "string",
     })
 
-"field": {
+// example
+{
   "name": "companyId",
   "body": "{\"companyIdType\":\"TEST\",\"companyId\":\"11111\"}",
   "locale": "en-US"
@@ -232,7 +243,8 @@ The field to assign a user to delegate exclusive administrative rights limited t
 `body` - a username.
 
 ```
-"field": {
+// example
+{
   "name": "delegation",
   "body": "new-way",
   "locale": "en-US"
@@ -245,7 +257,8 @@ The field to add description.
 `body` - the description value.
 
 ```
-"field": {
+// example
+{
   "name": "description",
   "body": "test description...",
   "locale": "en-US"
@@ -269,7 +282,8 @@ const dimensionsBody = JSON.stringify({
         unit: "string",  // required, enum: km, m, cm, mm, μm, mi, yd, ft, in, nmi,
     })
 
-"field": {
+// example
+{
   "name": "dimensions",
   "body": "{\"length\":\"10\",\"width\":\"5\",\"depth\":\"2\",\"unit\":\"in\"}",
   "locale": "en-US"
@@ -282,7 +296,8 @@ This field is used to specify the departments to which the object belongs.
 `body` - a depatment name. If the department does not exist, it will be created.
 
 ```
-"field": {
+// example
+{
   "name": "departments",
   "body": "test product",
   "locale": "en-US"
@@ -297,7 +312,8 @@ This field is used to add the email.
 `body` - the email value.
 
 ```
-"field": {
+// example
+{
   "name": "email",
   "body": "test@gmail.com",
   "locale": "en-US"
@@ -315,7 +331,8 @@ const featuresBody = JSON.stringify({
         value: "string",
     })
 
-"field": {
+// example
+{
   "name": "features",
   "body": "{\"key\":\"TestName\",\"value\":\"TestValue\"}",
   "locale": "en-US"
@@ -333,7 +350,8 @@ This field is used to add album for images.
 
 
 ```
-"field": {
+// example
+{
   "name": "galleryAlbum",
   "body": "test1",
   "locale": "en-US",
@@ -342,7 +360,7 @@ This field is used to add album for images.
 ```
 
 
-## galleryitem
+## galleryItem
 This field is used to add an image.  The images are stored within an album.
 
 `body` - an image URL.
@@ -350,7 +368,8 @@ This field is used to add an image.  The images are stored within an album.
 `id` - ID of album.
 
 ```
-"field": {
+// example
+{
   "name": "galleryItem",
   "body": "https://waivio.nyc3.digitaloceanspaces.com/38a46fc471e30c2f12e5a6aa51ed8f32837837cc0cdbb1a653b699683759a138",
   "locale": "en-US",
@@ -366,7 +385,8 @@ The purpose of this field is to combine descriptions of different options of the
 `body` - full group ID.
 
 ```
-"field": {
+// example
+{
   "name": "groupId",
   "body": "test111",
   "locale": "en-US"
@@ -382,7 +402,8 @@ This field, "listItem," exists exclusively for objects of type "list." It is uti
 `body` - permlink of the object that will be added to the list.
 
 ```
-"field": {
+// example
+{
   "name": "listItem",
   "body": "exh-test-list-27091703",
   "locale": "en-US"
@@ -401,7 +422,8 @@ const mapBody = JSON.stringify({
         longitude: number[],
     })
 
-"field": {
+// example
+{
   "name": "map",
   "body": "{\"latitude\":\"53.435451\",\"longitude\":\"14.518846\"}",
   "locale": "en-US"
@@ -410,9 +432,9 @@ const mapBody = JSON.stringify({
 
 
 ## manufacturer
-The field to add the brand manufacturer or object.
+The field to add the manufacturer name or object.
 
-`body`- stringified object, which contains the following fields: "name" (an optional field) and "authorPermlink" (the object permalink that would be added as the manufacturer, with the name taken from the object itself). Both fields type: string. 
+`body`- a stringified object, which contains the following fields: "name" (an optional field) and "authorPermlink" (the object permalink that would be added as the manufacturer, with the name taken from the object itself). Both fields type: string. 
 
 ```
 const manufacturerBody = JSON.stringify({
@@ -420,7 +442,8 @@ const manufacturerBody = JSON.stringify({
         authorPermlink: "string",
     })
 
-"field": {
+// example
+{
   "name": "manufacturer",
   "body": "{\"name\":\"test name\",\"authorPermlink\":\"qpf-test-manufacturer-02021103\"}",
   "locale": "en-US"
@@ -429,33 +452,418 @@ const manufacturerBody = JSON.stringify({
 
 
 ## menuItem
+The field to add buttons. List, page, external link (old button), newsfeed, widget can be added as menu item.
 
+`body` - a stringified object containing the following fields, must have either "linkToObject" or "linkToWeb":
+- "title" - the title of the menu item (required).
+- "style"- the style of the menu item (required).
+- "image" - the image of the menu item.
+- "linkToObject" - the permlink of an existing object if applicable.
+- "objectType" - the type of the linked object if 'linkToObject' is provided.
+- "linkToWeb" - a valid URI for linking to a web page.
+All fields type: string.
 
+```
+const menuItemBody = JSON.stringify({
+        title: string,  //required
+        style: string,  //required
+        image: string, 
+        linkToObject: string, // existing author_permlink
+        objectType: string, // if linkToObject
+        linkToWeb: string, // valid uri
+    })
+    // menuItemBody must have either linkToObject or linkToWeb
+
+// example
 {
   "name": "menuItem",
   "body": "{\"title\":\"test title\",\"style\":\"standard\",\"linkToObject\":\"mor-test-list-not-bad-advice\",\"objectType\":\"list\"}",
   "locale": "en-US"
 }
+```
 
-merchant
-name
-options
-pagecontent
-parent
-phone
-pin
-price
-productid
-productweight
-rating
-related
-remove
-restaurant
-similar
-sortcustom
-status
-tagcategory
-title
-walletaddress
-website
-worktime
+
+
+## merchant
+The field to add the merchant name or object.
+
+`body`- stringified object, which contains the following fields: 
+- "name" - custom name, an optional field;
+- "authorPermlink" - the object permlink that would be added as the merchant, with the name taken from the object itself. 
+Both fields type: string. 
+
+```
+const merchantBody = JSON.stringify({
+        name: "string", 
+        authorPermlink: "string",
+    })
+
+// example
+{
+  "name": "merchant",
+  "body": "{\"name\":\"test name\",\"authorPermlink\":\"btw-test-merchant-02021106\"}",
+  "locale": "en-US"
+}
+```
+
+## name
+The field to add the name.
+
+`body` - the name.
+
+```
+// example
+{
+  "name": "name",
+  "body": "test name",
+  "locale": "en-US"
+}
+```
+
+
+
+## options
+The field is used to add an option. The Options field works in conjunction with the Group ID field, consolidating all potential options for a given product or service into a single view.
+
+`body` - a stringified object containing the following fields:
+- "category" - a name indicating the category of the option (required). Field type: string.
+- "value" - a value representing the value of the option (required). Field type: string.
+- "position" - a number indicating the position of the option. Field type: number.
+- "image" - an image URL. Field type: string.
+
+```
+const optionsBody = JSON.stringify({
+        category: "string",  // required
+        value: "string",  // required
+        position: "number",
+        image: "string",
+    })
+
+// example
+{
+  "name": "options",
+  "body": "{\"category\":\"Test\",\"value\":\"test1\",\"position\":\"1\",\"image\":\"https://waivio.nyc3.digitaloceanspaces.com/d5cc755bff705674ef7eecd05d5b3d833d0f2672985d8ba6c9dc369b2cbbb4fb\"}",
+  "locale": "en-US"
+}
+```
+
+
+## pageContent
+The field is used to add page content, exists exclusively for objects of type "page".
+
+`body` - a content text.
+
+```
+// example
+{
+  "name": "pageContent",
+  "body": "test 111\n",
+  "locale": "en-US"
+}
+```
+
+## parent
+This field is used to add parent object. One of the way to make connection between objects.
+
+`body` - permlink of the object that will be added as parent.
+
+```
+// example
+{
+  "name": "parent",
+  "body": "ksg-test-product-21031525",
+  "locale": "en-US"
+}
+```
+
+## phone
+This field is used to add phone number.
+
+`body` - phone name (can be empty if a phone name is not needed). 
+
+`number` - value of phone number.
+
+
+```
+// example
+{
+  "name": "phone",
+  "body": "Name1",
+  "locale": "en-US",
+  "number": "11111111"
+}
+```
+
+## pin
+This field is used to pin post at the top of the object reviews feed.
+
+`body` - a string with the structure "author/postPermlink".
+
+```
+// example
+{
+  "name": "pin",
+  "body": "wiv01/embracing-the-journey-overcoming-challenges-in-writing-your-first-book",
+  "locale": "en-US"
+}
+```
+
+
+## price
+This field is used to add price information.
+
+`body` - price information.
+
+```
+{
+  "name": "price",
+  "body": "10-20",
+  "locale": "en-US"
+}
+```
+
+## productId
+The field to add product ID. 
+
+`body` - stringified object, which contains the following fields: 
+- "productId" - a value of the product ID (required). 
+- "productIdType" - a value of the product ID (required).
+- "productIdImage" - an image URL (optional). 
+All fields type: string.
+
+```
+const productIdBody = JSON.stringify({
+        productId: "string",  // required,  
+        productIdType: "string",  // required,  
+        productIdImage: "string",  // new Url() check
+    })
+
+// example
+{
+  "name": "productId",
+  "body": "{\"productIdType\":\"test\",\"productId\":\"123456\",\"productIdImage\":\"https://waivio.nyc3.digitaloceanspaces.com/d5cc755bff705674ef7eecd05d5b3d833d0f2672985d8ba6c9dc369b2cbbb4fb\"}",
+  "locale": "en-US"
+}
+```
+
+
+## productWeight
+The field to add weight information.
+
+`body` - stringified object, which contains the following fields: 
+- "value" - the weight amount, minimum value of 0. Field type: number.
+- "unit" - the unit of measurement, enumeration:  t, kg, gm , mg, mcg, st, lb, oz. Field type: string. 
+
+
+```
+const weightBody = JSON.stringify({
+        value: "number",  // required,  min 0
+        unit: "string",  // required, enum:  t, kg, gm , mg, mcg, st, lb, oz
+    })
+
+// example
+{
+  "name": "productWeight",
+  "body": "{\"value\":\"10\",\"unit\":\"kg\"}",
+  "locale": "en-US"
+}
+```
+
+## rating
+The field to add rating category.
+
+`body` - the rating category name.
+
+```
+// example
+{
+  "name": "rating",
+  "body": "Good",
+  "locale": "en-US"
+}
+```
+
+
+## related
+The field is for including additional objects that are related to the object.
+
+`body` - object permlink of the object that will be added as related.
+
+```
+// example
+{
+  "name": "related",
+  "body": "jhf-test-product-23051329",
+  "locale": "en-US"
+}
+```
+
+## remove
+This field is used to remove (hide) the post from the object reviews feed.
+
+`body` - a string with the structure "author/postPermlink".
+
+```
+// example
+{
+  "name": "remove",
+  "body": "wiv01/how-to-start-writing-a-book-a-journey-from-idea-to-manuscript",
+  "locale": "en-US"
+}
+```
+
+## similar
+The field is for including additional objects that are similar to the object.
+
+`body` - object permlink of the object that will be added as similar.
+
+```
+// example
+{
+  "name": "similar",
+  "body": "tkt-test-product-12031444",
+  "locale": "en-US"
+}
+```
+
+## sortCustom
+The "sortCustom" field has two functions: one specific to the "list" object type and another for other object types.
+
+**For "list" object type ** 
+This field is used to add sorting for items that were added to a list. Therefore, this field exists only for the "list" object type. Items can be excluded (hidden) from the list.
+
+**(?)**
+`body` - stringified object, which contains the following fields: 
+- "exclude" - a list of permalinks for excluded objects. Field type: array.
+- "include" - a list of permalinks for included objects, arranged in the preferred sorting order. Field type: array.
+
+```
+// example
+{
+  "name": "sortCustom",
+  "body": "{\"exclude\":[\"exh-test-list-27091703\"],\"include\":[\"bev-test-list-not-bad-advice-2\",\"viw-test-test-03061511\"]}",
+  "locale": "en-US"
+}
+```
+
+**For other object types**
+The "sortCustom" field is used to sort menu items. For objects that have a menuItems field, this field allows sorting of the menu items in the preferred order. Exclusion of items is not supported; only sorting is permitted.
+
+`body` - stringified object, which contains the following fields: 
+- "exclude" - empty array. Field type: array.
+- "include" - a list of permalinks, arranged in the preferred sorting order. Field type: array.
+
+```
+// example
+{
+  "name": "sortCustom",
+  "body": "{\"include\":[\"waivio-jase-carmel-rez68eawifh\",\"wiv01-2vq0sk91yea\"],\"exclude\":[]}",
+  "locale": "en-US"
+}
+```
+
+## status
+This field is used to add a status mark to the object. 
+
+Statuses: 
+- Unavailable (object could not be found anymore);
+- Relisted (moved to another object, with a provided link);
+- NSFW;
+- Flagged.
+
+`body` -  stringified object, which contains the following fields: 
+- "title" - one of the statuses (Unavailable, Relisted, NSFW, Flagged). Field type: string.
+- "link" - object permlink of the other object. Only applicable for the Relisted status. Field type: string.
+
+```
+// example
+{
+  "name": "status",
+  "body": "{\"title\":\"relisted\",\"link\":\"exh-test-list-27091703\"}",
+  "locale": "en-US"
+}
+```
+
+
+## tagCategory
+This field is used to add a tag category for tags (categoryItem).
+
+`body` -  tag category name.
+
+```
+// example
+{
+  "name": "tagCategory",
+  "body": "Test",
+  "locale": "en-US",
+  "id": "bfb5e9e9-ed39-46b8-97ca-23764a3f23d8"
+}
+```
+
+## title
+This field is used to add a title text.
+
+`body` -  the title text.
+
+```
+// example
+{
+  "name": "title",
+  "body": "test",
+  "locale": "en-US"
+}
+```
+
+
+## walletAddress
+This field is used to add wallet address information.
+
+`body` -  stringified object, which contains the following fields: 
+- "title" - custom text. 
+- "symbol" - currency (required). Options:  Bitcoin (BTC), Litecoin (LTC), Ethereum (ETH), Lightning Bitcoin (LBTC), HIVE, HBD, WAIV.
+- "address" - the wallet address value (required).
+All fields type: string.
+```
+const walletAddressBody = JSON.stringify({
+        "title" : string
+        "symbol" : string // required
+        "address" : string // required
+   })
+
+// example
+{
+  "name": "walletAddress",
+  "body": "{\"title\":\"support us\",\"symbol\":\"Bitcoin (BTC)\",\"address\":\"bc11111111\"}",
+  "locale": "en-US"
+}
+```
+
+## website
+This field is used to add a website link.
+
+`body` -  stringified object, which contains the following fields: 
+- "title" - custom link text. 
+- "link" - the URL.
+All fields type: string.
+```
+// example
+{
+  "name": "website",
+  "body": "{\"title\":\"site\",\"link\":\"https://example.com\"}",
+  "locale": "en-US"
+}
+```
+
+## workTime
+This field is used to add a working hours information.
+
+`body` - text about working hours.
+
+```
+// example
+{
+  "name": "workTime",
+  "body": "working hours info",
+  "locale": "en-US"
+}
+```
