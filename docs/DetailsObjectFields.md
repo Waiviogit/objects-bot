@@ -48,7 +48,7 @@
   - [walletAddress](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#walletaddress)
   - [website](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#website)
   - [workTime](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#worktime)
-- [Additional information]()
+- [Additional information](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#additional-information)
 
 
 
@@ -83,6 +83,7 @@ Each of these types has a list of fields, which represents the information that 
 
 # General payload for adding an update-field
 Request – /objects-bot/append-object
+[Swagger](https://waivio.com/objects-bot/docs/#/object/post_objects_bot_append_object)
 
 * Field or update (noun), or field-update, the same thing with the same meaning, can be called interchangeably.
 
@@ -932,3 +933,4 @@ This field is used to add a working hours information.
 
 # Additional information
 - [Simplified Document with Requests Only](https://github.com/Waiviogit/objects-bot/blob/dev/docs/objectFields.md)
+- 
