@@ -48,7 +48,7 @@
   - [walletAddress](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#walletaddress)
   - [website](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#website)
   - [workTime](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#worktime)
-- [Additional information](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#additional-information)
+- [Useful links](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#useful-links)
 
 
 
@@ -86,9 +86,11 @@ Each of these types has a list of fields, which represents the information that 
 # General payload for adding an update-field
 Request – /objects-bot/append-object
 
-[Swagger](https://waivio.com/objects-bot/docs/#/object/post_objects_bot_append_object)
+[Swagger Object Bot](https://waivio.com/objects-bot/docs/#/object/post_objects_bot_append_object)
 
-[Here Simplified Document with Requests Only](https://github.com/Waiviogit/objects-bot/blob/dev/docs/objectFields.md)
+[Swagger API](https://waivio.com/api/docs/#/wobject)
+
+[Simplified Document with Requests Only](https://github.com/Waiviogit/objects-bot/blob/dev/docs/objectFields.md)
 
 
 ### Template:
@@ -409,7 +411,7 @@ This field is used to add album for images.
 
 `body` - an album name.
 
-`id` - albume id. **(?)** random string
+`id` - albume id, random string.
 
 
 ```
@@ -455,9 +457,6 @@ The purpose of this field is to combine descriptions of different options of the
   "locale": "en-US"
 }
 ```
-
-## link (?)
-
 
 ## listItem
 This field, "listItem," exists exclusively for objects of type "list." It is utilized to add items to the list.
@@ -798,7 +797,6 @@ The "sortCustom" field has two functions: one specific to the "list" object type
 **For "list" object type ** 
 This field is used to add sorting for items that were added to a list. Therefore, this field exists only for the "list" object type. Items can be excluded (hidden) from the list.
 
-**(?)**
 `body` - stringified object, which contains the following fields: 
 - "exclude" - a list of permalinks for excluded objects. Field type: array.
 - "include" - a list of permalinks for included objects, arranged in the preferred sorting order. Field type: array.
@@ -934,6 +932,7 @@ This field is used to add a working hours information.
 }
 ```
 
-# Additional information
+# Useful links
 - [Simplified Document with Requests Only](https://github.com/Waiviogit/objects-bot/blob/dev/docs/objectFields.md)
-- 
+- [Swagger Object Bot](https://waivio.com/objects-bot/docs/#/object/post_objects_bot_append_object)
+- [Swagger API](https://waivio.com/api/docs/#/wobject)
