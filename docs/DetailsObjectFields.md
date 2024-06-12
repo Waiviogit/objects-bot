@@ -478,6 +478,9 @@ This field, "listItem," exists exclusively for objects of type "list." It is uti
 ## map
 The field is used to add a map. Coordinates will include "latitude" and "longitude".
 
+`body`- a stringified object, which contains the following fields:
+- "latitude" -
+- "longitude" -
 **(?)**
 ```
 const mapBody = JSON.stringify({
