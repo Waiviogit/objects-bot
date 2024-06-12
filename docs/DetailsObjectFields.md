@@ -83,12 +83,13 @@ Each of these types has a list of fields, which represents the information that 
 
 # General payload for adding an update-field
 Request – /objects-bot/append-object
+
 [Swagger](https://waivio.com/objects-bot/docs/#/object/post_objects_bot_append_object)
 
-* Field or update (noun), or field-update, the same thing with the same meaning, can be called interchangeably.
-
-
 [Here Simplified Document with Requests Only](https://github.com/Waiviogit/objects-bot/blob/dev/docs/objectFields.md)
+
+Field or update (noun), or field-update, the same thing with the same meaning, can be called interchangeably in documents.
+
 
 
 ### Template:
