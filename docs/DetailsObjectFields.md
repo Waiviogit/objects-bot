@@ -59,6 +59,8 @@ An **object** on Waivio is a user-created entity such as a restaurant, hashtag, 
 # How does it work?
 Simplified concept: The object type is a post, and each first-level comment under it is an object. Second-level comments and beyond are its updates. Users add updates through our bots and vote for them; updates with the most votes win.
 
+Field or update (noun), or field-update, the same thing with the same meaning, can be called interchangeably in this document.
+
 
 # Object types
 Object types that you might be interested in include: product, book, business, restaurant, list, and page. 
@@ -87,9 +89,6 @@ Request – /objects-bot/append-object
 [Swagger](https://waivio.com/objects-bot/docs/#/object/post_objects_bot_append_object)
 
 [Here Simplified Document with Requests Only](https://github.com/Waiviogit/objects-bot/blob/dev/docs/objectFields.md)
-
-Field or update (noun), or field-update, the same thing with the same meaning, can be called interchangeably in documents.
-
 
 
 ### Template:
