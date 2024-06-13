@@ -1,5 +1,5 @@
 - [What is an object?](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#what-is-an-object)
-- [How does it work?](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#how-does-it-work)
+- [Simplified concept of the object system](https://github.com/Waiviogit/objects-bot/edit/dev/docs/DetailsObjectFields.md#simplified-concept-of-the-object-system)
 - [Object types and general list of fields](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#object-types)
 - [General payload for adding an update-field](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#general-payload-for-adding-an-update-field)
 - ["field" detailed information:](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#details)
@@ -53,7 +53,7 @@
 # What is an object?
 An **object** on Waivio is a user-created entity such as a restaurant, hashtag, business, product, etc.,  which is given a unique URL (permlink) on the Hive blockchain. It serves as a specific reference point that can be linked to posts and contributes to the structured accumulation of knowledge within the Waivio and Hive ecosystem.
 
-# How does it work?
+# Simplified concept of the object system
 Simplified concept: The object type is a post, and each first-level comment under it is an object. Second-level comments and beyond are its updates. Users add updates through our bots and vote for them; updates with the most votes win.
 
 Field or update (noun), or field-update, the same thing with the same meaning, can be called interchangeably in this document.
