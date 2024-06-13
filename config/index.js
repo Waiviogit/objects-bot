@@ -19,6 +19,7 @@ const envConfig = {
   appName: process.env.APP_NAME || 'waiviodev',
   version: process.env.APP_VERSION || '1.0.0',
   objectTypeKey: process.env.OBJECT_TYPE_KEY,
+  accessKey: process.env.OBJECT_BOT_ACCESS_KEY,
 };
 
 const commonConfig = {

@@ -30,11 +30,11 @@ process.on('unhandledRejection', (error) => {
 
 const session = createNamespace('request-session');
 const job = require('jobs/sendToChain');
-const { corsOptions } = require('./config/corsConfig');
+const { corsOptionsDelegate } = require('./config/corsConfig');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors(corsOptionsDelegate));
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   session.run(() => next());
@@ -49,7 +49,7 @@ app.use((req, res, next) => {
 
 app.use('/', routes);
 app.get('/objects-bot/test-cors', (req, res, next) => {
-  res.status(200).json({ status: 'Ok', origin: req.headers['origin'] });
+  res.status(200).json({ status: 'Ok', origin: req.headers.origin });
 });
 app.use('/objects-bot/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
