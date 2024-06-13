@@ -2,7 +2,7 @@
 - [Simplified concept of the object system](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#simplified-concept-of-the-object-system)
 - [Object types and general list of fields](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#object-types)
 - [General payload for adding an update-field](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#general-payload-for-adding-an-update-field)
-- ["field" detailed information:](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#details)
+- ["field" detailed information:](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#field-detailed-information)
   - [address](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#address)
   - [addOn](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#addon)
   - [authority](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#authority)
