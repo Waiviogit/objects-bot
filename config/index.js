@@ -18,6 +18,7 @@ const envConfig = {
   engineTags: process.env.ENGINE_TAGS ? process.env.ENGINE_TAGS.split(',') : ['waivio'],
   appName: process.env.APP_NAME || 'waiviodev',
   version: process.env.APP_VERSION || '1.0.0',
+  objectTypeKey: process.env.OBJECT_TYPE_KEY,
 };
 
 const commonConfig = {
