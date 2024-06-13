@@ -49,7 +49,7 @@ app.use((req, res, next) => {
 
 app.use('/', routes);
 app.get('/objects-bot/test-cors', (req, res, next) => {
-  res.status(200).json({ status: 'Ok' });
+  res.status(200).json({ status: 'Ok', origin: req.headers['origin'] });
 });
 app.use('/objects-bot/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
