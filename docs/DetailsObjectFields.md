@@ -263,8 +263,9 @@ The field to add the background image for the object.
 ## brand
 The field to add the brand name or object.
 
-`body`- stringified object, which contains the following fields: "name" (an optional field) and "authorPermlink" (the object permalink that would be added as the brand, with the name taken from the object itself). Both fields type: string. 
-
+`body`- stringified object, which contains the following fields: 
+- "name" - custom brand name (optional).
+- "authorPermlink" - the object permalink that would be added as the brand, with the name taken from the object itself). Both fields type: string. 
 
 
 ```
@@ -306,7 +307,10 @@ This field is used to add a tag. The tag requires a Tag category (tagCategory) w
 ## companyId
 The field to add company ID. 
 
-`body` - stringified object, which contains the following fields: "companyId" (the ID value) and "companyIdType" (the type value). Both fields type: string. 
+`body` - stringified object, which contains the following fields: 
+- "companyId" - the ID value.
+- "companyIdType" - the type value.
+Both fields type: string. 
 
 
 ```
@@ -521,7 +525,10 @@ const mapBody = JSON.stringify({
 ## manufacturer
 The field to add the manufacturer name or object.
 
-`body`- a stringified object, which contains the following fields: "name" (an optional field) and "authorPermlink" (the object permalink that would be added as the manufacturer, with the name taken from the object itself). Both fields type: string. 
+`body`- a stringified object, which contains the following fields: 
+- "name" - custom name (optional).
+- "authorPermlink" - the object permalink that would be added as the manufacturer, with the name taken from the object itself.
+Both fields type: string. 
 
 ```
 const manufacturerBody = JSON.stringify({
