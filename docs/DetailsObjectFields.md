@@ -54,7 +54,7 @@
 An **object** on Waivio is a user-created entity such as a restaurant, hashtag, business, product, etc.,  which is given a unique URL (permlink) on the Hive blockchain. It serves as a specific reference point that can be linked to posts and contributes to the structured accumulation of knowledge within the Waivio and Hive ecosystem.
 
 # Simplified concept of the object system
-Simplified concept: The object type is a post, and each first-level comment under it is an object. Second-level comments and beyond are its updates. Users add updates through our bots and vote for them; updates with the most votes win.
+The object type is a post, and each first-level comment under it is an object. Second-level comments and beyond are its updates. Users add updates through our bots and vote for them; updates with the most votes win.
 
 Field or update (noun), or field-update, the same thing with the same meaning, can be called interchangeably in this document.
 
