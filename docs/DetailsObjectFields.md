@@ -159,7 +159,6 @@ Request – /objects-bot/append-object
 
 
 
-***
 
 
 # "field" detailed information
