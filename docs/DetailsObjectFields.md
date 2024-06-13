@@ -70,8 +70,8 @@ Each of these types has a list of fields, which represents the information that 
 |Object type|Fields |
 |---|---|
 |product|status, avatar, authority, name, title, background, parent, tagCategory, categoryItem, galleryAlbum, galleryItem, sortCustom, rating, price, description, website, productId, dimensions, productWeight, groupId, options, departments, merchant, manufacturer, brand, features, pin, remove, menuItem, related, addOn, similar, delegation|
-|business|status, avatar, authority, name, title, background, parent, tagCategory, categoryItem, galleryAlbum, galleryItem, sortCustom, rating, price, description, workTime, address, map, website, phone, email, link, companyId, pin, remove, menuItem, walletAddress, delegation|
-|restaurant|status, avatar, authority, name, title, background, parent, tagCategory, categoryItem, galleryAlbum, galleryItem, sortCustom, rating, price, description, workTime, address, map, website, phone, email, link, companyId, pin, remove, menuItem, walletAddress, delegation| 
+|business|status, avatar, authority, name, title, background, parent, tagCategory, categoryItem, galleryAlbum, galleryItem, sortCustom, rating, price, description, workTime, address, map, website, phone, email, companyId, pin, remove, menuItem, walletAddress, delegation|
+|restaurant|status, avatar, authority, name, title, background, parent, tagCategory, categoryItem, galleryAlbum, galleryItem, sortCustom, rating, price, description, workTime, address, map, website, phone, email, companyId, pin, remove, menuItem, walletAddress, delegation| 
 |list|status, avatar, authority, name, title, background, parent, tagCategory, categoryItem, galleryAlbum, galleryItem, website, description, listItem, sortCustom, pin, remove, delegation|
 |page|status, avatar, authority, name, title, background, parent, tagCategory, categoryItem, galleryAlbum, galleryItem, pageContent, website, description, pin, remove, delegation|
 
@@ -113,7 +113,7 @@ Request – /objects-bot/append-object
 |--|--|---|
 |`author`|`"author": "wiv01"`|Comment author, user who adds the update field. <br><br>Field type: string.|
 |`parentAuthor`|`"parentAuthor": "fgh87"`|The name of the bot that created the object (author of the comment that created the object) to which the update will be added. <br><br>Field type: string.|
-|`parentPermlink`|`"parentPermlink": "lqd-test-rest-id04071600"`| The unique permalink of the object where users want to add related updates. It's the specific object permlink to which the update field will be appended (from author_permlink field for object).  <br>Example: A user wants to add an updated-field to "test1" object (https://example.com/test1). In this case, "parentPermlink" would be "test1".<br><br><br>Field type: string.|
+|`parentPermlink`|`"parentPermlink": "lqd-test-rest-id04071600"`| The unique permalink of the object where users want to add related updates. It's the specific object permlink to which the update field will be appended (from author_permlink field for object).  <br>Example: A user wants to add an updated-field to "test1" object (https://example.com/test1). In this case, "parentPermlink" would be "test1".<br><br>Field type: string.|
 |`body`|`"body": "@wiv01 added parent (English):\n vuf-test-rest-v6"`|Custom text containing update information. <br>Template: @{username} added {field} ({locale}): {details}. <br>Example: @wiv01 added description (English):/n test <br><br>Field type: string.|
 |`title`|`"title": ""`|This should be empty because comments do not require a title.<br><br>Field type: string.|
 |`permlink`|`"permlink": "wiv01-5bu8lnlxelw"`|Random string following the rules for generating permalinks (without special characters, etc.). <br><br>Field type: string.|
@@ -137,6 +137,26 @@ Request – /objects-bot/append-object
     "permlink": "wiv01-5bu8lnlxelw",
 }
 ```
+### Response
+
+|Field Name|Example Value (in JSON)|Description|
+|--|--|---|
+|`author`|`"author": "dw38h"`|Author of recently created comment with information about object field. <br><br>Field type: string.|
+|`permlink`|`"permlink": "wiv01-5bu8lnlxelw"`|Random string, following the rules for generating permalinks (without special characters, etc.)Unique name of recently created comment with append object. <br><br>Field type: string.|
+|`parentAuthor`|`"parentAuthor": "fgh87"`|The name of the bot that created the object (author of comment with create object) to which the update is added. <br><br>Field type: string.|
+|`parentPermlink`|`"parentPermlink": "lqd-test-rest-id04071600"`|Unique name of comment with create object which append related on. <br><br>Field type: string.|
+|`transactionId`|`"transactionId": "fb9e5d5de0d797f56de1af10d45ecaa6c9b2fa6a"`|id of transaction with comment which include append object. <br><br>Field type: string.|
+
+```
+{
+    "author": "dw38h",
+    "permlink": "wiv01-5bu8lnlxelw",
+    "parentAuthor": "fgh87",
+    "parentPermlink": "lqd-test-rest-id04071600",
+    "transactionId": "fb9e5d5de0d797f56de1af10d45ecaa6c9b2fa6a"
+}
+```
+
 
 
 ***
@@ -149,8 +169,14 @@ Now, when you know main details about how to make request to add update-field, h
 ## address
 Field for adding an address.
 
-`body` - includes information from all fields: address, street, city, state, postalCode, country.
-
+`body` - a stringified object that contains the following fields:
+- "address" - full address text.
+- "street" - street name.
+- "city" - city name.
+- "state" - state name.
+- "postalCode" - postal code information.
+- "country" - country information.
+All fields type: string.
 ```
 // example
 {
@@ -159,8 +185,6 @@ Field for adding an address.
   "locale": "en-US"
 }
 ```
-
-
 
 
 ## addOn
@@ -475,9 +499,10 @@ This field, "listItem," exists exclusively for objects of type "list." It is uti
 The field is used to add a map. Coordinates will include "latitude" and "longitude".
 
 `body`- a stringified object, which contains the following fields:
-- "latitude" -
-- "longitude" -
-**(?)**
+- "latitude" - a coordinate for latitude. 
+- "longitude" -  a coordinate for longitude.
+Both field types: array of numbers.
+
 ```
 const mapBody = JSON.stringify({
         latitude: number[], 
