@@ -17,6 +17,8 @@ const getWhiteList = async () => {
 };
 
 const corsOptionsDelegate = async (req, callback) => {
+  if (/objects-bot\/docs/.test(req.path)) return callback(null, true);
+
   const whitelist = [...corsWhitelist, ...await getWhiteList()];
   const origin = req.header('Origin');
   const key = req.header('access-key');
