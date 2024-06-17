@@ -45,6 +45,7 @@
   - [walletAddress](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#walletaddress)
   - [website](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#website)
   - [workTime](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#worktime)
+- [See the object in the site context](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#see-the-object-in-the-site-context) 
 - [Useful links](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#useful-links)
 
 
@@ -959,6 +960,16 @@ This field is used to add a working hours information.
   "locale": "en-US"
 }
 ```
+# See the object in the site context
+To see the object in the context of the site, you can add the optional 'Access-Host' field to the request headers. This ensures that you receive information about the object that is specific to the site.
+
+The 'Access-Host' value should be the domain or site host, without https://. 
+
+Examples: `cleangirllook.com`, `demo.social.gifts`.
+
+[Swagger API](https://waivio.com/api/docs/#/wobject)
+
+
 
 # Useful links
 - [Simplified Document with Requests Only](https://github.com/Waiviogit/objects-bot/blob/dev/docs/objectFields.md)
