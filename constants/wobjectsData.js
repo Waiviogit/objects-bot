@@ -71,6 +71,7 @@ const FIELDS_NAMES = {
   MAP_OBJECTS_LIST: 'mapObjectsList',
   WALLET_ADDRESS: 'walletAddress',
   DELEGATION: 'delegation',
+  URL: 'url',
 };
 
 const ARRAY_FIELDS = [
@@ -384,7 +385,26 @@ const EXPOSED_FIELDS_FOR_OBJECT_TYPE = {
     FIELDS_NAMES.CATEGORY_ITEM,
     FIELDS_NAMES.PARENT,
     FIELDS_NAMES.RATING,
-    FIELDS_NAMES.LINK,
+    FIELDS_NAMES.URL,
+  ],
+};
+
+const SUPPOSED_UPDATES_BY_TYPE = {
+  link: [
+    {
+      name: 'rating',
+      values: [
+        'Safety',
+        'Value',
+      ],
+    },
+    {
+      name: 'tagCategory',
+      values: [
+        'Pros',
+        'Cons',
+      ],
+    },
   ],
 };
 
@@ -392,4 +412,5 @@ module.exports = {
   ARRAY_FIELDS,
   FIELDS_NAMES,
   EXPOSED_FIELDS_FOR_OBJECT_TYPE,
+  SUPPOSED_UPDATES_BY_TYPE,
 };

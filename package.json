@@ -11,6 +11,7 @@
   "scripts": {
     "start": "node --max-old-space-size=400 ./bin/service.js",
     "addExposedFieldsToObjectTypes": "node ./utilities/tasks/addExposedFields.js",
+    "addSupposedUpdates": "node ./utilities/tasks/addSupposedUpdates.js",
     "generateEncryptionKey": "node ./utilities/tasks/generateEncryptionKey.js",
     "addServiceKeys": "node ./utilities/tasks/addServiceKeys.js",
     "test": "NODE_ENV=test nyc --reporter=html mocha"
