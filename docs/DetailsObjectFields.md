@@ -1,4 +1,4 @@
-- [Getting Started](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#getting-started)
+- [Getting started](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#getting-started)
 - [What is an object?](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#what-is-an-object)
 - [Simplified concept of the object system](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#simplified-concept-of-the-object-system)
 - [Object types and general list of fields](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#object-types)
@@ -50,7 +50,7 @@
 - [Useful links](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#useful-links)
 
 
-# Getting Started
+# Getting started
 Our API is open, allowing you to retrieve information about objects (read operations available to everyone).
 
 If you wish to add or modify objects (write operations), you need to obtain access.
