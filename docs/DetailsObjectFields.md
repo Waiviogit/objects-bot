@@ -61,6 +61,12 @@ There are two ways to obtain write access:
 
 Contact [Grampo](https://www.waivio.com/@grampo) to receive access through your preferred method.
 
+[Swagger Object Bot](https://waivio.com/objects-bot/docs/#/object/post_objects_bot_append_object)
+
+[Swagger API](https://waivio.com/api/docs/#/wobject)
+
+[Simplified Document with Requests Only](https://github.com/Waiviogit/objects-bot/blob/dev/docs/objectFields.md)
+
 # What is an object?
 An **object** on Waivio is a user-created entity such as a restaurant, hashtag, business, product, etc.,  which is given a unique URL (permlink) on the Hive blockchain. It serves as a specific reference point that can be linked to posts and contributes to the structured accumulation of knowledge within the Waivio and Hive ecosystem.
 
