@@ -1,3 +1,4 @@
+- [Getting Started](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#getting-started)
 - [What is an object?](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#what-is-an-object)
 - [Simplified concept of the object system](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#simplified-concept-of-the-object-system)
 - [Object types and general list of fields](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#object-types)
@@ -49,7 +50,16 @@
 - [Useful links](https://github.com/Waiviogit/objects-bot/blob/dev/docs/DetailsObjectFields.md#useful-links)
 
 
+# Getting Started
+Our API is open, allowing you to retrieve information about objects (read operations available to everyone).
 
+If you wish to add or modify objects (write operations), you need to obtain access.
+
+There are two ways to obtain write access:
+- Receive an access key.
+- Have your site's host added to our list of approved sites, enabling write operations for your site.
+
+Contact [Grampo](https://www.waivio.com/@grampo) to receive access through your preferred method.
 
 # What is an object?
 An **object** on Waivio is a user-created entity such as a restaurant, hashtag, business, product, etc.,  which is given a unique URL (permlink) on the Hive blockchain. It serves as a specific reference point that can be linked to posts and contributes to the structured accumulation of knowledge within the Waivio and Hive ecosystem.
