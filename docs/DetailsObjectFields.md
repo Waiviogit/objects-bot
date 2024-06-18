@@ -56,7 +56,7 @@ Our API is open, allowing you to retrieve information about objects (read operat
 If you wish to add or modify objects (write operations), you need to obtain access.
 
 There are two ways to obtain write access:
-- Receive an access key.
+- Receive an access-key.
 - Have your site's host added to our list of approved sites, enabling write operations for your site.
 
 Contact [Grampo](https://www.waivio.com/@grampo) to receive access through your preferred method.
