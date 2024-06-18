@@ -70,11 +70,11 @@ Each of these types has a list of fields, which represents the information that 
 
 |Object type|Fields |
 |---|---|
-|product|status, avatar, authority, name, title, background, parent, tagCategory, categoryItem, galleryAlbum, galleryItem, sortCustom, rating, price, description, website, productId, dimensions, productWeight, groupId, options, departments, merchant, manufacturer, brand, features, pin, remove, menuItem, related, addOn, similar, delegation|
-|business|status, avatar, authority, name, title, background, parent, tagCategory, categoryItem, galleryAlbum, galleryItem, sortCustom, rating, price, description, workTime, address, map, website, phone, email, companyId, pin, remove, menuItem, walletAddress, delegation|
-|restaurant|status, avatar, authority, name, title, background, parent, tagCategory, categoryItem, galleryAlbum, galleryItem, sortCustom, rating, price, description, workTime, address, map, website, phone, email, companyId, pin, remove, menuItem, walletAddress, delegation| 
-|list|status, avatar, authority, name, title, background, parent, tagCategory, categoryItem, galleryAlbum, galleryItem, website, description, listItem, sortCustom, pin, remove, delegation|
-|page|status, avatar, authority, name, title, background, parent, tagCategory, categoryItem, galleryAlbum, galleryItem, pageContent, website, description, pin, remove, delegation|
+|product|addOn, authority, avatar, background, brand, categoryItem, delegation, departments, description, dimensions, features, galleryAlbum, galleryItem, groupId, manufacturer, menuItem, merchant, name, options, parent, pin, price, productId, productWeight, rating, related, remove, similar, sortCustom, status, tagCategory, title, website|
+|business|address, authority, avatar, background, categoryItem, companyId, delegation, description, email, galleryAlbum, galleryItem, link, map, menuItem, name, parent, phone, pin, price, rating, remove, sortCustom, status, tagCategory, title, walletAddress, website, workTime|
+|restaurant|address, authority, avatar, background, categoryItem, companyId, delegation, description, email, galleryAlbum, galleryItem, map, menuItem, name, parent, phone, pin, price, rating, remove, sortCustom, status, tagCategory, title, walletAddress, website, workTime| 
+|list|authority, avatar, background, categoryItem, delegation, description, galleryAlbum, galleryItem, listItem, name, parent, pin, remove, sortCustom, status, tagCategory, title, website|
+|page|authority, avatar, background, categoryItem, delegation, description, galleryAlbum, galleryItem, name, pageContent, parent, pin, remove, status, tagCategory, title, website|
 
 (Details for each field are provided below.)
 
@@ -482,6 +482,21 @@ The purpose of this field is to combine descriptions of different options of the
   "locale": "en-US"
 }
 ```
+## link
+This field to add social media links.
+
+`body` - a stringified object containing the following fields: 
+- "linkFacebook", "linkTwitter", "linkYouTube", "linkInstagram", "linkGitHub" - username (a part of the URL that uniquely identifies the platform's page, which will be appended to the base URL to form the complete link). All fields are of type: string.
+
+```
+// example
+{
+  "name": "link",
+  "body": "{\"linkFacebook\":\"test2\",\"linkTwitter\":\"test2\",\"linkYouTube\":\"test3\",\"linkInstagram\":\"test4\",\"linkGitHub\":\"test5\"}",
+  "locale": "en-US"
+}
+```
+  
 
 ## listItem
 This field, "listItem," exists exclusively for objects of type "list." It is utilized to add items to the list.
