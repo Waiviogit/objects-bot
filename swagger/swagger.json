@@ -4,7 +4,7 @@
     "description" : "Service for Waivio\n[UI template for Waivio](http://waiviodev.com)\n",
     "version" : "1.0.0",
     "title" : "Object Bot Service",
-    "termsOfService" : "https://steemit.com/@waivio",
+    "termsOfService" : "https://www.waivio.com/object/ylr-waivio",
     "contact" : {
       "email" : "maxim@wizardsdev.com"
     }
@@ -22,7 +22,14 @@
         "summary" : "Create post with 'create object type'",
         "description" : "Create post with specials identities wich create new **object type** in database\n",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
+        "parameters" : [
+          {
+            "name": "Access-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
           "in" : "body",
           "name" : "params",
           "description" : "**objectType** - name of new Object Type to create\n",
@@ -30,7 +37,8 @@
           "schema" : {
             "$ref" : "#/definitions/params"
           }
-        } ],
+        }
+        ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -47,7 +55,14 @@
         "summary" : "Create comment with 'create object', parent comment must be post with create object type",
         "description" : "Create comment with specials identities wich create new **object** in database\n",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
+        "parameters" : [
+          {
+            "name": "Access-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
           "in" : "body",
           "name" : "params",
           "description" : "**author** - creator of new *Object*,\n**title** - title on comment with *createObject*,\n**body** - body on comment with *createObject*,\n**permlink** - permlink of comment and **author_permlink** of new created *object*,\n**objectName** - *default_name* of *object* and name of first append field of *object*,\n**locale** - locale of first append field on *object*,\n**isExtendingOpen** - flag on *object* which allow *extend object*,\n**isPostingOpen** - flag on *object* which allow add *object* to your own post,\n**parentAuthor** - author of post with **Create Object Type**,\n**parentPermlink** - permlink of post with **Create Object Type**\n---------------**RESPONSE**-----------------\n**transactionId** - id of transaction with append after creating object\n**author** - author of comment with append which added after creating object\n**permlink** - permlink of comment with append which added after creating object\n**parentAuthor** - author of comment with *create object*\n**parentPermlink** - permlink of comment with *create object*\n",
@@ -72,7 +87,14 @@
         "summary" : "Append field to 'object'",
         "description" : "Create comment with specials identities wich create new **field** on object in database. Parent comment must be comment with *create Object*\n",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
+        "parameters" : [
+          {
+            "name": "Access-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
           "in" : "body",
           "name" : "params",
           "description" : "**author** - Creator of new field\n**body** -  body on comment with *appendObject*\n**title** - title on comment with *appendObject*\n**permlink** - permlink of new creatig comment with *appendObject*\n**parentAuthor** - author of comment with *createObject*\n**parentPermlink** - permlink of comment with *createObject*\n**field** - info about append\n*   field.name* - name of field(name,title,avatar,addres,link etc.)\n*   field.body* - value of field(for ex. if name - bitcoin, if title - descr. for bitcoin etc.)\n*   field.locale* - locale of field(en-US, ru-RU etc.)\n",
@@ -99,6 +121,12 @@
         "produces" : [ "application/json" ],
         "parameters": [
           {
+            "name": "Access-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
             "in": "body",
             "name": "params",
             "description": "**id** - id of operation,\n**root_author** -post author to delete. \n**permlink** - post permlink to delete  \n**userName** - username of guest account",
@@ -124,6 +152,12 @@
         "description" : "",
         "produces" : [ "application/json" ],
         "parameters": [
+          {
+            "name": "Access-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
           {
             "in": "body",
             "name": "params",
@@ -169,6 +203,12 @@
         "description" : "",
         "produces" : [ "application/json" ],
         "parameters": [
+          {
+            "name": "Access-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
           {
             "in": "body",
             "name": "params",

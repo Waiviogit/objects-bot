@@ -41,7 +41,8 @@
     "objects": {
       "account": 0
     },
-    "app": "waivio"
+    "app": "waivio",
+    "swaggerHost": "www.waivio.com"
   },
   "staging": {
     "db": {
@@ -85,7 +86,8 @@
     "objects": {
       "account": 0
     },
-    "app": "waiviodev"
+    "app": "waiviodev",
+    "swaggerHost": "waiviodev.com"
   },
   "development": {
     "db": {
@@ -129,7 +131,8 @@
     "objects": {
       "account": 0
     },
-    "app": "waiviodev"
+    "app": "waiviodev",
+    "swaggerHost": "localhost:8093"
   },
   "test": {
     "db": {
@@ -169,6 +172,7 @@
     "objects": {
       "account": 0
     },
-    "app": "waiviodev"
+    "app": "waiviodev",
+    "swaggerHost": "localhost:8093"
   }
 }

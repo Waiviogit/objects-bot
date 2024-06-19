@@ -22,7 +22,7 @@ const corsOptionsDelegate = async (req, callback) => {
   const whitelist = [...corsWhitelist, ...await getWhiteList()];
   const origin = req.header('Origin');
   const key = req.header('access-key');
-  const serverCondition = !origin && key === config.accessKey;
+  const serverCondition = !origin && config.accessKeys.includes(key);
 
   if (whitelist.indexOf(origin) > -1 || serverCondition) {
     return callback(null, true);
