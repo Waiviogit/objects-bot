@@ -20,6 +20,7 @@ const envConfig = {
   version: process.env.APP_VERSION || '1.0.0',
   objectTypeKey: process.env.OBJECT_TYPE_KEY,
   accessKeys: (process.env.OBJECT_BOT_ACCESS_KEY ?? '').split(','),
+  turnOffCors: process.env.CORS === 'false',
 };
 
 const commonConfig = {

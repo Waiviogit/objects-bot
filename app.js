@@ -34,7 +34,11 @@ const { corsOptionsDelegate } = require('./config/corsConfig');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(cors(corsOptionsDelegate));
+
+config.turnOffCors
+  ? app.use(cors())
+  : app.use(cors(corsOptionsDelegate));
+
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   session.run(() => next());
