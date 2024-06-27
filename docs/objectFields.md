@@ -460,3 +460,38 @@
     },
 ```
 
+## url field:
+```
+   "field": {
+        "name": "url" ,
+        "body": "string", 
+        "locale": "string"
+    },
+```
+
+
+## calories field:
+```
+   "field": {
+        "name": "calories" ,
+        "body": "string", 
+        "locale": "string"
+    },
+```
+## budget field:
+```
+   "field": {
+        "name": "budget" ,
+        "body": "string", 
+        "locale": "string"
+    },
+```
+## cookingTime field:
+```
+   "field": {
+        "name": "cookingTime" ,
+        "body": "string", 
+        "locale": "string"
+    },
+```
+
