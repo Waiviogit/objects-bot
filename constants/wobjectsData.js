@@ -72,6 +72,9 @@ const FIELDS_NAMES = {
   WALLET_ADDRESS: 'walletAddress',
   DELEGATION: 'delegation',
   URL: 'url',
+  CALORIES: 'calories',
+  BUDGET: 'budget',
+  COOKING_TIME: 'cookingTime',
 };
 
 const ARRAY_FIELDS = [
@@ -387,6 +390,20 @@ const EXPOSED_FIELDS_FOR_OBJECT_TYPE = {
     FIELDS_NAMES.RATING,
     FIELDS_NAMES.URL,
   ],
+  recipe: [
+    ...MAIN_FIELDS,
+    FIELDS_NAMES.TAG_CATEGORY,
+    FIELDS_NAMES.CATEGORY_ITEM,
+    FIELDS_NAMES.GALLERY_ALBUM,
+    FIELDS_NAMES.GALLERY_ITEM,
+    FIELDS_NAMES.RATING,
+    FIELDS_NAMES.CALORIES,
+    FIELDS_NAMES.BUDGET,
+    FIELDS_NAMES.COOKING_TIME,
+    FIELDS_NAMES.ADD_ON,
+    FIELDS_NAMES.SIMILAR,
+    FIELDS_NAMES.FEATURES,
+  ],
 };
 
 const SUPPOSED_UPDATES_BY_TYPE = {
@@ -404,6 +421,23 @@ const SUPPOSED_UPDATES_BY_TYPE = {
         'Pros',
         'Cons',
       ],
+      id_path: 'id',
+    },
+  ],
+  recipe: [
+    {
+      name: 'rating',
+      values: [
+        'Rating',
+      ],
+    },
+    {
+      name: 'tagCategory',
+      values: [
+        'Recipe tags',
+        'Ingredients',
+      ],
+      id_path: 'id',
     },
   ],
 };
