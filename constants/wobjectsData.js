@@ -75,6 +75,7 @@ const FIELDS_NAMES = {
   CALORIES: 'calories',
   BUDGET: 'budget',
   COOKING_TIME: 'cookingTime',
+  COST: 'cost',
 };
 
 const ARRAY_FIELDS = [
@@ -403,6 +404,7 @@ const EXPOSED_FIELDS_FOR_OBJECT_TYPE = {
     FIELDS_NAMES.ADD_ON,
     FIELDS_NAMES.SIMILAR,
     FIELDS_NAMES.FEATURES,
+    FIELDS_NAMES.COST,
   ],
 };
 

@@ -495,3 +495,12 @@
     },
 ```
 
+## cost field:
+```
+   "field": {
+        "name": "cost" ,
+        "body": "string", 
+        "locale": "string"
+    },
+```
+
