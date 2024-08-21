@@ -504,3 +504,65 @@
     },
 ```
 
+## recipeIngredients field:
+```
+    const recipeIngredientsBody = JSON.stringify(["ingredient1", "ingredient2"])
+   
+   "field": {
+        "name": "recipeIngredients" ,
+        "body": recipeIngredientsBody,
+        "locale": "string"
+    },
+```
+
+## groupExpertise field:
+```
+    const groupExpertiseBody = JSON.stringify(["object1", "object2"])
+   
+   "field": {
+        "name": "groupExpertise" ,
+        "body": groupExpertiseBody,
+        "locale": "string"
+    },
+```
+
+## groupFollowers field:
+```
+    const groupFollowersBody = JSON.stringify(["user1", "user2"])
+   
+   "field": {
+        "name": "groupFollowers" ,
+        "body": groupFollowersBody,
+        "locale": "string"
+    },
+```
+
+## groupFollowing field:
+```
+    const groupFollowingBody = JSON.stringify(["user1", "user2"])
+   
+   "field": {
+        "name": "groupFollowing" ,
+        "body": groupFollowingBody,
+        "locale": "string"
+    },
+```
+
+## groupAdd field:
+ ```  
+   "field": {
+        "name": "groupAdd" ,
+        "body": "username",
+        "locale": "string"
+    },
+```
+
+## groupExclude field:
+ ```     
+   "field": {
+        "name": "groupExclude" ,
+        "body": "username",
+        "locale": "string"
+    },
+```
+
