@@ -76,6 +76,7 @@ const FIELDS_NAMES = {
   BUDGET: 'budget',
   COOKING_TIME: 'cookingTime',
   COST: 'cost',
+  RECIPE_INGREDIENTS: 'recipeIngredients',
   GROUP_EXPERTISE: 'groupExpertise',
   GROUP_FOLLOWERS: 'groupFollowers',
   GROUP_FOLLOWING: 'groupFollowing',
@@ -410,6 +411,7 @@ const EXPOSED_FIELDS_FOR_OBJECT_TYPE = {
     FIELDS_NAMES.SIMILAR,
     FIELDS_NAMES.FEATURES,
     FIELDS_NAMES.COST,
+    FIELDS_NAMES.RECIPE_INGREDIENTS,
   ],
   group: [
     ...MAIN_FIELDS,

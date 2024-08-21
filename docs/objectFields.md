@@ -504,6 +504,17 @@
     },
 ```
 
+## recipeIngredients field:
+```
+    const recipeIngredientsBody = JSON.stringify(["ingredient1", "ingredient2"])
+   
+   "field": {
+        "name": "recipeIngredients" ,
+        "body": recipeIngredientsBody,
+        "locale": "string"
+    },
+```
+
 ## groupExpertise field:
 ```
     const groupExpertiseBody = JSON.stringify(["object1", "object2"])
