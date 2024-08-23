@@ -46,6 +46,7 @@ const broadcastStatusParse = async (message, path, postingErrorWait, qname, botT
   const account = _.get(accounts, `${botType}[${config[path].account}]`);
   const { error, result, guestAuthor } = await broadcastHelper.switcher(message, account);
   if (error) {
+    console.log('broadcastStatusParse error:');
     console.log(error.message);
   }
   if (result) {
