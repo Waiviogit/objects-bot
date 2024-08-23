@@ -45,6 +45,9 @@ const broadcastStatusParse = async (message, path, postingErrorWait, qname, botT
   if (_.get(accounts, 'error')) return true;
   const account = _.get(accounts, `${botType}[${config[path].account}]`);
   const { error, result, guestAuthor } = await broadcastHelper.switcher(message, account);
+  if (error) {
+    console.log(error.message);
+  }
   if (result) {
     config[path].account === accounts[botType].length - 1
       ? config[path].account = 0
