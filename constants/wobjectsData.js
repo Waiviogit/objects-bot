@@ -457,8 +457,9 @@ const SUPPOSED_UPDATES_BY_TYPE = {
     {
       name: 'tagCategory',
       values: [
-        'Recipe tags',
-        'Ingredients',
+        'Cuisine',
+        'Meal Type',
+        'Diet',
       ],
       id_path: 'id',
     },
