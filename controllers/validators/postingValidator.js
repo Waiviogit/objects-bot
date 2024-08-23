@@ -33,7 +33,21 @@ exports.optionsSchema = Joi.object().keys({
             account: Joi.string().required(),
             weight: Joi.number().required(),
           }).required(),
-        ),
+        ).custom((value, helpers) => {
+          // Create a Set to track unique accounts
+          const accounts = new Set();
+          // Iterate over each beneficiary and check for duplicates
+          for (const beneficiary of value) {
+            if (accounts.has(beneficiary.account)) {
+              return helpers.message(`Duplicate account: ${beneficiary.account}`);
+            }
+            accounts.add(beneficiary.account);
+          }
+          accounts.clear();
+
+          // If no duplicates were found, return the value
+          return value;
+        }, 'Unique account validation').required(),
       }).required(),
     ),
   ).required(),
