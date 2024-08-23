@@ -45,8 +45,8 @@ const switcher = async (message, account) => {
   }
 
   const post = parsedData.comment;
-  console.info(`Try to create comment by | ${account.name}`);
   const guestAuthor = _.cloneDeep(post.author);
+  console.info(`Try to create comment by | ${account.name} | guest author ${guestAuthor}`);
   // Prepare comment body
   post.body = `${post.body}<hr/><center><a href="/${await permlinkGenerator(post, account, guestAuthor)}">Posted</a> by Waivio guest: <a href="/@${post.author}">@${post.author}</a></center>`;
   // Change comment author for bot name
