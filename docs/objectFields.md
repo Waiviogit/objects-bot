@@ -347,10 +347,10 @@
 
 ## affiliateCode field:
 ```
-   const affiliateCodeBody = JSON.stringify(["PERSONAL", "ACCHSUIT"])
+   const affiliateCodeBody = JSON.stringify(["PERSONAL", "CODE1"])
    
    //where first argument is string with either PERSONAL or example.social.gifts
-   //and second is string with code itself
+   //and second is string with code itself you also can add several codes with show chance : ["PERSONAL", "CODE1::70", "CODE2::30"]
     
    "field": {
         "name": "affiliateCode" ,
