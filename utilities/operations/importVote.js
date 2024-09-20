@@ -215,7 +215,7 @@ exports.voteForField = async ({
   }
 
   console.log('vote', voter);
-  await vote({
+  return vote({
     voter,
     author,
     permlink,
