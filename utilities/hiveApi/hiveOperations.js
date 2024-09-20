@@ -119,6 +119,7 @@ exports.vote = async ({
     );
     return { result };
   } catch (error) {
+    console.log('vote ERROR', JSON.stringify(error, null, 2));
     return { error };
   }
 };
