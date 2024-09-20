@@ -182,6 +182,7 @@ exports.voteForField = async ({
 
   const powers = await getEnginePowers({ account: voter, symbol: 'WAIV' });
   if (!powers) {
+    console.log()
     await sentryCaptureException(new Error(`voteForField !powers ${voter}`));
     return;
   }

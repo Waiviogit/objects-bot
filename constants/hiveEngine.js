@@ -1,5 +1,4 @@
 exports.HIVE_ENGINE_NODES = [
-  'https://engine.waivio.com',
   'https://herpc.dtools.dev',
   'https://api.primersion.com',
   'https://herpc.kanibot.com',
