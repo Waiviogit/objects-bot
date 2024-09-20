@@ -189,10 +189,13 @@ exports.voteForField = async ({
     return;
   }
 
+  console.log('getVoteAmount', voter);
   const amountUsd = await getVoteAmount({ account: voter });
 
+  console.log('usdToWaiv', voter);
   const amount = await usdToWaiv({ amountUsd });
 
+  console.log('getWeightForVote', voter);
   const weight = await getWeightForVote({
     account: voter, votingPower: powers.votingPower, amount,
   });
@@ -203,11 +206,15 @@ exports.voteForField = async ({
     return;
   }
 
+  console.log('getSameFields', voter);
+
   const sameFields = await getSameFields({ voter, authorPermlink, fieldType });
   if (!_.isEmpty(sameFields)) {
+    console.log('unvoteOnSameFields', voter);
     await unvoteOnSameFields({ voter, sameFields, authorPermlink });
   }
 
+  console.log('vote', voter);
   await vote({
     voter,
     author,
