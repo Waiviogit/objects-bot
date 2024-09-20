@@ -196,6 +196,7 @@ exports.voteForField = async ({
   });
 
   if (!weight) {
+    console.log('!weight');
     await sentryCaptureException(new Error(`voteForField !weight ${voter}`));
     return;
   }
