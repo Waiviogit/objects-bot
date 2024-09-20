@@ -110,6 +110,9 @@ exports.broadcastJson = async ({
 exports.vote = async ({
   key, voter, author, permlink, weight,
 }) => {
+  console.log('vote params:', JSON.stringify({
+    voter, author, permlink, weight,
+  }));
   try {
     const result = await broadcastClient.broadcast.vote(
       {
