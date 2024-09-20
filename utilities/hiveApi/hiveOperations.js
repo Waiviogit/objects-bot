@@ -120,6 +120,7 @@ exports.vote = async ({
       },
       PrivateKey.fromString(key),
     );
+    console.log('voting result', JSON.stringify(result, null, 2));
     return { result };
   } catch (error) {
     console.log('vote ERROR', JSON.stringify(error, null, 2));
