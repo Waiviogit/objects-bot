@@ -180,6 +180,8 @@ exports.voteForField = async ({
     });
   }
 
+  console.log('getEnginePowers', voter);
+
   const powers = await getEnginePowers({ account: voter, symbol: 'WAIV' });
   if (!powers) {
     console.log('!POWERS', voter);
