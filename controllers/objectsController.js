@@ -47,7 +47,11 @@ const voteForField = async (req, res, next) => {
   if (!value) return;
   const { error, result } = await importVote.voteForField({ ...value, voteRequest: true });
 
-  if (error) return next(error);
+  if (error) {
+    console.log('voteForField', error);
+    return next(error);
+  }
+  console.log('voteForField result ', result);
   res.result = result;
   next();
 };
