@@ -204,7 +204,7 @@ exports.voteForField = async ({
     await unvoteOnSameFields({ voter, sameFields, authorPermlink });
   }
 
-  await vote({
+  return vote({
     voter,
     author,
     permlink,
