@@ -38,4 +38,5 @@ exports.voteSchema = Joi.object().keys({
   permlink: Joi.string().required(),
   authorPermlink: Joi.string().required(),
   fieldType: Joi.string().required(),
+  shouldWhiteListVote: Joi.boolean().default(false),
 });
