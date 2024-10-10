@@ -185,7 +185,7 @@ exports.voteForField = async ({
   const powers = await getEnginePowers({ account: voter, symbol: 'WAIV' });
   if (!powers) {
     await sentryCaptureException(new Error(`voteForField !powers ${voter}`));
-    return { error: { status: 500, message: 'Cant calc weight for vote' } };
+    return { error: { status: 500, message: 'Cant calc power for vote' } };
   }
 
   const amountUsd = await getVoteAmount({ account: voter });
