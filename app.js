@@ -61,6 +61,7 @@ app.use(Sentry.Handlers.errorHandler({
   shouldHandleError(error) {
     // Capture 500 errors
     if (error.status >= 500 || !error.status) {
+      console.log(JSON.stringify(error));
       sendSentryNotification();
       return true;
     }
