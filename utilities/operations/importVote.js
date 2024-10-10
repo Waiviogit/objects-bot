@@ -167,6 +167,8 @@ const voteForFieldGuest = async ({
       ? guestMana.MANA_CONSUMPTION.VOTE
       : guestMana.MANA_CONSUMPTION.FIELD_VOTE,
   });
+
+  return { result: 'ok' };
 };
 
 exports.voteForField = async ({
@@ -183,7 +185,7 @@ exports.voteForField = async ({
   const powers = await getEnginePowers({ account: voter, symbol: 'WAIV' });
   if (!powers) {
     await sentryCaptureException(new Error(`voteForField !powers ${voter}`));
-    return;
+    return { error: { status: 500, message: 'Cant calc weight for vote' } };
   }
 
   const amountUsd = await getVoteAmount({ account: voter });
@@ -196,7 +198,7 @@ exports.voteForField = async ({
 
   if (!weight) {
     await sentryCaptureException(new Error(`voteForField !weight ${voter}`));
-    return;
+    return { error: { status: 500, message: 'Cant calc weight for vote' } };
   }
 
   const sameFields = await getSameFields({ voter, authorPermlink, fieldType });
