@@ -174,7 +174,7 @@ const voteForFieldGuest = async ({
 exports.voteForField = async ({
   voter, author, permlink, authorPermlink, fieldType, voteRequest, shouldWhiteListVote,
 }) => {
-  if (await isUserInWhitelist({ account: voter }) && !shouldWhiteListVote) return;
+  if (await isUserInWhitelist({ account: voter }) && !shouldWhiteListVote) return { result: 'ok' };
 
   if (isGuest(voter)) {
     return voteForFieldGuest({
@@ -185,6 +185,7 @@ exports.voteForField = async ({
   const powers = await getEnginePowers({ account: voter, symbol: 'WAIV' });
   if (!powers) {
     await sentryCaptureException(new Error(`voteForField !powers ${voter}`));
+    console.log('Cant calc power for vote');
     return { error: { status: 500, message: 'Cant calc power for vote' } };
   }
 
@@ -198,6 +199,7 @@ exports.voteForField = async ({
 
   if (!weight) {
     await sentryCaptureException(new Error(`voteForField !weight ${voter}`));
+    console.log('Cant calc weight for vote');
     return { error: { status: 500, message: 'Cant calc weight for vote' } };
   }
 
