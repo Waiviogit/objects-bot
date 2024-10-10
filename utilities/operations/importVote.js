@@ -170,9 +170,9 @@ const voteForFieldGuest = async ({
 };
 
 exports.voteForField = async ({
-  voter, author, permlink, authorPermlink, fieldType, voteRequest,
+  voter, author, permlink, authorPermlink, fieldType, voteRequest, shouldWhiteListVote,
 }) => {
-  if (await isUserInWhitelist({ account: voter })) return;
+  if (await isUserInWhitelist({ account: voter }) && !shouldWhiteListVote) return;
 
   if (isGuest(voter)) {
     return voteForFieldGuest({
