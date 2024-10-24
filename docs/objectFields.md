@@ -566,3 +566,21 @@
     },
 ```
 
+## groupLastActivity field:
+ ```     
+   "field": {
+        "name": "groupLastActivity" ,
+        "body": "7776000000",  //time to subtract from current date in ms (90)
+        "locale": "string"
+    },
+```
+
+## groupMinExpertise field:
+ ```     
+   "field": {
+        "name": "groupMinExpertise" ,
+        "body": "7776000000",  
+        "locale": "string"
+    },
+```
+
