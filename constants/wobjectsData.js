@@ -82,6 +82,8 @@ const FIELDS_NAMES = {
   GROUP_FOLLOWING: 'groupFollowing',
   GROUP_ADD: 'groupAdd',
   GROUP_EXCLUDE: 'groupExclude',
+  GROUP_LAST_ACTIVITY: 'groupLastActivity',
+  GROUP_MIN_EXPERTISE: 'groupMinExpertise',
 };
 
 const ARRAY_FIELDS = [
@@ -427,6 +429,7 @@ const EXPOSED_FIELDS_FOR_OBJECT_TYPE = {
     FIELDS_NAMES.GROUP_FOLLOWING,
     FIELDS_NAMES.GROUP_ADD,
     FIELDS_NAMES.GROUP_EXCLUDE,
+    FIELDS_NAMES.GROUP_LAST_ACTIVITY,
   ],
 };
 
