@@ -584,3 +584,14 @@
     },
 ```
 
+## promotion field:
+ ```     
+   "field": {
+        "name": "promotion" ,
+        "body": "waiviodev.com",  
+        "locale": "string",
+        "startDate": 1730811940951,
+        "endDate": 1730821940951
+    },
+```
+
