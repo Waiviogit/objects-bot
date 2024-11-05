@@ -84,6 +84,7 @@ const FIELDS_NAMES = {
   GROUP_EXCLUDE: 'groupExclude',
   GROUP_LAST_ACTIVITY: 'groupLastActivity',
   GROUP_MIN_EXPERTISE: 'groupMinExpertise',
+  PROMOTION: 'promotion',
 };
 
 const ARRAY_FIELDS = [
@@ -118,6 +119,7 @@ const MAIN_FIELDS = [
   FIELDS_NAMES.DESCRIPTION,
   FIELDS_NAMES.BACKGROUND,
   FIELDS_NAMES.DELEGATION,
+  FIELDS_NAMES.PROMOTION,
 ];
 
 const MAP_TYPE_FIELDS = [
