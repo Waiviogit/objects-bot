@@ -36,6 +36,11 @@ const switcher = async (message, account) => {
   // check post to exists in base, if exist -> it is update
   if (!parsedData.comment.parent_author) {
     const checkInBase = await commentFinder(parsedData.comment.author, parsedData.comment.permlink);
+    parsedData.comment.json_metadata = addSignatureToJsonMetadata({
+      jsonMetadata: parsedData?.comment?.json_metadata,
+      author: checkInBase.author,
+      permlink: parsedData?.comment?.permlink,
+    });
     // if author exists - we need to update post
     if (_.has(checkInBase, 'author')) return updateHelper(checkInBase.author, parsedData.comment);
   }
