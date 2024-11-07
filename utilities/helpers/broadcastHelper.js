@@ -36,13 +36,15 @@ const switcher = async (message, account) => {
   // check post to exists in base, if exist -> it is update
   if (!parsedData.comment.parent_author) {
     const checkInBase = await commentFinder(parsedData.comment.author, parsedData.comment.permlink);
-    parsedData.comment.json_metadata = addSignatureToJsonMetadata({
-      jsonMetadata: parsedData?.comment?.json_metadata,
-      author: checkInBase.author,
-      permlink: parsedData?.comment?.permlink,
-    });
     // if author exists - we need to update post
-    if (_.has(checkInBase, 'author')) return updateHelper(checkInBase.author, parsedData.comment);
+    if (_.has(checkInBase, 'author')) {
+      parsedData.comment.json_metadata = addSignatureToJsonMetadata({
+        jsonMetadata: parsedData?.comment?.json_metadata,
+        author: checkInBase.author,
+        permlink: parsedData?.comment?.permlink,
+      });
+      return updateHelper(checkInBase.author, parsedData.comment);
+    }
   }
   // if in post data from redis exists special flag - it is comment for update
   if (parsedData.comment.parent_author && parsedData.comment.guest_root_author) {
