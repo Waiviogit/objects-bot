@@ -16,7 +16,7 @@ const proxyPosting = async (req, res, next) => { // add data to queue
   const validName = validationHelper.appValidation(comment.comment.author);
   if (!validName) return next({ status: 401, message: 'Forbidden' });
 
-  const { error, isValid } = await authoriseUser.authorise(comment.comment.author);
+  const { error, isValid } = await authoriseUser.authorise(comment.comment.author, req.header('access-key'));
   if (error) return next(error);
   if (isValid) {
     if (comment.comment.guest_root_author && comment.comment.parent_author !== '') {
