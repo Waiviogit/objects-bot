@@ -27,7 +27,7 @@ const corsOptionsDelegate = async (req, callback) => {
   if (whitelist.indexOf(origin) > -1 || serverCondition) {
     return callback(null, true);
   }
-  return callback(new Error('Not allowed by CORS'));
+  return callback({ status: 401 });
 };
 
 module.exports = {
