@@ -23,6 +23,7 @@ exports.authorise = async (username, accessKey = '') => {
 
   if (accessKey) {
     isValidToken = config.accessKeys.includes(accessKey);
+    session.set('authorised_user', { name: username, provider: 'google' });
     if (isValidToken) return { isValid: true };
   }
 
