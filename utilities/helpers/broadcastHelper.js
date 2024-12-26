@@ -55,7 +55,10 @@ const switcher = async (message, account) => {
   const guestAuthor = _.cloneDeep(post.author);
   console.info(`Try to create comment by | ${account.name} | guest author ${guestAuthor}`);
   // Prepare comment body
-  post.body = `${post.body}<hr/><center><a href="/${await permlinkGenerator(post, account, guestAuthor)}">Posted</a> by Waivio guest: <a href="/@${post.author}">@${post.author}</a></center>`;
+  const host = jsonHelper.parseJson(post?.json_metadata, null)?.host;
+  const hostRef = host ? `https://${host}` : '';
+
+  post.body = `${post.body}<hr/><center><a href="${hostRef}/${await permlinkGenerator(post, account, guestAuthor)}">Posted</a> by Waivio guest: <a href="${hostRef}/@${post.author}">@${post.author}</a></center>`;
   // Change comment author for bot name
   post.author = account.name;
 
