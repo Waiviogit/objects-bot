@@ -1,7 +1,13 @@
 const { redisGetter, redis } = require('utilities/redis');
 const config = require('config');
 
-const corsWhitelist = ['https://waiviodev.com', 'https://waivio.com', 'https://www.waivio.com'];
+const corsWhitelist = [
+  'https://waiviodev.com',
+  'https://waivio.com',
+  'https://www.waivio.com',
+  'https://www.youtube.com',
+  'https://www.tiktok.com',
+];
 
 const parseJson = (string) => {
   try {
