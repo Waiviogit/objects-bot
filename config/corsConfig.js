@@ -7,6 +7,8 @@ const corsWhitelist = [
   'https://www.waivio.com',
   'https://www.youtube.com',
   'https://www.tiktok.com',
+  'https://www.tiktok.com',
+  'https://www.instagram.com',
 ];
 
 const parseJson = (string) => {
