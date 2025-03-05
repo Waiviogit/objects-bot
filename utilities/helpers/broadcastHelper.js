@@ -58,7 +58,11 @@ const switcher = async (message, account) => {
   const host = jsonHelper.parseJson(post?.json_metadata, null)?.host;
   const hostRef = host ? `https://${host}` : '';
 
-  post.body = `${post.body}<hr/><center><a href="${hostRef}/${await permlinkGenerator(post, account, guestAuthor)}">Posted</a> by Waivio guest: <a href="${hostRef}/@${post.author}">@${post.author}</a></center>`;
+  post.body = `${post.body}
+
+---
+
+[Posted](${hostRef}/${await permlinkGenerator(post, account, guestAuthor)}) by Waivio guest: [@${post.author}](${hostRef}/@${post.author})`;
   // Change comment author for bot name
   post.author = account.name;
 
