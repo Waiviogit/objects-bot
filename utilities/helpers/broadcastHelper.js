@@ -59,7 +59,6 @@ const switcher = async (message, account) => {
   const hostRef = host ? `https://${host}` : '';
 
   post.body = `${post.body}
-
 ---
 
 [Posted](${hostRef}/${await permlinkGenerator(post, account, guestAuthor)}) by Waivio guest: [@${post.author}](${hostRef}/@${post.author})`;
