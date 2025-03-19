@@ -85,6 +85,7 @@ const FIELDS_NAMES = {
   GROUP_LAST_ACTIVITY: 'groupLastActivity',
   GROUP_MIN_EXPERTISE: 'groupMinExpertise',
   PROMOTION: 'promotion',
+  NUTRITION: 'nutrition',
 };
 
 const ARRAY_FIELDS = [
@@ -418,6 +419,7 @@ const EXPOSED_FIELDS_FOR_OBJECT_TYPE = {
     FIELDS_NAMES.RECIPE_INGREDIENTS,
     FIELDS_NAMES.PRODUCT_ID,
     FIELDS_NAMES.DEPARTMENTS,
+    FIELDS_NAMES.NUTRITION,
   ],
   group: [
     ...MAIN_FIELDS,
