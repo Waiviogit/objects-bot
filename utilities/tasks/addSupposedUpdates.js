@@ -1,4 +1,4 @@
-const { SUPPOSED_UPDATES_BY_TYPE } = require('../../constants/wobjectsData');
+const { SUPPOSED_UPDATES_BY_TYPE } = require('@waivio/objects-processor');
 const { ObjectType } = require('../../database').models;
 
 const addSupposedUpdates = async () => {

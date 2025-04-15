@@ -603,3 +603,12 @@
         "locale": "string"
     },
 ```
+
+## Featured field:
+```
+   "field": {
+        "name": "featured" ,
+        "body": "author_permlink",
+        "locale": "string"
+    },
+```

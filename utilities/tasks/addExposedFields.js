@@ -1,4 +1,4 @@
-const { EXPOSED_FIELDS_FOR_OBJECT_TYPE } = require('../../constants/wobjectsData');
+const { EXPOSED_FIELDS_FOR_OBJECT_TYPE } = require('@waivio/objects-processor');
 const { ObjectType } = require('../../database').models;
 
 const addExposedFields = async () => {
