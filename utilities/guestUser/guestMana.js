@@ -6,8 +6,8 @@ const MANA_CONSUMPTION = {
   FIELD_VOTE: 2,
   FIELD: 1,
   VOTE: 1,
-  POST: 100,
-  COMMENT: 25,
+  POST: 200,
+  COMMENT: 100,
   CUSTOM_JSON: 1,
 };
 
