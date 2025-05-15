@@ -71,6 +71,7 @@ const validateMana = async ({ account, cost = MANA_CONSUMPTION.FIELD_VOTE }) => 
 };
 
 module.exports = {
+  updateLastManaUpdateTimestamp,
   consumeMana,
   getCurrentMana,
   validateMana,

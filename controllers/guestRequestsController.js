@@ -8,6 +8,7 @@ const { withdraw } = require('utilities/operations/guestWithdraw');
 const validators = require('./validators');
 const { guestMana } = require('../utilities/guestUser');
 const { postOrCommentGuest, getManaError } = require('../utilities/helpers/userHelper');
+const { detectSpamMessage } = require('../utilities/guestUser/spamDetection');
 
 const proxyPosting = async (req, res, next) => { // add data to queue
   const comment = validationHelper.postingValidator(req.body, next);
@@ -30,6 +31,13 @@ const proxyPosting = async (req, res, next) => { // add data to queue
     });
 
     if (!validMP) return next(getManaError());
+
+    const { error: spamError } = await detectSpamMessage({
+      body: comment.comment.body,
+      account: comment.comment.author,
+    });
+    if (spamError) return next(spamError);
+
     await guestMana.consumeMana({
       account: comment.comment.author,
       cost: actionCost,
