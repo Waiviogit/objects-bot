@@ -612,3 +612,14 @@
         "locale": "string"
     },
 ```
+
+## sale field:
+ ```     
+   "field": {
+        "name": "sale" ,
+        "body": "string",  
+        "locale": "string",
+        "startDate": 1730811940951,
+        "endDate": 1730821940951
+    },
+```
