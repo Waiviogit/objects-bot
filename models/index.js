@@ -3,4 +3,5 @@ module.exports = {
   GuestManaModel: require('./GuestManaModel'),
   ServiceBotsModel: require('./ServiceBotModel'),
   GuestSpamModel: require('./GuestSpamModel'),
+  UserModel: require('./UserModel'),
 };

@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 const config = require('config');
+const { waivioModels } = require('@waivio/types');
 
-mongoose.connect(config.mongoConnectionString, {
-  useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true,
-})
+mongoose.connect(config.mongoConnectionString)
   .then(() => console.log('connection successful!'))
   .catch((error) => console.error(error));
 
@@ -14,10 +13,11 @@ mongoose.Promise = global.Promise;
 module.exports = {
   Mongoose: mongoose,
   models: {
-    WObject: require('./schemas/wObjectSchema'),
-    ObjectType: require('./schemas/ObjectTypeSchema'),
-    GuestMana: require('./schemas/GuestManaSchema'),
-    ServiceBot: require('./schemas/ServiceBotSchema'),
-    GuestSpam: require('./schemas/GuestSpamSchema'),
+    User: mongoose.model(...waivioModels.User),
+    WObject: mongoose.model(...waivioModels.Wobject),
+    ObjectType: mongoose.model(...waivioModels.ObjectType),
+    GuestMana: mongoose.model(...waivioModels.GuestMana),
+    ServiceBot: mongoose.model(...waivioModels.ServiceBot),
+    GuestSpam: mongoose.model(...waivioModels.GuestSpam),
   },
 };

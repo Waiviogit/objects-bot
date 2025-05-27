@@ -1,6 +1,6 @@
 const { promptWithJsonSchema } = require('../operations/gptService');
 const { updateLastManaUpdateTimestamp } = require('./guestMana');
-const { GuestSpamModel } = require('../../models');
+const { GuestSpamModel, UserModel } = require('../../models');
 
 const spamSchema = {
   type: 'object',
@@ -35,6 +35,7 @@ const detectSpamMessage = async ({ body, account }) => {
   await GuestSpamModel.create({
     account, body, reason,
   });
+  await UserModel.setSpamByName(account);
 
   const message = `Your message was detected as spam and was not posted.
 Reason: ${reason}

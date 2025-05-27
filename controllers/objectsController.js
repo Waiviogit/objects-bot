@@ -1,6 +1,7 @@
 const { objectOperations, importVote } = require('utilities');
 const validators = require('controllers/validators');
 const config = require('config');
+const checkForBlock = require('../utilities/guestUser/checkForBlock');
 
 const processCreateObjectType = async (req, res, next) => {
   if (!req.body.objectType) {
@@ -22,6 +23,8 @@ const processCreateObjectType = async (req, res, next) => {
 const processCreateObject = async (req, res, next) => {
   const value = validators.validate(req.body, validators.object.createSchema, next);
   if (!value) return;
+  const { error: blockedError } = await checkForBlock(value.author);
+  if (blockedError) return next(blockedError);
   const { error, result } = await objectOperations.createObjectOp(value);
 
   if (error) return next(error);
@@ -33,6 +36,8 @@ const processAppendObject = async (req, res, next) => {
   const value = validators.validate(req.body, validators.object.appendSchema, next);
 
   if (!value) return;
+  const { error: blockedError } = await checkForBlock(value.author);
+  if (blockedError) return next(blockedError);
   const { error, result } = await objectOperations.AppendObjectOp(value);
 
   if (error) return next(error);
@@ -45,6 +50,8 @@ const voteForField = async (req, res, next) => {
   if (req.headers.api_key !== config.apiKey) return next({ status: 401, message: 'unauthorized' });
 
   if (!value) return;
+  const { error: blockedError } = await checkForBlock(value.voter);
+  if (blockedError) return next(blockedError);
   const { error, result } = await importVote.voteForField({ ...value, voteRequest: true });
 
   if (error) return next(error);
