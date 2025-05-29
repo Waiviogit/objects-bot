@@ -14,6 +14,7 @@ module.exports = {
   Mongoose: mongoose,
   models: {
     User: mongoose.model(...waivioModels.User),
+    WobjectSubscription: mongoose.model(...waivioModels.WobjectSubscription),
     WObject: mongoose.model(...waivioModels.Wobject),
     ObjectType: mongoose.model(...waivioModels.ObjectType),
     GuestMana: mongoose.model(...waivioModels.GuestMana),
