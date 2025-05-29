@@ -623,3 +623,12 @@
         "endDate": 1730821940951
     },
 ```
+
+## compareAtPrice field:
+ ```     
+   "field": {
+        "name": "compareAtPrice" ,
+        "body": "string",  
+        "locale": "string",
+    },
+```
