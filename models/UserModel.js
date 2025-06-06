@@ -31,11 +31,6 @@ const findOneBlockedByName = async (name) => {
   return result;
 };
 
-(async () => {
-  const yo = await findOneBlockedByName('waivio_fesmofet');
-  console.log();
-})();
-
 module.exports = {
   findOneBlockedByName,
   setSpamByName,
