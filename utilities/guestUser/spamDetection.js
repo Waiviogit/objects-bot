@@ -5,16 +5,26 @@ const { GuestSpamModel, UserModel } = require('../../models');
 const spamSchema = {
   type: 'object',
   properties: {
-    spam: {
-      type: 'boolean',
-      description: 'Whether the text is spam Do NOT flag a post as spam or phishing just because it contains an external link.',
+    spamDegree: {
+      type: 'integer',
+      minimum: 0,
+      maximum: 5,
+      description: [
+        'Spam severity on a scale from 0 to 5.',
+        '0 = Not spam at all.',
+        '1 = Very likely legitimate, but contains some minor spam-like features.',
+        '2 = Slight suspicion, but probably OK.',
+        '3 = Mixed, contains notable spam indicators but not outright spam.',
+        '4 = Strongly suspicious, likely spam.',
+        '5 = Definitely spam or phishing.',
+      ].join(' '),
     },
     reason: {
       type: 'string',
-      description: 'Explanation why the text is considered spam/phishing or legitimate',
+      description: 'Explanation of why this score was given (describe features, not just “spam”/“not spam”).',
     },
   },
-  required: ['spam', 'reason'],
+  required: ['spamDegree', 'reason'],
 };
 
 const spamSchemaObject = {
@@ -49,8 +59,6 @@ Examples of acceptable posts:
 - Posts about nature, life, vacations, opinions, or everyday experiences
 - Posts with personal or professional links that do not meet the spam/phishing criteria above
 
-Analyze the following text and ONLY flag it as spam or phishing if it matches the criteria above.
-
 Text to analyze:
 ${body}
 `;
@@ -58,7 +66,9 @@ ${body}
   const { result, error } = await promptWithJsonSchema({ prompt, jsonSchema: spamSchemaObject });
   if (error) return { error: null };
   if (!result) return { error: null };
-  const { spam, reason } = result;
+  const { spamDegree, reason } = result;
+
+  const spam = spamDegree > 3;
   if (!spam) return { error: null };
 
   // don't allow to post for some time
