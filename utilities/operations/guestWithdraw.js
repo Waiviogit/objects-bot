@@ -9,6 +9,7 @@ const Web3 = require('web3');
 const config = require('config');
 const { validateBalanceRequest, engineBroadcast } = require('./transferOperation');
 const { getTokenBalances } = require('../hiveEngine/tokensContract');
+const { redis, redisGetter, redisSetter } = require('../redis');
 
 const DEFAULT_PRECISION = 8;
 const DEFAULT_SLIPPAGE = 0.0001;
@@ -209,26 +210,66 @@ const validateEngineBalance = async ({ account, symbol, quantity }) => {
   return new BigNumber(wallet.balance).gte(quantity);
 };
 
+const WITHDRAW_LOCK_KEY = 'guest_withdraw_lock:';
+
+const getWithdrawLock = async (account) => {
+  const result = await redisGetter.get({
+    key: `${WITHDRAW_LOCK_KEY}${account}`,
+    client: redis.botsClient,
+  });
+
+  return result;
+};
+const setLock = async (account) => {
+  await redisSetter.setEx({
+    key: `${WITHDRAW_LOCK_KEY}${account}`,
+    client: redis.botsClient,
+    value: account,
+    ttl: 60 * 60 * 24,
+  });
+};
+const delWithdrawLock = async (account) => {
+  await redisSetter.del({
+    key: `${WITHDRAW_LOCK_KEY}${account}`,
+    client: redis.botsClient,
+  });
+};
+
 exports.withdraw = async ({ account, data }) => {
+  const lock = await getWithdrawLock(account);
+  if (lock) {
+    return { error: { message: 'Operation already in progress', status: 403 } };
+  }
+  await setLock(account);
+
   const {
     quantity, inputSymbol, outputSymbol, address,
   } = data;
   const validHotAccBalance = await validateEngineBalance({
     account: config.guestHotAccount, symbol: inputSymbol, quantity,
   });
-  if (!validHotAccBalance) return { error: { message: 'not sufficient balance' } };
+  if (!validHotAccBalance) {
+    await delWithdrawLock(account);
+    return { error: { message: 'not sufficient balance' } };
+  }
 
   const validGuestBalance = await validateBalanceRequest(
     { account, symbol: inputSymbol, quantity },
   );
-  if (!validGuestBalance) return { error: { message: `${account} not sufficient balance` } };
+  if (!validGuestBalance) {
+    await delWithdrawLock(account);
+    return { error: { message: `${account} not sufficient balance` } };
+  }
 
   const params = withdrawParams[inputSymbol][outputSymbol];
 
   const { swapJson, amount, error } = await params.getSwapData({
     params, quantity, inputSymbol,
   });
-  if (error) return { error };
+  if (error) {
+    await delWithdrawLock(account);
+    return { error };
+  }
 
   /// prediction withdraw for front-end
   const predictionAmount = amount * DEFAULT_WITHDRAW_FEE_MUL;
@@ -237,13 +278,19 @@ exports.withdraw = async ({ account, data }) => {
     address, outputSymbol, params, amount, inputSymbol, account, inputQuantity: quantity,
   });
 
-  if (errWithdrawData) return { error: errWithdrawData };
+  if (errWithdrawData) {
+    await delWithdrawLock(account);
+    return { error: errWithdrawData };
+  }
   const customJsonPayload = [...swapJson, withdraw];
   const { result, error: broadcastError } = await engineBroadcast({
     account: { name: config.guestHotAccount, key: config.guestHotKey },
     operations: customJsonPayload,
   });
 
-  if (broadcastError) return { error: broadcastError };
+  if (broadcastError) {
+    await delWithdrawLock(account);
+    return { error: broadcastError };
+  }
   return { result };
 };
