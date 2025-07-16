@@ -1,6 +1,5 @@
 const { GuestManaModel } = require('../../models');
-const { smembersAsync } = require('../redis/redisGetter');
-const { WHITE_LIST_KEY } = require('../../constants/importObjects');
+const { isNameInWhiteList } = require('../redis/redisGetter');
 
 const MANA_CONSUMPTION = {
   FIELD_VOTE: 2,
@@ -53,8 +52,8 @@ const getCurrentMana = async (account) => {
 const consumeMana = async ({ account = '', cost = MANA_CONSUMPTION.FIELD }) => {
   if (!account.includes('_')) return;
 
-  const whitelist = await smembersAsync({ key: WHITE_LIST_KEY });
-  if (whitelist.includes(account)) return;
+  const inWhiteList = await isNameInWhiteList(account);
+  if (inWhiteList) return;
 
   const currentMana = await getCurrentMana(account);
 

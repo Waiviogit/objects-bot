@@ -5,8 +5,8 @@ const { vote } = require('../hiveApi/hiveOperations');
 const { getTokenBalances, getRewardPool } = require('../hiveEngine/tokensContract');
 const { MAX_VOTING_POWER } = require('../../constants/hiveEngine');
 const { getEnginePowers, usdToWaiv } = require('../hiveEngine/operations');
-const { smembersAsync, get } = require('../redis/redisGetter');
-const { WHITE_LIST_KEY, VOTE_COST, IMPORT_REDIS_KEYS } = require('../../constants/importObjects');
+const { get, isNameInWhiteList } = require('../redis/redisGetter');
+const { VOTE_COST, IMPORT_REDIS_KEYS } = require('../../constants/importObjects');
 const { sentryCaptureException } = require('../helpers/sentryHelper');
 const { Wobj } = require('../../models');
 const { ARRAY_FIELDS } = require('../../constants/wobjectsData');
@@ -46,14 +46,9 @@ const getWeightForVote = async ({ account, votingPower, amount }) => {
 };
 
 const getVoteAmount = async ({ account }) => {
-  const whitelist = await smembersAsync({ key: WHITE_LIST_KEY });
-  if (_.includes(whitelist, account)) return VOTE_COST.FOR_WHITE_LIST;
+  const inWhiteList = await isNameInWhiteList(account);
+  if (inWhiteList) return VOTE_COST.FOR_WHITE_LIST;
   return VOTE_COST.USUAL;
-};
-
-const isUserInWhitelist = async ({ account }) => {
-  const whitelist = await smembersAsync({ key: WHITE_LIST_KEY });
-  return _.includes(whitelist, account);
 };
 
 const getMinVotingPower = async ({ user }) => {
@@ -174,7 +169,7 @@ const voteForFieldGuest = async ({
 exports.voteForField = async ({
   voter, author, permlink, authorPermlink, fieldType, voteRequest, shouldWhiteListVote,
 }) => {
-  if (await isUserInWhitelist({ account: voter }) && !shouldWhiteListVote) return { result: 'ok' };
+  if (await isNameInWhiteList(voter) && !shouldWhiteListVote) return { result: 'ok' };
 
   if (isGuest(voter)) {
     return voteForFieldGuest({

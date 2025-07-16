@@ -1,6 +1,7 @@
 const { promptWithJsonSchema } = require('../operations/gptService');
 const { updateLastManaUpdateTimestamp } = require('./guestMana');
 const { GuestSpamModel, UserModel } = require('../../models');
+const { isNameInWhiteList } = require('../redis/redisGetter');
 
 const spamSchema = {
   type: 'object',
@@ -33,6 +34,9 @@ const spamSchemaObject = {
 };
 
 const detectSpamMessage = async ({ body, account }) => {
+  const inWhiteList = await isNameInWhiteList(account);
+  if (inWhiteList) return { error: null };
+
   const prompt = `
 You are an AI spam detector posting platform
 
