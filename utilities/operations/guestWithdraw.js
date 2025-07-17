@@ -9,7 +9,7 @@ const Web3 = require('web3');
 const config = require('config');
 const { validateBalanceRequest, engineBroadcast } = require('./transferOperation');
 const { getTokenBalances } = require('../hiveEngine/tokensContract');
-const { redis, redisGetter, redisSetter } = require('../redis');
+const { getWithdrawLock, setLock, delWithdrawLock } = require('./withdrawLock');
 
 const DEFAULT_PRECISION = 8;
 const DEFAULT_SLIPPAGE = 0.0001;
@@ -208,31 +208,6 @@ const validateEngineBalance = async ({ account, symbol, quantity }) => {
   const wallet = await getTokenBalances({ query: { account, symbol }, method: 'findOne' });
   if (!wallet) return false;
   return new BigNumber(wallet.balance).gte(quantity);
-};
-
-const WITHDRAW_LOCK_KEY = 'guest_withdraw_lock:';
-
-const getWithdrawLock = async (account) => {
-  const result = await redisGetter.get({
-    key: `${WITHDRAW_LOCK_KEY}${account}`,
-    client: redis.botsClient,
-  });
-
-  return result;
-};
-const setLock = async (account) => {
-  await redisSetter.setEx({
-    key: `${WITHDRAW_LOCK_KEY}${account}`,
-    client: redis.botsClient,
-    value: account,
-    ttl: 60 * 60 * 24,
-  });
-};
-const delWithdrawLock = async (account) => {
-  await redisSetter.del({
-    key: `${WITHDRAW_LOCK_KEY}${account}`,
-    client: redis.botsClient,
-  });
 };
 
 exports.withdraw = async ({ account, data }) => {
