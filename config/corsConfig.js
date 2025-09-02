@@ -9,6 +9,7 @@ const corsWhitelist = [
   'https://www.tiktok.com',
   'https://www.tiktok.com',
   'https://www.instagram.com',
+  'https://3speak.tv',
 ];
 
 const parseJson = (string) => {
