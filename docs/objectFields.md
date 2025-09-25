@@ -632,3 +632,21 @@
         "locale": "string",
     },
 ```
+
+## contentPosition field:
+ ```     
+   "field": {
+        "name": "contentPosition" ,
+        "body": "string",  
+        "locale": "string",
+    },
+```
+
+## htmlContent field:
+ ```     
+   "field": {
+        "name": "htmlContent" ,
+        "body": "string",  
+        "locale": "string",
+    },
+```
