@@ -644,9 +644,10 @@
 
 ## htmlContent field:
  ```     
+    const body = JSON.stringify({code: string, hideSignIn: boolean, hideMenu: boolean})
    "field": {
         "name": "htmlContent" ,
-        "body": "string",  
+        "body": body,  
         "locale": "string",
     },
 ```
