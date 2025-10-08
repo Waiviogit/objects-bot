@@ -1,7 +1,10 @@
 const { objectOperations, importVote } = require('utilities');
 const validators = require('controllers/validators');
 const config = require('config');
+const { FIELDS_NAMES } = require('@waivio/objects-processor');
 const checkForBlock = require('../utilities/guestUser/checkForBlock');
+const { htmlThreatDetector } = require('../utilities/operations/htmlThreatDetector');
+const { parseJson } = require('../utilities/helpers/jsonHelper');
 
 const processCreateObjectType = async (req, res, next) => {
   if (!req.body.objectType) {
@@ -38,6 +41,15 @@ const processAppendObject = async (req, res, next) => {
   if (!value) return;
   const { error: blockedError } = await checkForBlock(value.author);
   if (blockedError) return next(blockedError);
+
+  if (value.field.name === FIELDS_NAMES.HTML_CONTENT) {
+    const htmlContent = parseJson(value.field.body)?.code;
+    if (!htmlContent) return next({ status: 422, message: 'no html content' });
+
+    const { error: htmlError } = await htmlThreatDetector(htmlContent);
+    if (htmlError) return next(htmlError);
+  }
+
   const { error, result } = await objectOperations.AppendObjectOp(value);
 
   if (error) return next(error);
