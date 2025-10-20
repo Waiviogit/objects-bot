@@ -644,10 +644,19 @@
 
 ## htmlContent field:
  ```     
-    const body = JSON.stringify({code: string, hideSignIn: boolean, hideMenu: boolean})
    "field": {
         "name": "htmlContent" ,
-        "body": body,  
+        "body": "string",
+        "locale": "string",
+    },
+```
+
+
+## contentView field:
+ ```     
+   "field": {
+        "name": "contentView" ,
+        "body": "string",
         "locale": "string",
     },
 ```

@@ -113,6 +113,78 @@
         }
       }
     },
+    "/objects-bot/create-object" : {
+      "post" : {
+        "tags" : [ "object" ],
+        "summary" : "Create comment with 'create object', parent comment must be post with create object type",
+        "description" : "Create comment with specials identities wich create new **object** in database\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name": "Access-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in" : "body",
+            "name" : "params",
+            "description" : "**author** - creator of new *Object*,\n**title** - title on comment with *createObject*,\n**body** - body on comment with *createObject*,\n**permlink** - permlink of comment and **author_permlink** of new created *object*,\n**objectName** - *default_name* of *object* and name of first append field of *object*,\n**locale** - locale of first append field on *object*,\n**isExtendingOpen** - flag on *object* which allow *extend object*,\n**isPostingOpen** - flag on *object* which allow add *object* to your own post,\n**parentAuthor** - author of post with **Create Object Type**,\n**parentPermlink** - permlink of post with **Create Object Type**\n---------------**RESPONSE**-----------------\n**transactionId** - id of transaction with append after creating object\n**author** - author of comment with append which added after creating object\n**permlink** - permlink of comment with append which added after creating object\n**parentAuthor** - author of comment with *create object*\n**parentPermlink** - permlink of comment with *create object*\n",
+            "required" : false,
+            "schema" : {
+              "$ref" : "#/definitions/params_1"
+            }
+          } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_1"
+            }
+          }
+        }
+      }
+    },
+    "/objects-bot/append-object/validate" : {
+      "post" : {
+        "tags" : [ "object" ],
+        "summary" : "validate field",
+        "description" : "validate field",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name": "Access-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in" : "body",
+            "name" : "params",
+            "description" : "**author** - Creator of new field\n**body** -  body on comment with *appendObject*\n**title** - title on comment with *appendObject*\n**permlink** - permlink of new creatig comment with *appendObject*\n**parentAuthor** - author of comment with *createObject*\n**parentPermlink** - permlink of comment with *createObject*\n**field** - info about append\n*   field.name* - name of field(name,title,avatar,addres,link etc.)\n*   field.body* - value of field(for ex. if name - bitcoin, if title - descr. for bitcoin etc.)\n*   field.locale* - locale of field(en-US, ru-RU etc.)\n",
+            "required" : false,
+            "schema" : {
+              "$ref" : "#/definitions/params_2"
+            }
+          } ],
+        "responses" : {
+          "200" : {
+            "description" : "SUCCESS",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "ERROR"
+          }
+        }
+      }
+    },
     "/objects-bot/guest-delete-comment" : {
       "post" : {
         "tags" : [ "object" ],

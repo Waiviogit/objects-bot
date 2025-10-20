@@ -43,10 +43,7 @@ const processAppendObject = async (req, res, next) => {
   if (blockedError) return next(blockedError);
 
   if (value.field.name === FIELDS_NAMES.HTML_CONTENT) {
-    const htmlContent = parseJson(value.field.body)?.code;
-    if (!htmlContent) return next({ status: 422, message: 'no html content' });
-
-    const { error: htmlError } = await htmlThreatDetector(htmlContent);
+    const { error: htmlError } = await htmlThreatDetector(value.field.body);
     if (htmlError) return next(htmlError);
   }
 
@@ -55,6 +52,21 @@ const processAppendObject = async (req, res, next) => {
   if (error) return next(error);
   res.result = result;
   next();
+};
+
+const validateAppendObject = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.object.appendSchema, next);
+
+  if (!value) return;
+  const { error: blockedError } = await checkForBlock(value.author);
+  if (blockedError) return next(blockedError);
+
+  if (value.field.name === FIELDS_NAMES.HTML_CONTENT) {
+    const { error: htmlError } = await htmlThreatDetector(value.field.body);
+    if (htmlError) return next(htmlError);
+  }
+
+  return res.status(200).json({ message: 'Success' });
 };
 
 const voteForField = async (req, res, next) => {
@@ -76,4 +88,5 @@ module.exports = {
   processCreateObject,
   processAppendObject,
   voteForField,
+  validateAppendObject,
 };
