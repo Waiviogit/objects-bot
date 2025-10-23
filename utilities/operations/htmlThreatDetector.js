@@ -78,7 +78,7 @@ Now analyze this HTML: ${content}
   if (!result) return { error: null };
   const { threatLevel, summary } = result;
 
-  const threat = threatLevel > 4;
+  const threat = threatLevel > 5;
   if (!threat) return { error: null };
 
   const message = `Your update was detected as dangerous and was not posted.
