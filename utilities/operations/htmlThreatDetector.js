@@ -75,7 +75,7 @@ ${content}
   if (!result) return { error: null };
   const { threatLevel, summary } = result;
 
-  const threat = threatLevel > 5;
+  const threat = threatLevel > 6;
   if (!threat) return { error: null };
 
   const message = `Your update was detected as dangerous and was not posted. Threat: ${threatLevel};
