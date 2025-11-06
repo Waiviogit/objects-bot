@@ -8,19 +8,9 @@ const htmlThreatSchema = {
       type: 'integer',
       minimum: 0,
       maximum: 10,
-      description: [
-        'Threat score for the HTML page on a scale from 0 to 10.',
-        '0 = Pure HTML/CSS, no scripts or external resources (fully safe).',
-        '1–2 = Only harmless inline scripts or trusted local scripts (very low risk).',
-        '3–4 = Limited external or inline event handlers; mild indicators but no active threats (low–moderate risk).',
-        '5–6 = Untrusted external resources, mixed inline JS, or forms referencing unknown origins (moderate risk).',
-        '7–8 = Suspicious constructs like eval(), Function(), base64-encoded JS, or dynamic script injection (high risk).',
-        '9–10 = Confirmed exploit patterns, obfuscated payloads, or known-malicious domains (critical risk).',
-      ].join(' '),
     },
     summary: {
       type: 'string',
-      description: 'One-sentence explanation of the result: why this page got the given threatLevel.',
     },
   },
 };
@@ -31,47 +21,53 @@ const htmlThreatSchemaObject = {
 };
 
 const htmlThreatDetector = async (content) => {
-  const prompt = `You are an application security auditor validating a single HTML document by static inspection only (no execution).
+  const prompt = `You are an application security auditor validating ONE HTML document by static inspection only (no execution).
 
-Your task:
-- Inspect the HTML code for potential security threats.
-- Return a JSON object matching this schema:
-  {
-    "threatLevel": <integer 0–10>,
-    "summary": "<one concise sentence explaining the reason>"
-  }
-
-Threat scale:
-0 = Pure HTML/CSS, no scripts or external resources (fully safe).
-1–2 = Only harmless inline or local scripts (very low risk).
-3–4 = Some inline handlers or mild issues (low–moderate risk).
-5–6 = Untrusted external scripts, forms to unknown origins (moderate risk).
-7–8 = Suspicious constructs: eval(), Function(), base64 JS, dynamic injection (high risk).
-9–10 = Confirmed malicious patterns, obfuscation, known-malicious domains (critical risk).
-
-Inspect:
-- <script> tags (inline/external)
-- Inline event handlers (onclick, onload)
-- External resources (scripts, links, iframes)
-- Dangerous functions: eval, new Function, atob, document.write, innerHTML assignment
-- Forms posting to third-party URLs
-- Suspicious URL schemes (javascript:, data:)
-- Security mitigations (CSP, SRI, sandbox)
-
-Rules:
-- Use the lowest score consistent with evidence.
-- If ambiguous → choose the higher boundary within a band.
-- No scripts/external links → must be 0.
-- Output JSON only. No text or markdown.
-
-Example output:
+Return JSON ONLY, matching:
 {
-  "threatLevel": 6,
-  "summary": "Contains inline scripts and form posting to unknown domain without CSP."
+  "threatLevel": <integer 0–10>,
+  "summary": "<one concise sentence explaining the reason>"
 }
 
-Now analyze this HTML: ${content}
-`;
+Scoring rubric (mutually exclusive bands):
+0  = Pure HTML/CSS. No <script>, no inline handlers, no external resources.
+1–2 = Benign scripts ONLY:
+      - <script type="application/ld+json"> structured data
+      - Small inline scripts that do not read/modify DOM or use dangerous APIs
+      - Local, same-origin script URLs without query params and without dynamic loaders
+3–4 = Mild risk:
+      - Inline event handlers (onclick, onload, onerror, etc.)
+      - DOM writes limited to safe textContent usage
+      - External resources from recognizable CDNs with SRI or CSP present
+5–6 = Moderate:
+      - External scripts without SRI/CSP (unknown trust)
+      - Forms posting to third-party origins
+      - iframe without sandbox
+7–8 = High:
+      - eval, new Function, setTimeout/Interval with string arg
+      - atob/btoa + suspicious Base64 payloads
+      - document.write / innerHTML assignment from untrusted strings
+      - javascript: or data: URLs that execute JS
+      - dynamic script injection (createElement('script'), appendChild) or obfuscation
+9–10 = Critical:
+      - Confirmed malware patterns, heavy obfuscation, crypto-miners, known malicious domains
+
+Consider (but don’t over-penalize):
+- CSP, SRI, sandbox, referrerpolicy (mitigations lower the band when applicable).
+- Type "module" is not by itself risky.
+- application/ld+json is SAFE.
+- Analytics pixels alone are not high risk.
+
+Rules:
+- Use the LOWEST score consistent with the evidence found.
+- If nothing clearly risky is present, return 1 (not 3+).
+- If truly no scripts/external resources/inline handlers exist, return 0.
+- Output JSON only, no prose, no Markdown, no backticks.
+
+Now analyze this HTML exactly as given (do not execute it):
+<<<BEGIN_HTML>>>
+${content}
+<<<END_HTML>>>`;
 
   const { result, error } = await promptWithJsonSchema({ prompt, jsonSchema: htmlThreatSchemaObject });
   if (error) return { error: null };
@@ -81,7 +77,7 @@ Now analyze this HTML: ${content}
   const threat = threatLevel > 5;
   if (!threat) return { error: null };
 
-  const message = `Your update was detected as dangerous and was not posted.
+  const message = `Your update was detected as dangerous and was not posted. Threat: ${threatLevel};
 Reason: ${summary}`;
 
   return { error: { status: 422, message } };
