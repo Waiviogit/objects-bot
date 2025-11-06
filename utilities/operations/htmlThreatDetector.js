@@ -62,6 +62,7 @@ Rules:
 - Use the LOWEST score consistent with the evidence found.
 - If nothing clearly risky is present, return 1 (not 3+).
 - If truly no scripts/external resources/inline handlers exist, return 0.
+- Inline scripts that perform static DOM construction with safe APIs (createElement, textContent, appendChild) should not exceed threatLevel 5 unless they include dangerous sinks like eval, innerHTML, or external script injection
 - Output JSON only, no prose, no Markdown, no backticks.
 
 Now analyze this HTML exactly as given (do not execute it):
