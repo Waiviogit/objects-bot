@@ -1,4 +1,4 @@
-const { promptWithJsonSchema } = require('./gptService');
+const { promptWithJsonSchema5 } = require('./gptService');
 
 const htmlThreatSchema = {
   type: 'object',
@@ -70,7 +70,7 @@ Now analyze this HTML exactly as given (do not execute it):
 ${content}
 <<<END_HTML>>>`;
 
-  const { result, error } = await promptWithJsonSchema({ prompt, jsonSchema: htmlThreatSchemaObject });
+  const { result, error } = await promptWithJsonSchema5({ prompt, jsonSchema: htmlThreatSchemaObject });
   if (error) return { error: null };
   if (!result) return { error: null };
   const { threatLevel, summary } = result;

@@ -26,6 +26,28 @@ const promptWithJsonSchema = async ({ prompt, jsonSchema }) => {
   }
 };
 
+const promptWithJsonSchema5 = async ({ prompt, jsonSchema }) => {
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-5-mini',
+      messages: [{
+        role: 'user',
+        content: prompt,
+      }],
+      response_format: {
+        type: 'json_schema',
+        json_schema: jsonSchema,
+      },
+    });
+
+    const result = JSON.parse(response?.choices[0]?.message?.content);
+    return { result };
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
 module.exports = {
   promptWithJsonSchema,
+  promptWithJsonSchema5,
 };
