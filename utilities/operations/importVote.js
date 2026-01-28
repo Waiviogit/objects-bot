@@ -88,7 +88,7 @@ const unvoteOnSameFields = async ({ voter, sameFields, authorPermlink }) => {
       continue;
     }
 
-    const weight = getWeightToReject({
+    const weight = await getWeightToReject({
       userName: voter,
       author: field.author,
       permlink: field.permlink,
